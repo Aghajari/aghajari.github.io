@@ -8,7 +8,7 @@ export const profile = {
   tagline: "Engineering the way things move.",
   // SEO / meta
   description:
-    "AmirHossein Aghajari — Android Chapter Lead at Cafe Bazaar. UI & graphics engineer building beautiful, performant software in Kotlin, Java, Jetpack Compose and OpenGL — and writing about the internals.",
+    "AmirHossein Aghajari — Android Chapter Lead at Cafe Bazaar. Software engineer building beautiful, performant softwares — and writing about the internals.",
   // Long-form intro statement
   statement:
     "I build the layer where software meets the eye — interfaces, motion, and graphics — and I care about what happens underneath them. For nearly a decade I've shipped Android products, crafted open-source libraries used in hundreds of apps, and written about the internals of animation, rendering, and performance.",
