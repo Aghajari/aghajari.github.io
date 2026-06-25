@@ -1,0 +1,69 @@
+---
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import BaseHead from "@components/BaseHead.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: "website" | "article";
+  publishedTime?: string;
+  modifiedTime?: string;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown>[];
+  /** Tighten the gap between page content and the site footer. */
+  flushFooter?: boolean;
+}
+const {
+  title,
+  description,
+  image,
+  type,
+  publishedTime,
+  modifiedTime,
+  noindex,
+  jsonLd,
+  flushFooter = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <BaseHead
+      title={title}
+      description={description}
+      image={image}
+      type={type}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      noindex={noindex}
+      jsonLd={jsonLd}
+    />
+    <ClientRouter />
+    <script is:inline>
+      // Set theme before paint to avoid flash.
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+          var theme = stored || (prefersLight ? "light" : "dark");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class:list={{ "flush-footer": flushFooter }}>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Header transition:persist="site-header" />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer transition:persist="site-footer" />
+
+    <script src="../scripts/site.ts"></script>
+  </body>
+</html>

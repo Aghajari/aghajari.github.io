@@ -1,0 +1,101 @@
+---
+import type { Milestone } from "@data/experience";
+import Icon from "./Icon.astro";
+
+interface Props {
+  milestone: Milestone;
+  revealDelay?: number;
+}
+
+const { milestone: m, revealDelay = 0 } = Astro.props;
+
+const kindIcon = {
+  work: "code",
+  award: "star",
+  contribution: "github",
+  education: "pen",
+} as const;
+
+const kindLabel = {
+  work: "Role",
+  award: "Honor",
+  contribution: "Contribution",
+  education: "Education",
+} as const;
+
+const spotlight = m.kind === "award" || m.kind === "contribution";
+---
+
+<li
+  class:list={["tl-item", `tl-item--${m.kind}`]}
+  data-reveal
+  style={revealDelay > 0 ? `--reveal-delay:${revealDelay}ms` : undefined}
+>
+  <span class:list={["tl-marker", m.kind, { "tl-marker--spotlight": spotlight }]}>
+    <Icon name={kindIcon[m.kind]} size={spotlight ? 15 : 14} />
+  </span>
+
+  <article class:list={["tl-card", spotlight && `tl-card--spotlight tl-card--${m.kind}`]}>
+    {spotlight && (
+      <>
+        <div class="tl-card__glow" aria-hidden="true"></div>
+        <div class="tl-card__ring" aria-hidden="true"></div>
+      </>
+    )}
+
+    <div class="tl-card__body">
+      <header class="tl-head">
+        <div class="tl-head__left">
+          <span class="tl-period mono">{m.period}</span>
+          {spotlight && m.badge && (
+            <span class:list={["tl-badge", `tl-badge--${m.kind}`]}>
+              {m.kind === "contribution" && <span class="tl-badge__dot" aria-hidden="true"></span>}
+              {m.badge}
+            </span>
+          )}
+        </div>
+        <span class:list={["tl-kind", m.kind]}>
+          {spotlight && <Icon name={kindIcon[m.kind]} size={11} />}
+          {kindLabel[m.kind]}
+        </span>
+      </header>
+
+      <h3 class="tl-title">{m.title}</h3>
+
+      <p class="tl-org">
+        {m.orgUrl ? (
+          <a href={m.orgUrl} target="_blank" rel="noopener">{m.org}</a>
+        ) : (
+          m.org
+        )}
+        {m.location && <span class="tl-loc"> · {m.location}</span>}
+      </p>
+
+      <p class:list={["tl-summary", { muted: !spotlight }]}>{m.summary}</p>
+
+      {m.points.length > 0 && (
+        <ul class:list={["tl-points", spotlight && `tl-points--${m.kind}`]}>
+          {m.points.map((p) => (
+            <li><span class="tl-bullet" aria-hidden="true"></span>{p}</li>
+          ))}
+        </ul>
+      )}
+
+      {m.links && m.links.length > 0 && (
+        <footer class="tl-foot">
+          {m.links.map((link) => (
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class:list={["tl-link", `tl-link--${m.kind}`]}
+            >
+              {link.label}
+              <Icon name="arrow-up-right" size={13} />
+            </a>
+          ))}
+        </footer>
+      )}
+    </div>
+  </article>
+</li>

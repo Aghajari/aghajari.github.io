@@ -1,0 +1,47 @@
+---
+import { getCollection } from "astro:content";
+import Base from "@layouts/Base.astro";
+import PageHero from "@components/PageHero.astro";
+import TalkCard from "@components/TalkCard.astro";
+import { breadcrumbJsonLd } from "@/lib/seo";
+
+const talks = (await getCollection("presentations")).sort((a, b) => {
+  const da = a.data.date?.valueOf() ?? 0;
+  const db = b.data.date?.valueOf() ?? 0;
+  return db - da;
+});
+---
+
+<Base
+  title="Presentations"
+  description="Technical talks by AmirHossein Aghajari — interactive experiences built around real conference presentations."
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Presentations", path: "/presentations" },
+    ]),
+  ]}
+>
+  <PageHero
+    eyebrow="Speaking"
+    title="Talks &amp; presentations"
+    intro="Talks rebuilt for the web — technical sessions you can explore hands-on, and reflective ones you can simply read."
+  />
+
+  <section class="section">
+    <div class="container">
+      <div class="talks-grid">
+        {talks.map((t) => <TalkCard entry={t} />)}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .talks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: var(--space-5);
+    max-width: 1140px;
+  }
+</style>

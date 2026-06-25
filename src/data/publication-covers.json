@@ -1,0 +1,52 @@
+{
+  "building-a-piano-app": {
+    "local": "/images/publications/building-a-piano-app.png",
+    "remote": "https://cdn-images-1.medium.com/max/800/1*HdMDILwhpNR60uIssub5-A.png",
+    "alt": "Where to Start: Building a Piano App"
+  },
+  "dynamic-code-execution": {
+    "local": "/images/publications/dynamic-code-execution.png",
+    "remote": "https://cdn-images-1.medium.com/max/800/1*Sa2Zuyup-B8yVgLQ9ehtbg.png",
+    "alt": "Dynamic Code Execution in Java & Android"
+  },
+  "getting-started-opengl-es": {
+    "local": "/images/publications/getting-started-opengl-es.png",
+    "remote": "https://cdn-images-1.medium.com/max/800/1*pOA8zksDoIriD6GggBipYQ.png",
+    "alt": "Getting Started with OpenGL ES in Android"
+  },
+  "kernel-threads-xv6": {
+    "local": "/images/publications/kernel-threads-xv6.png",
+    "remote": "https://cdn-images-1.medium.com/max/800/1*e8XVNUQJk9dq3WDkcOzYqQ.png",
+    "alt": "Implementing Kernel Threads in xv6"
+  },
+  "liquid-glass": {
+    "local": "/images/publications/liquid-glass.jpg",
+    "remote": "https://cdn-images-1.medium.com/max/800/1*w7Iv7vE0eazB-5wgfWbS5A.jpeg",
+    "alt": "Liquid Glass: The iOS Effect, Explained"
+  },
+  "moving-dots": {
+    "local": "/images/publications/moving-dots.png",
+    "remote": "https://cdn-images-1.medium.com/max/800/1*vCFcGnIb3wIm4pitqpv1WA.png",
+    "alt": "Moving Dots: Animating Points in OpenGL ES"
+  },
+  "opengl-intro": {
+    "local": "/images/publications/opengl-intro.png",
+    "remote": "https://cdn-images-1.medium.com/max/800/1*5u82F_oJddw0kvspnyBUnw.png",
+    "alt": "OpenGL ES on Android: The Journey Begins"
+  },
+  "shading-the-canvas": {
+    "local": "/images/publications/shading-the-canvas.png",
+    "remote": "https://cdn-images-1.medium.com/max/800/1*-cT8-tJvAxecvvwC137Zag.png",
+    "alt": "Shading the Canvas: Vertex & Fragment Shaders"
+  },
+  "transformable-brush": {
+    "local": "/images/publications/transformable-brush.jpg",
+    "remote": "https://cdn-images-1.medium.com/max/800/1*klrQXNTbxddcaAgQBheCmw.jpeg",
+    "alt": "TransformableBrush: Efficient Brush Animations in Compose"
+  },
+  "value-animator": {
+    "local": "/images/publications/value-animator.jpg",
+    "remote": "https://cdn-images-1.medium.com/max/800/1*q73G2X6rC4QvbCGZ4B4lbw.jpeg",
+    "alt": "How ValueAnimator Makes Android"
+  }
+}

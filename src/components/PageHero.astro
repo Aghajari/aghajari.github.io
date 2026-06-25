@@ -1,0 +1,48 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+}
+const { eyebrow, title, intro } = Astro.props;
+---
+
+<section class="page-hero grid-bg">
+  <div class="ph-glow" aria-hidden="true"></div>
+  <div class="container">
+    <p class="eyebrow" data-reveal>{eyebrow}</p>
+    <h1 class="h1 ph-title" data-reveal style="--reveal-delay:60ms">{title}</h1>
+    {intro && (
+      <p class="lead ph-intro" data-reveal style="--reveal-delay:120ms">{intro}</p>
+    )}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(5rem, 12vw, 9rem) clamp(2.5rem, 6vw, 4rem);
+    border-bottom: 1px solid var(--border);
+  }
+  .page-hero::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 50%, var(--bg));
+    pointer-events: none;
+  }
+  .ph-glow {
+    position: absolute; top: -40%; right: -10%;
+    width: min(620px, 70vw); aspect-ratio: 1;
+    background: radial-gradient(closest-side, var(--glow), transparent 70%);
+    filter: blur(10px); pointer-events: none;
+  }
+  :global([data-theme="light"]) .ph-glow {
+    filter: blur(18px);
+    opacity: 0.95;
+  }
+  .container { position: relative; z-index: 1; }
+  .ph-title { margin-top: var(--space-4); max-width: 18ch; }
+  .ph-intro { margin-top: var(--space-5); max-width: 60ch; }
+</style>

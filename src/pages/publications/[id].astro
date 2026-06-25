@@ -1,0 +1,246 @@
+---
+import "@/styles/fonts-editorial.css";
+import { getCollection, render } from "astro:content";
+import Base from "@layouts/Base.astro";
+import PublicationCover from "@components/PublicationCover.astro";
+import ThemeVisual from "@components/ThemeVisual.astro";
+import MediumCTA from "@components/MediumCTA.astro";
+import ArticleCard from "@components/ArticleCard.astro";
+import Icon from "@components/Icon.astro";
+import { themes, themeVars, formatDate } from "@/lib/themes";
+import { getPublicationCover } from "@/lib/publications";
+import { publicationJsonLd } from "@/lib/seo";
+
+export async function getStaticPaths() {
+  const pubs = await getCollection("publications");
+  return pubs.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const t = themes[data.theme];
+const cover = getPublicationCover(entry);
+const { Content } = await render(entry);
+const seoImage = cover?.local;
+const jsonLd = publicationJsonLd(entry, cover?.local);
+
+// Related: same theme/series first, then recent.
+const all = (await getCollection("publications")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const related = all
+  .filter((p) => p.id !== entry.id)
+  .sort((a, b) => {
+    const score = (p: typeof a) =>
+      (p.data.theme === data.theme ? 2 : 0) +
+      (data.series && p.data.series === data.series ? 3 : 0);
+    return score(b) - score(a);
+  })
+  .slice(0, 3);
+---
+
+<Base
+  title={data.title}
+  description={data.summary}
+  type="article"
+  image={seoImage}
+  publishedTime={data.date.toISOString()}
+  jsonLd={jsonLd}
+>
+  <article class="pub" style={themeVars(data.theme)}>
+    <!-- Adaptive hero -->
+    <header class="pub-hero">
+      <div class="pub-hero-visual" aria-hidden="true">
+        {cover ? (
+          <PublicationCover src={cover.local} alt={cover.alt} theme={data.theme} variant="hero" />
+        ) : (
+          <ThemeVisual theme={data.theme} />
+        )}
+      </div>
+      <div class="pub-hero-overlay"></div>
+      <div class="container pub-hero-inner">
+        <a href="/publications" class="back-link" data-reveal>
+          <Icon name="arrow-left" size={16} class="back-arrow" /> All publications
+        </a>
+        <div class="pub-badges" data-reveal style="--reveal-delay:60ms">
+          <span class="pub-domain">{t.label}</span>
+          {data.series && <span class="pub-series">{data.series}</span>}
+        </div>
+        <h1 class="pub-title" data-reveal style="--reveal-delay:120ms">{data.title}</h1>
+        <p class="pub-subtitle serif" data-reveal style="--reveal-delay:180ms">{data.subtitle}</p>
+        <div class="pub-meta" data-reveal style="--reveal-delay:240ms">
+          <span>{formatDate(data.date)}</span>
+          <span class="dot-sep">·</span>
+          <span>{data.readingTime} min read</span>
+          <span class="dot-sep">·</span>
+          <span>Preview</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="container pub-body">
+      <div class="pub-layout">
+        <!-- Main column -->
+        <div class="pub-main">
+          <section class="pub-summary" data-reveal>
+            <p class="eyebrow">Summary</p>
+            <p class="pub-summary-text serif">{data.summary}</p>
+          </section>
+
+          {entry.body && entry.body.trim().length > 0 && (
+            <div class="pub-prose" data-reveal>
+              <Content />
+            </div>
+          )}
+
+          <section class="pub-ideas" data-reveal>
+            <p class="eyebrow">Key ideas</p>
+            <ul class="ideas-list">
+              {data.keyIdeas.map((idea, i) => (
+                <li class="idea">
+                  <span class="idea-num mono">{String(i + 1).padStart(2, "0")}</span>
+                  <span>{idea}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <div class="pub-cta-wrap" data-reveal>
+            <MediumCTA url={data.mediumUrl} readingTime={data.readingTime} />
+          </div>
+        </div>
+
+        <!-- Aside -->
+        <aside class="pub-aside">
+          <div class="aside-card card" data-reveal>
+            <p class="eyebrow">Technologies</p>
+            <div class="tag-row aside-tags">
+              {data.technologies.map((tech) => <span class="tag">{tech}</span>)}
+            </div>
+            <hr class="divider aside-div" />
+            <dl class="aside-facts">
+              <div><dt>Published</dt><dd>{formatDate(data.date)}</dd></div>
+              <div><dt>Reading time</dt><dd>{data.readingTime} min</dd></div>
+              <div><dt>Domain</dt><dd>{t.domain}</dd></div>
+              {data.series && <div><dt>Series</dt><dd>{data.series}</dd></div>}
+            </dl>
+            <a href={data.mediumUrl} target="_blank" rel="noopener" class="aside-medium">
+              <Icon name="medium" size={16} /> Read on Medium <Icon name="arrow-up-right" size={14} />
+            </a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Related -->
+    {related.length > 0 && (
+      <section class="section pub-related">
+        <div class="container">
+          <h2 class="h4 related-title" data-reveal>Keep reading</h2>
+          <div class="grid grid-3">
+            {related.map((p) => <ArticleCard entry={p} />)}
+          </div>
+        </div>
+      </section>
+    )}
+  </article>
+</Base>
+
+<style>
+  .pub-hero {
+    position: relative;
+    min-height: clamp(420px, 64vh, 640px);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .pub-hero-visual { position: absolute; inset: 0; }
+  .pub-hero-visual :global(.tv) { border-radius: 0; }
+  .pub-hero-overlay {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, var(--scrim-soft) 0%, transparent 28%),
+      linear-gradient(180deg, transparent 35%, var(--scrim-bottom) 68%, var(--scrim-end) 96%);
+  }
+  .pub-hero-inner {
+    position: relative; z-index: 1;
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+    max-width: 920px;
+    color: var(--on-media-text);
+    text-shadow: 0 1px 28px var(--scrim-text);
+  }
+
+  .back-link { display: inline-flex; align-items: center; gap: 0.5em; color: var(--on-media-text-2); font-size: 0.88rem; margin-bottom: var(--space-5); }
+  .back-link:hover { color: var(--on-media-text); }
+  .back-link :global(.back-arrow) { transition: transform var(--dur-fast); }
+  .back-link:hover :global(.back-arrow) { transform: translateX(-3px); }
+
+  .pub-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: var(--space-4); }
+  .pub-domain, .pub-series {
+    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.35em 0.8em; border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--t2) 45%, var(--media-chrome-border));
+    background: var(--media-chrome-bg); backdrop-filter: blur(8px);
+  }
+  .pub-domain { color: color-mix(in srgb, var(--t2) 70%, var(--media-chrome-text)); }
+  .pub-series { color: color-mix(in srgb, var(--media-chrome-text) 75%, var(--text-2)); }
+
+  .pub-title { font-size: clamp(2rem, 1.2rem + 4vw, 4.2rem); letter-spacing: -0.03em; line-height: 1.04; max-width: 18ch; }
+  .pub-subtitle { font-size: var(--step-2); color: var(--on-media-text-2); margin-top: var(--space-4); max-width: 46ch; line-height: 1.4; font-style: italic; }
+  .pub-meta { display: flex; flex-wrap: wrap; gap: 0.5em; align-items: center; margin-top: var(--space-5); font-family: var(--font-mono); font-size: 0.8rem; color: var(--on-media-text-3); }
+  .dot-sep { opacity: 0.5; }
+
+  /* body layout */
+  .pub-body { padding-top: clamp(2.5rem, 6vw, 4.5rem); }
+  .pub-layout { display: grid; grid-template-columns: 1fr 320px; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+
+  .pub-summary-text { font-size: var(--step-2); line-height: 1.5; color: var(--text); margin-top: var(--space-3); }
+  .pub-summary { padding-bottom: var(--space-6); margin-bottom: var(--space-6); border-bottom: 1px solid var(--border); }
+
+  .pub-prose { font-size: var(--step-1); color: var(--text-2); line-height: 1.7; margin-bottom: var(--space-7); }
+  .pub-prose :global(p) { margin-bottom: var(--space-4); }
+
+  .pub-ideas { margin-bottom: var(--space-7); }
+  .ideas-list { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-4); counter-reset: idea; }
+  .idea {
+    display: flex; gap: var(--space-4); align-items: flex-start;
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    background: var(--surface);
+    transition: border-color var(--dur-fast), transform var(--dur-fast) var(--ease-out);
+    font-size: 1.02rem; line-height: 1.5;
+  }
+  .idea:hover { border-color: var(--border-strong); transform: translateX(4px); }
+  .idea-num {
+    flex-shrink: 0; font-size: 0.85rem;
+    color: color-mix(in srgb, var(--t2) 80%, var(--text));
+    padding-top: 0.15em;
+  }
+
+  /* aside */
+  .pub-aside { position: sticky; top: 90px; }
+  .aside-card { padding: var(--space-5); }
+  .aside-tags { margin-top: var(--space-3); }
+  .aside-div { margin: var(--space-5) 0; }
+  .aside-facts { display: flex; flex-direction: column; gap: var(--space-3); }
+  .aside-facts > div { display: flex; justify-content: space-between; gap: var(--space-3); font-size: 0.88rem; }
+  .aside-facts dt { color: var(--text-3); }
+  .aside-facts dd { color: var(--text); text-align: right; }
+  .aside-medium {
+    display: inline-flex; align-items: center; gap: 0.5em;
+    margin-top: var(--space-5); padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
+    width: 100%; font-size: 0.9rem; color: var(--text-2);
+  }
+  .aside-medium:hover { color: var(--text); }
+
+  .pub-cta-wrap { margin-top: var(--space-7); }
+  .pub-related { border-top: 1px solid var(--border); margin-top: var(--space-9); }
+  .related-title { margin-bottom: var(--space-6); }
+
+  @media (max-width: 900px) {
+    .pub-layout { grid-template-columns: 1fr; }
+    .pub-aside { position: static; order: -1; }
+  }
+</style>

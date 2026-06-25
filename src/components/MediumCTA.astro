@@ -1,0 +1,55 @@
+---
+import Icon from "./Icon.astro";
+interface Props {
+  url: string;
+  readingTime?: number;
+  variant?: "banner" | "inline";
+}
+const { url, readingTime, variant = "banner" } = Astro.props;
+---
+
+{variant === "banner" ? (
+  <aside class="medium-cta sheen" data-reveal>
+    <div class="mc-text">
+      <p class="eyebrow">Continue reading</p>
+      <h3 class="mc-title">This is a preview. The full story lives on Medium.</h3>
+      <p class="muted mc-sub">
+        Read the complete article — code, diagrams and all
+        {readingTime ? ` — about ${readingTime} minutes.` : "."}
+      </p>
+    </div>
+    <a href={url} target="_blank" rel="noopener" class="btn btn--accent mc-btn">
+      <Icon name="medium" size={20} />
+      Read the Full Article on Medium
+      <Icon name="arrow-up-right" size={18} class="arrow" />
+    </a>
+  </aside>
+) : (
+  <a href={url} target="_blank" rel="noopener" class="btn btn--accent">
+    <Icon name="medium" size={20} />
+    Read the Full Article on Medium
+    <Icon name="arrow-up-right" size={18} class="arrow" />
+  </a>
+)}
+
+<style>
+  .medium-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    flex-wrap: wrap;
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    background:
+      radial-gradient(120% 140% at 100% 0%, var(--glow), transparent 55%),
+      var(--surface);
+  }
+  .mc-title { font-size: var(--step-2); letter-spacing: -0.02em; margin-top: var(--space-2); max-width: 22ch; }
+  .mc-sub { margin-top: var(--space-2); max-width: 44ch; font-size: 0.95rem; }
+  .mc-btn { flex-shrink: 0; }
+  @media (max-width: 720px) {
+    .mc-btn { width: 100%; justify-content: center; }
+  }
+</style>

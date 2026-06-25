@@ -1,0 +1,642 @@
+---
+import Base from "@layouts/Base.astro";
+import PageHero from "@components/PageHero.astro";
+import ExperienceMilestone from "@components/ExperienceMilestone.astro";
+import { milestones, yearStops } from "@data/experience";
+
+const lastYear = yearStops.length - 1;
+---
+
+<Base
+  title="Experience"
+  description="The professional journey of AmirHossein Aghajari — roles, awards and education across nearly a decade of engineering."
+>
+  <PageHero
+    eyebrow="Experience"
+    title="A journey, not a résumé"
+    intro="From freelance open-source author to senior engineer and chapter lead — the milestones that shaped how I build."
+  />
+
+  <!-- ===================== INTERACTIVE YEAR TIMELINE ===================== -->
+  <section class="section-tight yt-section">
+    <div class="container">
+      <div class="yt-head" data-reveal>
+        <p class="eyebrow">By the year</p>
+        <h2 class="h4 yt-headline">Where in the world was I?</h2>
+        <p class="muted yt-sub">Tap a year — I'll tell you where I was and what I was up to.</p>
+      </div>
+
+      <div class="yt" data-yeartimeline>
+        <div class="yt-rail" role="tablist" aria-label="Career by year">
+          {yearStops.map((y, i) => (
+            <button
+              type="button"
+              role="tab"
+              class:list={["yt-year", { "is-active": i === lastYear }]}
+              data-year-index={i}
+              data-kind={y.kind}
+              tabindex={i === lastYear ? 0 : -1}
+              aria-selected={i === lastYear ? "true" : "false"}
+              aria-label={`${y.year}: ${y.place}`}
+            >
+              <span class="yt-dot" aria-hidden="true"></span>
+              <span class="yt-num">{y.year}</span>
+            </button>
+          ))}
+        </div>
+
+        <div class="yt-panel">
+          {yearStops.map((y, i) => (
+            <article
+              class:list={["yt-card", { "is-active": i === lastYear }]}
+              data-year-card={i}
+              data-kind={y.kind}
+            >
+              <span class="yt-card__year" aria-hidden="true">{y.year}</span>
+              <div class="yt-card__main">
+                <p class="yt-card__label">Where I was</p>
+                <h3 class="yt-card__place">{y.place}</h3>
+                <p class="yt-card__role">{y.role}</p>
+                <p class="yt-card__note">{y.note}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section exp-section">
+    <div class="container container-narrow">
+      <ol class="timeline">
+        {milestones.map((m, i) => (
+          <ExperienceMilestone milestone={m} revealDelay={Math.min(i, 6) * 45} />
+        ))}
+      </ol>
+    </div>
+  </section>
+</Base>
+
+<script src="../scripts/year-timeline.ts"></script>
+
+<style>
+  /* ============================================================
+     Interactive year timeline
+     ============================================================ */
+  .yt-section { padding-top: clamp(1.5rem, 3vw, 2.5rem); }
+  .yt-head { margin-bottom: var(--space-6); }
+  .yt-headline { margin-top: var(--space-2); letter-spacing: -0.02em; }
+  .yt-sub { margin-top: var(--space-2); }
+
+  .yt { --yt-c: var(--accent); }
+
+  /* —— Rail of years —— */
+  .yt-rail {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0.4rem 0 1.4rem;
+    margin-bottom: var(--space-5);
+  }
+  .yt-rail::-webkit-scrollbar { display: none; }
+  .yt-rail::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 12px;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--border) 6%,
+      var(--border) 94%,
+      transparent
+    );
+    z-index: 0;
+  }
+
+  .yt-year {
+    position: relative;
+    z-index: 1;
+    flex: 1 0 auto;
+    min-width: 54px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0 0.2rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-3);
+    transition: color var(--dur-fast);
+  }
+  .yt-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--border-strong);
+    transition:
+      transform var(--dur-mid) var(--ease-spring),
+      background var(--dur-fast),
+      border-color var(--dur-fast),
+      box-shadow var(--dur-fast);
+  }
+  .yt-num {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+    transition: color var(--dur-fast), font-weight var(--dur-fast);
+  }
+  .yt-year:hover { color: var(--text-2); }
+  .yt-year:hover .yt-dot { border-color: var(--yt-c); transform: scale(1.15); }
+  .yt-year:focus-visible { outline: none; }
+  .yt-year:focus-visible .yt-dot {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--yt-c) 40%, transparent);
+  }
+
+  .yt-year.is-active { color: var(--text); }
+  .yt-year.is-active .yt-num { font-weight: 600; }
+  .yt-year.is-active .yt-dot {
+    transform: scale(1.55);
+    background: var(--yt-c);
+    border-color: var(--yt-c);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--yt-c) 18%, transparent);
+  }
+
+  /* per-kind accents on the rail */
+  .yt-year[data-kind="award"] { --yt-c: #d4a843; }
+  .yt-year[data-kind="education"] { --yt-c: #9aa8c7; }
+  .yt-year[data-kind="contribution"] { --yt-c: #52b87a; }
+
+  /* —— Reveal panel —— */
+  .yt-panel { position: relative; }
+  .yt-card {
+    --yt-c: var(--accent);
+    display: none;
+    grid-template-columns: auto 1fr;
+    gap: clamp(var(--space-4), 4vw, var(--space-6));
+    align-items: start;
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background:
+      radial-gradient(120% 150% at 0% 0%, color-mix(in srgb, var(--yt-c) 8%, transparent), transparent 55%),
+      var(--surface);
+  }
+  .yt-card[data-kind="award"] { --yt-c: #d4a843; }
+  .yt-card[data-kind="education"] { --yt-c: #9aa8c7; }
+  .yt-card[data-kind="contribution"] { --yt-c: #52b87a; }
+  .yt-card.is-active {
+    display: grid;
+    animation: yt-in 0.4s var(--ease-out);
+  }
+  @keyframes yt-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .yt-card__year {
+    font-family: var(--font-mono);
+    font-size: clamp(2.6rem, 1.6rem + 4vw, 4rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 0.9;
+    color: var(--yt-c);
+  }
+  .yt-card__label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .yt-card__place {
+    font-size: var(--step-2);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-top: 0.45rem;
+  }
+  .yt-card__role {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    color: color-mix(in srgb, var(--yt-c) 70%, var(--text-2));
+  }
+  .yt-card__note {
+    margin-top: var(--space-4);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text-2);
+    max-width: 56ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .yt-card.is-active { animation: none; }
+    .yt-dot, .yt-year:hover .yt-dot { transition: none; }
+  }
+
+  @media (max-width: 540px) {
+    .yt-card {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+      padding: var(--space-5);
+    }
+    .yt-card__year { font-size: 2.4rem; }
+  }
+
+  .exp-section {
+    padding-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .timeline {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 14px;
+    top: 10px;
+    bottom: 10px;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--border) 8%,
+      var(--border) 92%,
+      transparent
+    );
+  }
+
+  :global(.tl-item) {
+    position: relative;
+    padding-left: 2.75rem;
+    padding-bottom: var(--space-5);
+  }
+
+  :global(.tl-item:last-child) {
+    padding-bottom: 0;
+  }
+
+  :global(.tl-item--award),
+  :global(.tl-item--contribution) {
+    padding-bottom: var(--space-6);
+  }
+
+  /* —— Timeline markers —— */
+  :global(.tl-marker) {
+    position: absolute;
+    left: 6px;
+    top: 1.4rem;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-3);
+    z-index: 2;
+    transform: translateY(-50%);
+  }
+
+  :global(.tl-marker--spotlight) {
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background: var(--surface);
+  }
+
+  :global(.tl-marker.work) {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  }
+
+  :global(.tl-marker.education) {
+    color: #9aa8c7;
+    border-color: color-mix(in srgb, #9aa8c7 30%, var(--border));
+  }
+
+  :global(.tl-marker.award) {
+    color: #d4a843;
+    border-color: color-mix(in srgb, #d4a843 35%, var(--border));
+  }
+
+  :global(.tl-marker.contribution) {
+    color: #52b87a;
+    border-color: color-mix(in srgb, #52b87a 35%, var(--border));
+  }
+
+  /* —— Cards —— */
+  :global(.tl-card) {
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: inset 0 1px 0 var(--surface-highlight);
+    transition:
+      border-color var(--dur-mid) var(--ease-out),
+      box-shadow var(--dur-mid) var(--ease-out),
+      transform var(--dur-mid) var(--ease-out);
+  }
+
+  :global(.tl-card:not(.tl-card--spotlight):hover) {
+    border-color: color-mix(in srgb, var(--border-strong) 80%, var(--border));
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 80%, transparent),
+      0 8px 24px -20px color-mix(in srgb, var(--text) 8%, transparent);
+    transform: translateY(-2px);
+  }
+
+  :global(.tl-card--spotlight) {
+    --spot: var(--accent);
+    --spot-line: color-mix(in srgb, var(--spot) 22%, var(--border));
+    --spot-fill: color-mix(in srgb, var(--spot) 5%, var(--surface));
+    --spot-ink: color-mix(in srgb, var(--spot) 45%, var(--text-2));
+    border-color: var(--spot-line);
+    background: linear-gradient(180deg, var(--spot-fill) 0%, var(--surface) 36%);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--spot) 10%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--spot) 6%, transparent);
+  }
+
+  :global(.tl-card--award) {
+    --spot: #d4a843;
+  }
+
+  :global(.tl-card--contribution) {
+    --spot: #52b87a;
+  }
+
+  :global(.tl-card--spotlight:hover) {
+    border-color: color-mix(in srgb, var(--spot) 32%, var(--border));
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--spot) 14%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--spot) 8%, transparent),
+      0 12px 32px -24px color-mix(in srgb, var(--spot) 22%, transparent);
+    transform: translateY(-2px);
+  }
+
+  :global(.tl-card__glow) {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse 65% 50% at 100% 0%,
+      color-mix(in srgb, var(--spot) 9%, transparent),
+      transparent 60%
+    );
+  }
+
+  :global(.tl-card__ring) {
+    position: absolute;
+    inset: 5px;
+    border-radius: calc(var(--radius-lg) - 5px);
+    border: 1px solid color-mix(in srgb, var(--spot) 7%, transparent);
+    pointer-events: none;
+  }
+
+  :global(.tl-card__body) {
+    position: relative;
+    z-index: 1;
+    padding: var(--space-5);
+  }
+
+  :global(.tl-card--spotlight .tl-card__body) {
+    padding: calc(var(--space-5) + 2px) var(--space-6);
+  }
+
+  /* —— Header —— */
+  :global(.tl-head) {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  }
+
+  :global(.tl-card--spotlight .tl-head) {
+    border-bottom-color: color-mix(in srgb, var(--spot) 12%, var(--border));
+  }
+
+  :global(.tl-head__left) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.6rem;
+    min-width: 0;
+  }
+
+  :global(.tl-period) {
+    font-size: 0.76rem;
+    color: var(--text-3);
+    white-space: nowrap;
+  }
+
+  :global(.tl-kind) {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    padding: 0.26em 0.58em;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    color: var(--text-3);
+    background: transparent;
+  }
+
+  :global(.tl-kind.work) {
+    color: color-mix(in srgb, var(--accent) 80%, var(--text-2));
+    border-color: color-mix(in srgb, var(--accent) 22%, var(--border));
+  }
+
+  :global(.tl-kind.education) {
+    color: #9aa8c7;
+    border-color: color-mix(in srgb, #9aa8c7 22%, var(--border));
+  }
+
+  :global(.tl-kind.award),
+  :global(.tl-kind.contribution) {
+    color: var(--spot-ink);
+    border-color: color-mix(in srgb, var(--spot) 20%, var(--border));
+    background: color-mix(in srgb, var(--spot) 5%, transparent);
+  }
+
+  :global(.tl-badge) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38em;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.2em 0.55em;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--spot) 18%, var(--border));
+    color: var(--spot-ink);
+    background: color-mix(in srgb, var(--spot) 6%, var(--surface));
+  }
+
+  :global(.tl-badge__dot) {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--spot);
+  }
+
+  /* —— Content —— */
+  :global(.tl-title) {
+    font-size: var(--step-1);
+    letter-spacing: -0.02em;
+    line-height: 1.22;
+    max-width: 34ch;
+  }
+
+  :global(.tl-card--spotlight .tl-title) {
+    font-size: clamp(1.18rem, 1rem + 0.4vw, 1.38rem);
+    max-width: 36ch;
+  }
+
+  :global(.tl-org) {
+    margin-top: 0.4rem;
+    font-size: 0.91rem;
+    color: var(--text-2);
+  }
+
+  :global(.tl-org a) {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--border-strong) 80%, transparent);
+    transition: border-color var(--dur-fast);
+  }
+
+  :global(.tl-org a:hover) {
+    border-color: var(--accent);
+  }
+
+  :global(.tl-loc) {
+    color: var(--text-3);
+  }
+
+  :global(.tl-summary) {
+    margin-top: var(--space-3);
+    font-size: 0.93rem;
+    line-height: 1.65;
+  }
+
+  :global(.tl-card--spotlight .tl-summary) {
+    color: var(--text-2);
+    max-width: 58ch;
+  }
+
+  :global(.tl-points) {
+    margin-top: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: var(--space-3) 0 0;
+    list-style: none;
+    border-top: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+  }
+
+  :global(.tl-card--spotlight .tl-points) {
+    border-top-color: color-mix(in srgb, var(--spot) 10%, var(--border));
+  }
+
+  :global(.tl-points li) {
+    display: flex;
+    gap: 0.65em;
+    font-size: 0.87rem;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+
+  :global(.tl-bullet) {
+    flex-shrink: 0;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 0.62em;
+    opacity: 0.7;
+  }
+
+  :global(.tl-points--award .tl-bullet) {
+    background: #d4a843;
+    opacity: 1;
+  }
+
+  :global(.tl-points--contribution .tl-bullet) {
+    background: #52b87a;
+    opacity: 1;
+  }
+
+  /* —— Links (honors only) —— */
+  :global(.tl-foot) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+  }
+
+  :global(.tl-card--spotlight .tl-foot) {
+    border-top-color: color-mix(in srgb, var(--spot) 10%, var(--border));
+  }
+
+  :global(.tl-link) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    font-size: 0.83rem;
+    padding: 0.45em 0.85em;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--spot, var(--accent)) 22%, var(--border));
+    background: color-mix(in srgb, var(--spot, var(--accent)) 5%, var(--surface));
+    color: color-mix(in srgb, var(--spot, var(--accent)) 55%, var(--text-2));
+    text-decoration: none;
+    transition:
+      border-color var(--dur-fast),
+      background var(--dur-fast),
+      color var(--dur-fast),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  :global(.tl-link:hover) {
+    border-color: color-mix(in srgb, var(--spot, var(--accent)) 38%, var(--border));
+    background: color-mix(in srgb, var(--spot, var(--accent)) 9%, var(--surface));
+    color: var(--text);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 540px) {
+    :global(.tl-head) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-2);
+    }
+
+    :global(.tl-card--spotlight .tl-card__body) {
+      padding: var(--space-5);
+    }
+  }
+</style>

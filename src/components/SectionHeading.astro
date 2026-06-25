@@ -1,0 +1,59 @@
+---
+import Icon from "./Icon.astro";
+interface Props {
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  link?: { href: string; label: string };
+  align?: "left" | "center";
+}
+const { eyebrow, title, intro, link, align = "left" } = Astro.props;
+---
+
+<div class:list={["section-heading", align]} data-reveal>
+  <div class="sh-main">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h2 class="h3 sh-title">{title}</h2>
+    {intro && <p class="lead sh-intro">{intro}</p>}
+  </div>
+  {link && (
+    <a href={link.href} class="sh-link">
+      {link.label}
+      <Icon name="arrow" size={18} class="arrow" />
+    </a>
+  )}
+</div>
+
+<style>
+  .section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-5);
+    margin-bottom: var(--space-7);
+  }
+  .section-heading.center {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .sh-title { margin-top: var(--space-3); }
+  .sh-intro { margin-top: var(--space-3); max-width: 54ch; }
+  .center .sh-intro { margin-inline: auto; }
+  .sh-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    white-space: nowrap;
+    color: var(--text-2);
+    font-size: 0.92rem;
+    padding-bottom: 0.4rem;
+    transition: color var(--dur-fast);
+  }
+  .sh-link:hover { color: var(--text); }
+  .sh-link .arrow { transition: transform var(--dur-fast) var(--ease-out); }
+  .sh-link:hover .arrow { transform: translateX(4px); }
+  @media (max-width: 640px) {
+    .section-heading { flex-direction: column; align-items: flex-start; }
+  }
+</style>

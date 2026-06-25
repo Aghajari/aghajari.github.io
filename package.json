@@ -1,0 +1,23 @@
+{
+  "name": "aghajari-brand",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Personal brand website of AmirHossein Aghajari — engineering the way things move.",
+  "scripts": {
+    "sync:covers": "node scripts/sync-medium-covers.mjs",
+    "dev": "astro dev",
+    "start": "astro dev",
+    "prebuild": "npm run sync:covers",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.2.0",
+    "@astrojs/sitemap": "^3.2.1",
+    "@fontsource-variable/inter": "^5.1.1",
+    "@fontsource-variable/newsreader": "^5.1.1",
+    "@fontsource/jetbrains-mono": "^5.1.2",
+    "astro": "^5.5.0"
+  }
+}

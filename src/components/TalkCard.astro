@@ -1,0 +1,259 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { themes, formatDate } from "@/lib/themes";
+import TalkCardVisual from "./TalkCardVisual.astro";
+import Icon from "./Icon.astro";
+
+interface Props {
+  entry: CollectionEntry<"presentations">;
+}
+const { entry } = Astro.props;
+const { data } = entry;
+const t = themes[data.theme];
+const comingSoon = data.status === "coming-soon";
+const live = !comingSoon;
+const editorial = data.theme === "academic";
+const liveLabel = editorial ? "Recap" : "Interactive";
+const liveIcon = editorial ? "pen" : "play";
+const cta = editorial ? "Read the recap" : "Explore the talk";
+const maxTags = 4;
+const visibleTags = data.technologies.slice(0, maxTags);
+const extraTags = data.technologies.length - visibleTags.length;
+const speakerLine =
+  data.speakers.length > 0
+    ? data.speakers.length === 1
+      ? data.speakers[0]
+      : `${data.speakers.length} speakers`
+    : null;
+---
+
+<a
+  href={`/presentations/${entry.id}`}
+  class:list={["talk-card", "card", "sheen", { "talk-card--live": live }]}
+  style={`--t1:${t.c1};--t2:${t.c2};--t3:${t.c3}`}
+  data-reveal
+>
+  <div class="tc-visual">
+    <TalkCardVisual talkId={entry.id} theme={data.theme} />
+    <span class="tc-domain">{t.domain}</span>
+    {comingSoon ? (
+      <span class="tc-badge">Coming soon</span>
+    ) : (
+      <span class="tc-badge tc-badge--live">
+        <Icon name={liveIcon} size={11} /> {liveLabel}
+      </span>
+    )}
+    {data.duration && (
+      <span class="tc-duration mono">
+        <Icon name="play" size={12} /> {data.duration}
+      </span>
+    )}
+  </div>
+
+  <div class="tc-body">
+    <div class="tc-meta mono">
+      <span>{data.event}</span>
+      {data.date && (
+        <>
+          <span class="dot-sep">·</span>
+          <span>{formatDate(data.date)}</span>
+        </>
+      )}
+      {data.language && (
+        <>
+          <span class="dot-sep">·</span>
+          <span>{data.language}</span>
+        </>
+      )}
+    </div>
+
+    <h3 class="tc-title">{data.title}</h3>
+    <p class="tc-topic">{data.topic}</p>
+    <p class="tc-desc muted">{data.description}</p>
+
+    {speakerLine && (
+      <p class="tc-speakers">
+        <Icon name="mic" size={14} />
+        <span>{speakerLine}</span>
+      </p>
+    )}
+
+    {visibleTags.length > 0 && (
+      <div class="tag-row tc-tags">
+        {visibleTags.map((tech) => (
+          <span class="tag">{tech}</span>
+        ))}
+        {extraTags > 0 && <span class="tag tag--more">+{extraTags}</span>}
+      </div>
+    )}
+
+    <span class="tc-cta">
+      {live ? cta : "View"}
+      <Icon name="arrow" size={16} class="arrow" />
+    </span>
+  </div>
+</a>
+
+<style>
+  .talk-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+    transition:
+      border-color var(--dur-mid) var(--ease-out),
+      transform var(--dur-mid) var(--ease-out),
+      box-shadow var(--dur-mid) var(--ease-out);
+  }
+  .talk-card:hover {
+    border-color: color-mix(in srgb, var(--t2) 45%, var(--border));
+    box-shadow: 0 24px 56px -34px color-mix(in srgb, var(--t2) 55%, transparent);
+  }
+
+  .tc-visual {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .tc-visual :global(.tv),
+  .tc-visual :global(.tcv__canvas) {
+    transition: transform var(--dur-mid) var(--ease-out);
+  }
+  .talk-card:hover .tc-visual :global(.tv),
+  .talk-card:hover .tc-visual :global(.tcv__canvas) {
+    transform: scale(1.04);
+  }
+
+  .tc-domain {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    z-index: 6;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.32em 0.72em;
+    border-radius: var(--radius-pill);
+    background: var(--media-chrome-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--media-chrome-border);
+    color: var(--media-chrome-text);
+    box-shadow: 0 4px 20px var(--media-chrome-shadow);
+  }
+
+  .tc-badge {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    z-index: 6;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.32em 0.68em;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--t2) 40%, var(--media-chrome-border));
+    color: color-mix(in srgb, var(--t2) 80%, var(--media-chrome-text));
+    background: color-mix(in srgb, var(--media-chrome-bg) 86%, transparent);
+    backdrop-filter: blur(10px);
+  }
+  .tc-badge--live {
+    color: var(--media-chrome-text);
+    border-color: color-mix(in srgb, var(--t2) 55%, var(--media-chrome-border));
+    background: color-mix(in srgb, var(--t2) 16%, var(--media-chrome-bg));
+  }
+
+  .tc-duration {
+    position: absolute;
+    left: var(--space-3);
+    bottom: var(--space-3);
+    z-index: 6;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    font-size: 0.72rem;
+    padding: 0.28em 0.62em;
+    border-radius: var(--radius-pill);
+    color: color-mix(in srgb, var(--media-chrome-text) 75%, var(--text-2));
+    background: var(--media-chrome-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--media-chrome-border);
+  }
+
+  .tc-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: var(--space-5);
+    flex: 1;
+  }
+
+  .tc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    font-size: 0.74rem;
+    color: var(--text-3);
+  }
+  .dot-sep { opacity: 0.5; }
+
+  .tc-title {
+    font-size: var(--step-2);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  .tc-topic {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--t2) 70%, var(--text-2));
+  }
+
+  .tc-desc {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .tc-speakers {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    font-size: 0.82rem;
+    color: var(--text-2);
+  }
+  .tc-speakers :global(svg) {
+    color: color-mix(in srgb, var(--t2) 65%, var(--text-3));
+    flex-shrink: 0;
+  }
+
+  .tc-tags { margin-top: 0.15rem; }
+  .tag--more {
+    color: var(--text-3);
+    border-style: dashed;
+  }
+
+  .tc-cta {
+    margin-top: auto;
+    padding-top: var(--space-3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    font-size: 0.88rem;
+    color: var(--text);
+    transition: color var(--dur-fast);
+  }
+  .tc-cta .arrow { transition: transform var(--dur-fast) var(--ease-out); }
+  .talk-card:hover .tc-cta { color: color-mix(in srgb, var(--t2) 75%, var(--text)); }
+  .talk-card:hover .tc-cta .arrow { transform: translateX(4px); }
+</style>

@@ -1,0 +1,1607 @@
+---
+import Base from "@layouts/Base.astro";
+import Icon from "@components/Icon.astro";
+import { profile } from "@data/profile";
+import { themeVars } from "@/lib/themes";
+import { getEntry } from "astro:content";
+import { presentationSeoProps, youtubeVideoId } from "@/lib/seo";
+
+const entry = await getEntry("presentations", "complex-animations");
+if (!entry) throw new Error("Missing presentation: complex-animations");
+const seo = presentationSeoProps(entry);
+
+const videoId = youtubeVideoId(entry.data.videoUrl!)!;
+const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+const meta = [
+  { icon: "mic", label: "Tehran, Iran" },
+  { icon: "play", label: "1h 05m" },
+  { icon: "pen", label: "Persian" },
+  { icon: "spark", label: "Recorded" },
+] as const;
+
+const acts = [
+  { id: "recording", n: "00", label: "Watch" },
+  { id: "fundamentals", n: "01", label: "Fundamentals" },
+  { id: "designing", n: "02", label: "Designing" },
+  { id: "implementation", n: "03", label: "The Effect" },
+  { id: "performance", n: "04", label: "Performance" },
+  { id: "opengl", n: "05", label: "OpenGL ES" },
+];
+
+// Cross-links into the on-site OpenGL article series referenced in the talk.
+const series = [
+  { title: "OpenGL ES on Android: The Journey Begins", id: "opengl-intro" },
+  { title: "Shading the Canvas: Vertex & Fragment Shaders", id: "shading-the-canvas" },
+  { title: "Getting Started with OpenGL ES in Android", id: "getting-started-opengl-es" },
+  { title: "Moving Dots: Animating Points in OpenGL ES", id: "moving-dots" },
+];
+
+// ---- Code samples (kept as strings so Astro renders them as plain text) ----
+const codeObjectAnimator = `ObjectAnimator.ofFloat(view, "translationX", 100f).apply {
+    duration = 1000
+    start()
+}`;
+
+const codeMatrixAnimator = `val target = Matrix().apply {
+    postTranslate(100f, 100f)
+    postScale(1.2f, 1.2f)
+}
+
+ObjectAnimator.ofObject(
+    view,
+    "animationMatrix",
+    MatrixEvaluator(),
+    view.animationMatrix ?: Matrix(),
+    target,
+).apply {
+    duration = 1000
+    start()
+}`;
+
+const codeParticle = `data class Particle(
+    val initialX: Int,
+    val initialY: Int,
+    val color: Int,
+    val lifeTime: Long = 2000,
+    val initialRadius: Float = 6f,
+    val velocity: Float = 25f,
+    val translationX: Float = 250f,
+    val translationY: Float = 250f,
+    val initialAlpha: Int = Color.alpha(color),
+) {
+    var x = initialX.toFloat()
+    var y = initialY.toFloat()
+    var r = initialRadius
+    var alpha = initialAlpha
+    private var time = 0f
+
+    fun update(deltaTime: Float): Boolean = TODO()
+}`;
+
+const codeGenerate = `// 1 — snapshot the view into a bitmap
+fun View.takePicture(): Bitmap =
+    Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        .also { draw(Canvas(it)) }
+
+// 2 — split that bitmap into one particle per Nth pixel
+fun generateParticles(bitmap: Bitmap, perPx: Int = 6) = buildList {
+    for (x in 0 until bitmap.width step perPx)
+        for (y in 0 until bitmap.height step perPx)
+            add(Particle(x, y, color = bitmap.getPixel(x, y)))
+}
+
+// 3 — draw every living particle, each frame
+fun draw(canvas: Canvas, paint: Paint, deltaTime: Float) {
+    for (p in particles) {
+        if (p.update(deltaTime)) {
+            paint.color = p.color
+            paint.alpha = p.alpha
+            canvas.drawCircle(p.x, p.y, p.r, paint)
+        }
+    }
+}`;
+
+const codeUpdate = `fun update(deltaTime: Float): Boolean {
+    time += deltaTime
+    val fraction = time / lifeTime
+    if (fraction >= 1f) return false   // particle has died
+
+    // spread outward, relative to each particle's distance from center
+    x = initialX + (initialX - centerX) / centerX * translationX * fraction
+    y = initialY + (initialY - centerY) / centerY * translationY * fraction
+
+    // a touch of gravity: rise, then fall
+    y -= (fraction * velocity).pow(2f)
+
+    // shrink and fade as it dies
+    r = max(0.5f, initialRadius * (1f - fraction))
+    alpha = (initialAlpha * min(1.2f - fraction, 1f)).toInt()
+    return true
+}`;
+
+const codeRandom = `data class Particle(
+    // …
+    val lifeTime: Long = 1200L + (0..800).random(),
+    val initialRadius: Float = 6f / (1..4).random(),
+    val velocity: Float = 15f + (0..20).random(),
+    val translationX: Float = 250f + (0..200).random(),
+    val translationY: Float = 150f + (0..200).random(),
+    val initialAlpha: Int = min(Color.alpha(color), (76..255).random()),
+)
+
+// …and inside update(), let noise wobble the path:
+y -= noiseFunction(fraction)
+x += noiseFunction(fraction) *
+    arrayOf(-1f, 1f, 1f, 1f).random()   // bias 75% one way`;
+
+const codeTimeTuning = `fun timeTuning(
+    lastRenderTime: Long,
+    now: Long = System.nanoTime(),
+    refreshRate: Int = 60,
+    minDelta: Double = 1.0 / refreshRate,
+    maxDelta: Double = minDelta * 4,
+): Double {
+    var delta = (now - lastRenderTime) / 1_000_000_000.0
+    if (delta < minDelta) {
+        Thread.sleep(((minDelta - delta) * 1000).toLong()) // render thread
+        delta = minDelta
+    } else if (delta > maxDelta) {
+        delta = maxDelta   // never let one slow frame teleport everything
+    }
+    return delta
+}`;
+
+const codeNoisyCircle = `// animate Perlin noise over time to wobble the edge
+vec2 p = fragCoord * noiseScale + u_time * noiseSpeed;
+float n = perlinNoise(p);                      // organic variation
+float noisyRadius = radius + amplitude * (n - 0.5);
+
+if (distance(fragCoord, center) <= noisyRadius)
+    gl_FragColor = circleColor;`;
+
+const codePointSprite = `// gl_PointCoord runs [0, 1] across the point sprite
+vec2 coord = 2.0 * gl_PointCoord - 1.0;   // remap to [-1, 1]
+
+// outside the unit circle? throw the pixel away
+if (dot(coord, coord) > 1.0) discard;
+
+gl_FragColor = v_color;`;
+
+const codeCompose = `@Composable
+fun MainScreen() {
+    val scope = rememberCoroutineScope()
+    val thanos = rememberThanosEffect()
+    val context = LocalContext.current
+
+    Box {
+        if (!thanos.hasEffectStarted()) {
+            Image(
+                painter = painterResource(R.drawable.img),
+                contentDescription = null,
+                modifier = Modifier
+                    .thanosEffect(thanos)
+                    .clickable {
+                        scope.launch { thanos.start(context) }
+                    },
+            )
+        }
+    }
+}`;
+
+const repos = [
+  {
+    title: "ThanosEffect",
+    desc: "The full, production library — Canvas and OpenGL implementations side by side.",
+    url: "https://github.com/Aghajari/ThanosEffect",
+  },
+];
+---
+
+<Base {...seo} flushFooter>
+  <article class="ca" data-ca-root style={themeVars("motion")}>
+    <!-- ===================== HERO ===================== -->
+    <header class="ca-hero">
+      <canvas class="ca-hero__canvas" data-demo="hero" aria-hidden="true"></canvas>
+      <div class="ca-hero__veil" aria-hidden="true"></div>
+
+      <div class="container ca-hero__inner">
+        <a href="/presentations" class="ca-back" data-reveal>
+          <Icon name="arrow-left" size={16} class="ca-back__arrow" /> All presentations
+        </a>
+
+        <p class="ca-eyebrow" data-reveal>Talk · Interactive edition</p>
+        <h1 class="ca-title" data-reveal style="--reveal-delay:80ms">
+          Complex<span class="ca-title__break"></span>Animations
+        </h1>
+        <p class="ca-lede" data-reveal style="--reveal-delay:140ms">
+          From a square that simply slides across the screen, to a GPU-driven
+          disintegration effect. This is the same journey as the talk — the
+          grammar of motion, the dust, the performance wall, and the shaders
+          that break through it — rebuilt so you can <em>touch</em> every idea.
+        </p>
+
+        <div class="ca-meta" data-reveal style="--reveal-delay:200ms">
+          {meta.map((m) => (
+            <span class="ca-meta__chip"><Icon name={m.icon} size={13} /> {m.label}</span>
+          ))}
+        </div>
+
+        <div class="ca-byline" data-reveal style="--reveal-delay:260ms">
+          <span class="ca-byline__by">Presented by</span>
+          <span class="ca-byline__name">{profile.name}</span>
+        </div>
+
+        <a href="#recording" class="ca-scroll" data-reveal style="--reveal-delay:320ms" aria-label="Watch the talk">
+          <span>Watch the talk</span>
+          <span class="ca-scroll__line" aria-hidden="true"></span>
+        </a>
+      </div>
+    </header>
+
+    <!-- ===================== CHAPTER RAIL ===================== -->
+    <nav class="ca-rail" aria-label="Chapters" data-ca-rail>
+      <div class="container ca-rail__inner">
+        <ol class="ca-rail__list">
+          {acts.map((a) => (
+            <li>
+              <a href={`#${a.id}`} class="ca-rail__link" data-rail-link={a.id}>
+                <span class="ca-rail__n mono">{a.n}</span>
+                <span class="ca-rail__label">{a.label}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </nav>
+
+    <!-- ===================== RECORDING ===================== -->
+    <section class="ca-section ca-section--video" id="recording">
+      <div class="container container-narrow">
+        <p class="ca-kicker" data-reveal>The full talk</p>
+        <h2 class="ca-h2" data-reveal>Watch the original — 1 hour, 5 minutes</h2>
+        <p class="ca-prose" data-reveal>
+          Start here if you want the complete journey in Persian — every demo
+          live, with the asides and dead-ends that make the talk worth watching.
+          Then scroll on for the interactive companion below.
+        </p>
+
+        <div class="ca-video" data-demo="youtube" data-video-id={videoId} data-reveal>
+          <button class="ca-video__play" data-yt-play type="button" aria-label="Play the talk on YouTube">
+            <img
+              class="ca-video__thumb"
+              src={`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`}
+              alt="Complex Animations — conference talk thumbnail"
+              loading="eager"
+              width="1280"
+              height="720"
+            />
+            <span class="ca-video__veil" aria-hidden="true"></span>
+            <span class="ca-video__btn" aria-hidden="true"><Icon name="play" size={26} /></span>
+            <span class="ca-video__label">Play the recording</span>
+          </button>
+        </div>
+        <a href={videoUrl} target="_blank" rel="noopener" class="ca-video__fallback">
+          Open on YouTube <Icon name="arrow-up-right" size={14} />
+        </a>
+
+        <a href="#fundamentals" class="ca-continue" data-reveal>
+          Continue the interactive journey <Icon name="arrow" size={16} class="ca-continue__arrow" />
+        </a>
+      </div>
+    </section>
+
+    <!-- ===================== INTRO ===================== -->
+    <section class="ca-section ca-intro">
+      <div class="container container-narrow">
+        <p class="ca-kicker" data-reveal>How everything began</p>
+        <p class="ca-prose ca-prose--lead" data-reveal>
+          It starts with a question: why does one animation feel cheap, and
+          another feel <em>alive</em>? The difference is rarely a single trick.
+          It is many small, well-understood techniques, layered until motion
+          stops looking computed and starts looking organic.
+        </p>
+        <p class="ca-prose" data-reveal>
+          The destination is a “Thanos effect” — a view that crumbles into
+          thousands of drifting particles. But to build it well, we have to
+          earn it: starting from the four transforms every animation is made of,
+          and ending at the GPU. Every section below is something you can poke at.
+        </p>
+
+        <div class="ca-overview" data-reveal>
+          {[
+            { n: "01", t: "Fundamentals", d: "Transforms, matrices and interpolators — the alphabet of motion." },
+            { n: "02", t: "Designing", d: "Randomness and Perlin noise turn mechanical motion organic." },
+            { n: "03", t: "The Effect", d: "A particle system that disintegrates a view, frame by frame." },
+            { n: "04", t: "Performance", d: "Where Canvas runs out of road — and the tricks that don't save it." },
+            { n: "05", t: "OpenGL ES", d: "Shaders, point sprites, and rendering tens of thousands of points." },
+          ].map((s) => (
+            <div class="ca-overview__item">
+              <span class="ca-overview__n mono">{s.n}</span>
+              <h3 class="ca-overview__t">{s.t}</h3>
+              <p class="ca-overview__d">{s.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ACT I — FUNDAMENTALS ===================== -->
+    <section class="ca-section" id="fundamentals">
+      <div class="container container-narrow">
+        <div class="ca-act" data-reveal>
+          <span class="ca-act__n mono">01</span>
+          <div>
+            <h2 class="ca-act__title">The fundamentals</h2>
+            <p class="ca-act__sub">Five transforms, a little matrix algebra, and the curves that give motion its feel.</p>
+          </div>
+        </div>
+
+        <p class="ca-prose" data-reveal>
+          Almost every 2D animation is built from five primitive transforms.
+          Drag the controls below — this single shape is doing everything a
+          UI animation ever does.
+        </p>
+      </div>
+
+      <!-- Transform playground -->
+      <div class="container">
+        <figure class="ca-demo" data-demo="transform" data-reveal>
+          <div class="ca-demo__stage">
+            <canvas data-canvas></canvas>
+          </div>
+          <div class="ca-demo__panel">
+            <p class="ca-demo__title">Transform playground</p>
+            <div class="ca-sliders">
+              <label class="ca-slider"><span>Translate X</span><input type="range" data-ctl="tx" min="-120" max="120" value="0" /></label>
+              <label class="ca-slider"><span>Translate Y</span><input type="range" data-ctl="ty" min="-120" max="120" value="0" /></label>
+              <label class="ca-slider"><span>Scale</span><input type="range" data-ctl="scale" min="20" max="220" value="100" /></label>
+              <label class="ca-slider"><span>Rotate</span><input type="range" data-ctl="rotate" min="-180" max="180" value="0" /></label>
+              <label class="ca-slider"><span>Skew X</span><input type="range" data-ctl="skew" min="-60" max="60" value="0" /></label>
+              <label class="ca-slider"><span>Alpha</span><input type="range" data-ctl="alpha" min="10" max="100" value="100" /></label>
+            </div>
+            <button class="ca-btn ca-btn--ghost" data-action="reset">Reset</button>
+            <p class="ca-demo__note">Every transform is just a 3×3 matrix multiply applied to each point.</p>
+          </div>
+        </figure>
+      </div>
+
+      <div class="container container-narrow">
+        <p class="ca-prose" data-reveal>
+          On Android you rarely write the math — you animate a property and the
+          framework interpolates it:
+        </p>
+        <pre class="ca-code" data-reveal><code>{codeObjectAnimator}</code></pre>
+        <p class="ca-prose" data-reveal>
+          But a single property only gets you so far. To compose translate,
+          scale and rotate together, you animate a <strong>matrix</strong> and
+          let a <code>MatrixEvaluator</code> blend between the start and end:
+        </p>
+        <pre class="ca-code" data-reveal><code>{codeMatrixAnimator}</code></pre>
+
+        <h3 class="ca-h3" data-reveal>So… how does a matrix actually move a point?</h3>
+        <p class="ca-prose" data-reveal>
+          Each transform is a 3×3 matrix; applying it is one multiply against a
+          point written as <code>[x, y, 1]</code>. Pick a transform and drag the
+          point — the matrix and the result update live.
+        </p>
+      </div>
+
+      <!-- Matrix point demo -->
+      <div class="container">
+        <figure class="ca-demo" data-demo="matrix" data-reveal>
+          <div class="ca-demo__stage">
+            <canvas data-canvas></canvas>
+          </div>
+          <div class="ca-demo__panel">
+            <p class="ca-demo__title">Matrix · point</p>
+            <div class="ca-chips" data-matrix-tabs>
+              <button class="ca-chip is-active" data-kind="translate">Translate</button>
+              <button class="ca-chip" data-kind="scale">Scale</button>
+              <button class="ca-chip" data-kind="rotate">Rotate</button>
+              <button class="ca-chip" data-kind="skew">Skew</button>
+            </div>
+            <div class="ca-matrix" data-matrix aria-hidden="true"></div>
+            <p class="ca-demo__note" data-matrix-eq></p>
+          </div>
+        </figure>
+      </div>
+
+      <div class="container container-narrow">
+        <h3 class="ca-h3" data-reveal>Order matters</h3>
+        <p class="ca-prose" data-reveal>
+          Matrix multiplication is not commutative. <code>Translate × Scale</code>
+          is not the same as <code>Scale × Translate</code> — the second scales
+          your offset too. Watch the same point reach two different homes:
+        </p>
+      </div>
+
+      <!-- Order matters demo -->
+      <div class="container">
+        <figure class="ca-demo ca-demo--split" data-demo="order" data-reveal>
+          <div class="ca-order">
+            <p class="ca-order__label mono">Translate × Scale</p>
+            <div class="ca-demo__stage"><canvas data-canvas="ts"></canvas></div>
+            <p class="ca-order__out" data-out="ts"></p>
+          </div>
+          <div class="ca-order">
+            <p class="ca-order__label mono">Scale × Translate</p>
+            <div class="ca-demo__stage"><canvas data-canvas="st"></canvas></div>
+            <p class="ca-order__out" data-out="st"></p>
+          </div>
+        </figure>
+      </div>
+
+      <div class="container container-narrow">
+        <h3 class="ca-h3" data-reveal>Interpolators give motion its feel</h3>
+        <p class="ca-prose" data-reveal>
+          A transform tells you <em>where</em>; an interpolator tells you
+          <em>how it gets there</em>. The same move feels mechanical as a
+          straight line and lively with an overshoot. Watch four dots race the
+          same distance under four different curves:
+        </p>
+      </div>
+
+      <!-- Interpolators demo -->
+      <div class="container">
+        <figure class="ca-demo" data-demo="interpolators" data-reveal>
+          <div class="ca-demo__stage ca-demo__stage--tall">
+            <canvas data-canvas></canvas>
+          </div>
+          <div class="ca-demo__panel">
+            <p class="ca-demo__title">Interpolators</p>
+            <ul class="ca-legend" data-legend>
+              <li data-curve="linear"><span class="ca-legend__sw"></span>Linear<code>f(t) = t</code></li>
+              <li data-curve="easeIn"><span class="ca-legend__sw"></span>Ease In<code>f(t) = t²</code></li>
+              <li data-curve="easeInOut"><span class="ca-legend__sw"></span>Ease In-Out<code>cosine</code></li>
+              <li data-curve="overshoot"><span class="ca-legend__sw"></span>Overshoot<code>tension</code></li>
+            </ul>
+            <p class="ca-demo__note">Click a curve to isolate it.</p>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===================== ACT II — DESIGNING ===================== -->
+    <section class="ca-section ca-section--alt" id="designing">
+      <div class="container container-narrow">
+        <div class="ca-act" data-reveal>
+          <span class="ca-act__n mono">02</span>
+          <div>
+            <h2 class="ca-act__title">Designing complex motion</h2>
+            <p class="ca-act__sub">The recipe — and why a dose of randomness is the secret ingredient.</p>
+          </div>
+        </div>
+
+        <div class="ca-formula" data-reveal>
+          <span class="ca-formula__term">Fundamentals</span>
+          <span class="ca-formula__op">+</span>
+          <span class="ca-formula__term">Interpolators</span>
+          <span class="ca-formula__op">+</span>
+          <span class="ca-formula__term ca-formula__term--hl">Randomness</span>
+        </div>
+        <p class="ca-prose" data-reveal>
+          Randomise durations, start delays, amplitudes and directions, and the
+          motion stops marching in lockstep. But pure randomness is jittery and
+          ugly. What we actually want is <strong>coherent</strong> randomness —
+          values that wander smoothly. That is exactly what noise gives us.
+        </p>
+
+        <h3 class="ca-h3" data-reveal>Random vs. noise</h3>
+        <p class="ca-prose" data-reveal>
+          On the left, every cell is independent random — pure static. On the
+          right, the same range of values, but smoothly interpolated
+          (gradient / Perlin noise). One is chaos; the other breathes.
+        </p>
+      </div>
+
+      <!-- Noise demo -->
+      <div class="container">
+        <figure class="ca-demo ca-demo--split" data-demo="noise" data-reveal>
+          <div class="ca-order">
+            <p class="ca-order__label mono">White noise (random)</p>
+            <div class="ca-demo__stage ca-demo__stage--square"><canvas data-canvas="random"></canvas></div>
+          </div>
+          <div class="ca-order">
+            <p class="ca-order__label mono">Gradient noise (Perlin)</p>
+            <div class="ca-demo__stage ca-demo__stage--square"><canvas data-canvas="perlin"></canvas></div>
+          </div>
+        </figure>
+      </div>
+
+      <div class="container container-narrow">
+        <p class="ca-prose" data-reveal>
+          Sampled over time, Perlin noise becomes an organic signal you can feed
+          into anything — a wobbling radius, a drifting position, a flickering
+          alpha. In the talk it animates a circle's edge until it ripples like
+          something alive:
+        </p>
+        <pre class="ca-code" data-reveal><code>{codeNoisyCircle}</code></pre>
+      </div>
+    </section>
+
+    <!-- ===================== ACT III — THE EFFECT ===================== -->
+    <section class="ca-section" id="implementation">
+      <div class="container container-narrow">
+        <div class="ca-act" data-reveal>
+          <span class="ca-act__n mono">03</span>
+          <div>
+            <h2 class="ca-act__title">Building the dust effect</h2>
+            <p class="ca-act__sub">Three steps, one little physics formula, thousands of particles.</p>
+          </div>
+        </div>
+
+        <ol class="ca-steps" data-reveal>
+          <li><span class="ca-steps__n mono">1</span><div><strong>Snapshot</strong> the view into a bitmap.</div></li>
+          <li><span class="ca-steps__n mono">2</span><div><strong>Split</strong> that bitmap into one particle per Nth pixel.</div></li>
+          <li><span class="ca-steps__n mono">3</span><div><strong>Animate</strong> every particle independently until it dies.</div></li>
+        </ol>
+
+        <p class="ca-prose" data-reveal>
+          A particle is tiny — just where it started, its colour, and a few
+          motion parameters. It exposes one method: advance yourself by
+          <code>deltaTime</code>, and report whether you're still alive.
+        </p>
+        <pre class="ca-code" data-reveal><code>{codeParticle}</code></pre>
+
+        <p class="ca-prose" data-reveal>
+          Generating them is a double loop over the bitmap; drawing them is a
+          loop over the list. Stepping by <code>perPx</code> pixels keeps the
+          particle count sane.
+        </p>
+        <pre class="ca-code" data-reveal><code>{codeGenerate}</code></pre>
+
+        <h3 class="ca-h3" data-reveal>The update function — the whole effect, really</h3>
+        <p class="ca-prose" data-reveal>
+          Each particle pushes <em>outward</em> from the centre (so the edges
+          fly faster than the middle), gets a parabolic gravity nudge, then
+          shrinks and fades as its life runs out:
+        </p>
+        <pre class="ca-code" data-reveal><code>{codeUpdate}</code></pre>
+      </div>
+
+      <!-- Particle demo -->
+      <div class="container">
+        <figure class="ca-demo ca-demo--particles" data-demo="particles" data-reveal>
+          <div class="ca-demo__stage ca-demo__stage--wide">
+            <canvas data-canvas></canvas>
+            <button class="ca-particle-hint" data-action="play">
+              <Icon name="spark" size={15} /> Tap to disintegrate
+            </button>
+          </div>
+          <div class="ca-demo__panel">
+            <p class="ca-demo__title">Live particle system</p>
+            <div class="ca-demo__actions">
+              <button class="ca-btn" data-action="play">Disintegrate</button>
+              <button class="ca-btn ca-btn--ghost" data-action="reset">Reset</button>
+            </div>
+            <label class="ca-toggle">
+              <input type="checkbox" data-ctl="organic" checked />
+              <span>Randomness + noise</span>
+            </label>
+            <p class="ca-demo__note" data-particle-count></p>
+            <p class="ca-demo__note">Toggle randomness off to feel how lifeless uniform motion is.</p>
+          </div>
+        </figure>
+      </div>
+
+      <div class="container container-narrow">
+        <p class="ca-prose" data-reveal>
+          With uniform values it reads like a grid exploding. Add the
+          randomness from the talk — varied lifetimes, radii, velocities, and a
+          noise-driven sideways drift biased 75% one way — and it finally looks
+          like dust:
+        </p>
+        <pre class="ca-code" data-reveal><code>{codeRandom}</code></pre>
+      </div>
+    </section>
+
+    <!-- ===================== ACT IV — PERFORMANCE ===================== -->
+    <section class="ca-section ca-section--alt" id="performance">
+      <div class="container container-narrow">
+        <div class="ca-act" data-reveal>
+          <span class="ca-act__n mono">04</span>
+          <div>
+            <h2 class="ca-act__title">Then performance happens</h2>
+            <p class="ca-act__sub">It looks great with a few hundred particles. A real view has tens of thousands.</p>
+          </div>
+        </div>
+
+        <p class="ca-prose" data-reveal>
+          Drawing thousands of circles on the main thread every frame tanks the
+          UI. First move: get off the main thread with a
+          <code>TextureView</code> or <code>SurfaceView</code>, rendering on a
+          dedicated thread. That helps — but the motion still stutters, because
+          frame times aren't uniform. So we tune the delta:
+        </p>
+        <pre class="ca-code" data-reveal><code>{codeTimeTuning}</code></pre>
+        <p class="ca-prose" data-reveal>
+          Better — but on a busy device the render thread <em>still</em> can't
+          keep up, and the animation visibly lags behind. So the talk goes
+          hunting for fill-rate, one idea at a time. Each one trades something
+          away:
+        </p>
+
+        <ul class="ca-deadends" data-reveal>
+          <li>
+            <span class="ca-deadends__try">Skip more pixels</span>
+            <span class="ca-deadends__arrow" aria-hidden="true">→</span>
+            <span class="ca-deadends__cost">Fewer particles, but the effect gets coarse and blocky.</span>
+          </li>
+          <li>
+            <span class="ca-deadends__try">Draw rectangles, kill anti-aliasing</span>
+            <span class="ca-deadends__arrow" aria-hidden="true">→</span>
+            <span class="ca-deadends__cost">Faster, but “I like circles :(”.</span>
+          </li>
+          <li>
+            <span class="ca-deadends__try">Animate two big bitmaps instead</span>
+            <span class="ca-deadends__arrow" aria-hidden="true">→</span>
+            <span class="ca-deadends__cost">Oops — you can't disintegrate halves into dust.</span>
+          </li>
+        </ul>
+
+        <p class="ca-prose ca-prose--turn" data-reveal>
+          Every Canvas trick costs either quality or the very thing that makes
+          the effect beautiful. The honest conclusion: this is the wrong tool.
+          Per-pixel work at this scale belongs on the <strong>GPU</strong>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== ACT V — OPENGL ===================== -->
+    <section class="ca-section" id="opengl">
+      <div class="container container-narrow">
+        <div class="ca-act" data-reveal>
+          <span class="ca-act__n mono">05</span>
+          <div>
+            <h2 class="ca-act__title">Breaking through with OpenGL ES</h2>
+            <p class="ca-act__sub">Move the particles to the GPU and tens of thousands become cheap.</p>
+          </div>
+        </div>
+
+        <p class="ca-prose" data-reveal>
+          A GPU runs your code in parallel across every vertex and every pixel.
+          Two small programs — <strong>shaders</strong> — do the work:
+        </p>
+
+        <div class="ca-shader-split" data-reveal>
+          <div class="ca-shader-card">
+            <span class="ca-shader-card__tag mono">Vertex shader</span>
+            <p class="ca-shader-card__lead">Moves geometry</p>
+            <p class="ca-shader-card__body">Runs once per point. Decides where each particle lands on screen via <code>gl_Position</code> — this is where our update math now lives.</p>
+          </div>
+          <div class="ca-shader-card">
+            <span class="ca-shader-card__tag mono">Fragment shader</span>
+            <p class="ca-shader-card__lead">Colours pixels</p>
+            <p class="ca-shader-card__body">Runs once per pixel of each point, deciding its final colour — and, crucially, whether to draw it at all.</p>
+          </div>
+        </div>
+
+        <h3 class="ca-h3" data-reveal>A circle, with no circle-drawing</h3>
+        <p class="ca-prose" data-reveal>
+          We render each particle as a square <em>point sprite</em>, then carve
+          a circle out of it in the fragment shader. <code>gl_PointCoord</code>
+          runs 0→1 across the sprite; remap it to −1→1 and discard any pixel
+          outside the unit circle. Drag to scale the sprite and watch the
+          discarded corners:
+        </p>
+      </div>
+
+      <!-- Point sprite demo -->
+      <div class="container">
+        <figure class="ca-demo" data-demo="pointsprite" data-reveal>
+          <div class="ca-demo__stage ca-demo__stage--square"><canvas data-canvas></canvas></div>
+          <div class="ca-demo__panel">
+            <p class="ca-demo__title">Point sprite → circle</p>
+            <label class="ca-slider"><span>Sprite size</span><input type="range" data-ctl="size" min="40" max="100" value="80" /></label>
+            <label class="ca-toggle"><input type="checkbox" data-ctl="grid" checked /><span>Show coordinate grid</span></label>
+            <p class="ca-demo__note" data-discard></p>
+          </div>
+        </figure>
+      </div>
+
+      <div class="container container-narrow">
+        <pre class="ca-code" data-reveal><code>{codePointSprite}</code></pre>
+        <p class="ca-prose" data-reveal>
+          That single <code>discard</code> is the whole trick — no curves, no
+          anti-aliasing cost, just throwing away corner pixels. Multiply by tens
+          of thousands of points running in parallel and the effect that
+          murdered the Canvas now runs effortlessly.
+        </p>
+
+        <div class="ca-callout" data-reveal>
+          <Icon name="spark" size={16} />
+          <p>The real shaders carry colour, alpha and motion per point. They're trimmed here for clarity — the talk's implementation was simplified for timing too.</p>
+        </div>
+
+        <h3 class="ca-h3" data-reveal>And in Jetpack Compose, it's one modifier</h3>
+        <p class="ca-prose" data-reveal>
+          All of that — capture, particle generation, GPU rendering — collapses
+          into a single modifier. Tap the image, it turns to dust:
+        </p>
+        <pre class="ca-code" data-reveal><code>{codeCompose}</code></pre>
+      </div>
+    </section>
+
+    <!-- ===================== RESOURCES ===================== -->
+    <section class="ca-section" id="resources">
+      <div class="container container-narrow">
+        <p class="ca-kicker" data-reveal>Take it further</p>
+        <h2 class="ca-h2" data-reveal>Source &amp; further reading</h2>
+
+        <div class="ca-repos" data-reveal>
+          {repos.map((r) => (
+            <a href={r.url} target="_blank" rel="noopener" class="ca-repo">
+              <span class="ca-repo__head">
+                <Icon name="github" size={18} />
+                <span class="ca-repo__title">{r.title}</span>
+                <Icon name="arrow-up-right" size={15} class="ca-repo__go" />
+              </span>
+              <span class="ca-repo__desc">{r.desc}</span>
+            </a>
+          ))}
+        </div>
+
+        <div class="ca-series" data-reveal>
+          <p class="ca-series__title">The OpenGL ES article series referenced in the talk</p>
+          <ul class="ca-series__list">
+            {series.map((s) => (
+              <li>
+                <a href={`/publications/${s.id}`} class="ca-series__link">
+                  <Icon name="pen" size={14} />
+                  <span>{s.title}</span>
+                  <Icon name="arrow" size={14} class="ca-series__arrow" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== OUTRO ===================== -->
+    <section class="ca-outro">
+      <div class="container container-narrow ca-outro__inner">
+        <p class="ca-outro__thanks" data-reveal>Thank you.</p>
+        <div class="ca-outro__links" data-reveal>
+          <a href={profile.socials.github} target="_blank" rel="noopener" class="ca-btn ca-btn--ghost"><Icon name="github" size={17} /> GitHub</a>
+          <a href={profile.socials.linkedin} target="_blank" rel="noopener" class="ca-btn ca-btn--ghost"><Icon name="linkedin" size={17} /> LinkedIn</a>
+          <a href="/presentations" class="ca-btn ca-btn--ghost"><Icon name="arrow-left" size={16} /> All presentations</a>
+        </div>
+      </div>
+    </section>
+  </article>
+</Base>
+
+<script src="../../scripts/complex-animations.ts"></script>
+
+<style>
+  /* ============================================================
+     Complex Animations — bespoke page
+     Motion / graphics identity, dark-first, technical precision.
+     ============================================================ */
+  .ca {
+    --ca-accent: var(--t1, #f0a6ca);
+    --ca-accent-2: var(--t2, #b388ff);
+    --ca-accent-3: var(--t3, #6d6af0);
+    --ca-ink: color-mix(in srgb, var(--ca-accent) 60%, var(--text));
+    --ca-grid: color-mix(in srgb, var(--ca-accent-3) 18%, transparent);
+    display: block;
+  }
+
+  /* ---------- Hero ---------- */
+  .ca-hero {
+    position: relative;
+    min-height: clamp(560px, 92vh, 880px);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .ca-hero__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  .ca-hero__veil {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 90% at 75% 18%, color-mix(in srgb, var(--ca-accent-2) 14%, transparent), transparent 60%),
+      linear-gradient(180deg, var(--hero-scrim-top) 0%, var(--hero-scrim-mid) 36%, transparent 54%, var(--hero-scrim-bottom) 86%, var(--scrim-end) 100%);
+  }
+  .ca-hero__inner {
+    position: relative;
+    z-index: 2;
+    padding-block: clamp(3rem, 8vw, 6rem);
+  }
+  .ca-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--text-2);
+    font-size: 0.88rem;
+    margin-bottom: var(--space-6);
+  }
+  .ca-back:hover { color: var(--text); }
+  .ca-back :global(.ca-back__arrow) { transition: transform var(--dur-fast); }
+  .ca-back:hover :global(.ca-back__arrow) { transform: translateX(-3px); }
+
+  .ca-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ca-ink);
+  }
+  .ca-title {
+    margin-top: var(--space-4);
+    font-size: clamp(2.8rem, 1.5rem + 8vw, 7rem);
+    line-height: 0.94;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .ca-title__break { display: block; }
+  .ca-lede {
+    margin-top: var(--space-5);
+    max-width: 54ch;
+    font-size: var(--step-1);
+    line-height: 1.6;
+    color: var(--text-2);
+  }
+  .ca-lede em { color: var(--text); font-style: italic; }
+
+  .ca-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: var(--space-6);
+  }
+  .ca-meta__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    padding: 0.4em 0.8em;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--ca-accent-2) 26%, var(--border));
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    backdrop-filter: blur(8px);
+    color: var(--text-2);
+  }
+  .ca-byline {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    margin-top: var(--space-6);
+  }
+  .ca-byline__by { font-size: 0.82rem; color: var(--text-3); }
+  .ca-byline__name { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+
+  .ca-scroll {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8em;
+    margin-top: var(--space-7);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .ca-scroll:hover { color: var(--text); }
+  .ca-scroll__line {
+    width: 54px; height: 1px;
+    background: linear-gradient(90deg, var(--ca-accent), transparent);
+    position: relative;
+    overflow: hidden;
+  }
+  .ca-scroll__line::after {
+    content: "";
+    position: absolute; inset: 0;
+    width: 18px;
+    background: var(--ca-accent);
+    animation: ca-scroll-run 2.4s var(--ease-in-out) infinite;
+  }
+  @keyframes ca-scroll-run {
+    0% { transform: translateX(-20px); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(54px); opacity: 0; }
+  }
+
+  /* Dark theme — cinematic hero tint over canvas */
+  :global([data-theme="dark"]) .ca-hero__veil {
+    background:
+      radial-gradient(120% 90% at 75% 18%, color-mix(in srgb, var(--ca-accent-2) 14%, transparent), transparent 60%),
+      linear-gradient(180deg, var(--scrim-top) 0%, transparent 30%, var(--scrim-bottom) 86%, var(--scrim-end) 100%);
+  }
+  :global([data-theme="dark"]) .ca-hero__inner { color: var(--on-media-text); }
+  :global([data-theme="dark"]) .ca-back { color: var(--on-media-text-2); }
+  :global([data-theme="dark"]) .ca-back:hover { color: var(--on-media-text); }
+  :global([data-theme="dark"]) .ca-eyebrow {
+    color: color-mix(in srgb, var(--ca-accent) 68%, var(--on-media-text));
+  }
+  :global([data-theme="dark"]) .ca-title {
+    color: var(--on-media-text);
+    text-shadow: 0 2px 36px var(--scrim-text);
+  }
+  :global([data-theme="dark"]) .ca-lede { color: var(--on-media-text-2); }
+  :global([data-theme="dark"]) .ca-lede em { color: var(--on-media-text); }
+  :global([data-theme="dark"]) .ca-meta__chip {
+    border-color: color-mix(in srgb, var(--ca-accent-2) 26%, var(--media-chrome-border));
+    background: var(--media-chrome-bg);
+    color: var(--on-media-text-2);
+  }
+  :global([data-theme="dark"]) .ca-byline__by { color: var(--on-media-text-3); }
+  :global([data-theme="dark"]) .ca-byline__name { color: var(--on-media-text); }
+  :global([data-theme="dark"]) .ca-scroll { color: var(--on-media-text-3); }
+  :global([data-theme="dark"]) .ca-scroll:hover { color: var(--on-media-text); }
+
+  /* ---------- Chapter rail ---------- */
+  .ca-rail {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 90;
+    isolation: isolate;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Solid fallback */
+  .ca-rail::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: var(--header-tint);
+    pointer-events: none;
+  }
+
+  /* Frosted glass */
+  .ca-rail::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: var(--header-glass);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    pointer-events: none;
+  }
+
+  @supports (
+    (-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))
+  ) {
+    .ca-rail::before { opacity: 0; }
+  }
+
+  @supports not (
+    (-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))
+  ) {
+    .ca-rail::after { display: none; }
+    .ca-rail::before { opacity: 1; }
+  }
+
+  .ca-rail__inner { position: relative; z-index: 2; overflow-x: auto; scrollbar-width: none; }
+  .ca-rail__inner::-webkit-scrollbar { display: none; }
+  .ca-rail__list {
+    display: flex;
+    gap: clamp(0.5rem, 3vw, 2rem);
+    padding-block: 0.85rem;
+    min-width: max-content;
+  }
+  .ca-rail__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.35em 0.2em;
+    color: var(--text-3);
+    font-size: 0.86rem;
+    border-bottom: 2px solid transparent;
+    transition: color var(--dur-fast);
+    white-space: nowrap;
+  }
+  .ca-rail__link:hover { color: var(--text-2); }
+  .ca-rail__n {
+    display: inline-grid;
+    place-items: center;
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--ca-accent) 22%, var(--border));
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--ca-ink);
+    opacity: 0.85;
+    line-height: 1;
+  }
+  .ca-rail__link.is-active { color: var(--text); border-bottom-color: var(--ca-accent); }
+  .ca-rail__link.is-active .ca-rail__n {
+    opacity: 1;
+    border-color: color-mix(in srgb, var(--ca-accent) 45%, var(--border));
+    background: color-mix(in srgb, var(--ca-accent) 10%, transparent);
+  }
+
+  /* ---------- Sections / prose ---------- */
+  .ca-section { padding-block: clamp(3.5rem, 8vw, 7rem); }
+  .ca-section--alt {
+    background:
+      radial-gradient(100% 60% at 50% 0%, color-mix(in srgb, var(--ca-accent-3) 7%, transparent), transparent 60%),
+      var(--bg-soft);
+    border-block: 1px solid var(--border);
+  }
+  .ca-intro { padding-top: clamp(2.5rem, 6vw, 4.5rem); }
+
+  .ca-section--video {
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    padding-bottom: clamp(2.5rem, 6vw, 5rem);
+    background:
+      radial-gradient(100% 60% at 50% 0%, color-mix(in srgb, var(--ca-accent-2) 8%, transparent), transparent 60%),
+      var(--bg-soft);
+    border-bottom: 1px solid var(--border);
+  }
+  .ca-section--video .ca-prose { margin-top: var(--space-3); }
+  .ca-section--video .ca-h2 { margin-bottom: 0; }
+
+  .ca-continue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: var(--space-6);
+    font-size: 0.9rem;
+    color: var(--text-2);
+  }
+  .ca-continue:hover { color: var(--text); }
+  .ca-continue :global(.ca-continue__arrow) {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .ca-continue:hover :global(.ca-continue__arrow) {
+    transform: translateX(4px);
+  }
+
+  .ca-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ca-ink);
+    margin-bottom: var(--space-3);
+  }
+  .ca-prose {
+    font-size: var(--step-1);
+    line-height: 1.75;
+    color: var(--text-2);
+    max-width: 64ch;
+    margin-top: var(--space-4);
+  }
+  .ca-prose:first-of-type { margin-top: 0; }
+  .ca-prose--lead { font-size: var(--step-2); color: var(--text); line-height: 1.55; }
+  .ca-prose strong { color: var(--text); font-weight: 600; }
+  .ca-prose em { color: var(--text); font-style: italic; }
+  .ca-prose code,
+  .ca-act__sub code {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    padding: 0.1em 0.4em;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--ca-accent-3) 12%, var(--surface-2));
+    color: var(--ca-ink);
+  }
+  .ca-prose--turn {
+    margin-top: var(--space-6);
+    padding-left: var(--space-5);
+    border-left: 2px solid color-mix(in srgb, var(--ca-accent) 50%, var(--border));
+  }
+
+  .ca-h2 { font-size: var(--step-3); letter-spacing: -0.02em; margin-bottom: var(--space-3); color: var(--text); }
+  .ca-h3 {
+    font-size: var(--step-2);
+    letter-spacing: -0.02em;
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-2);
+  }
+
+  /* ---------- Act header ---------- */
+  .ca-act {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--border);
+  }
+  .ca-act__n {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--ca-accent) 32%, var(--border));
+    background: color-mix(in srgb, var(--ca-accent) 7%, var(--surface));
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--ca-ink);
+    line-height: 1;
+  }
+  .ca-act__body { min-width: 0; }
+  .ca-act__title { font-size: var(--step-3); letter-spacing: -0.02em; color: var(--text); }
+  .ca-act__sub { color: var(--text-3); margin-top: 0.3rem; font-size: 0.98rem; }
+
+  /* ---------- Overview ---------- */
+  .ca-overview {
+    margin-top: var(--space-7);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .ca-overview__item {
+    background: var(--surface);
+    padding: var(--space-5) var(--space-5) var(--space-6);
+  }
+  .ca-overview__n {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--ca-accent) 28%, var(--border));
+    background: color-mix(in srgb, var(--ca-accent) 6%, var(--surface-2));
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--ca-ink);
+    line-height: 1;
+    margin-bottom: var(--space-3);
+  }
+  .ca-overview__t { font-size: 1.05rem; }
+  .ca-overview__d { font-size: 0.88rem; color: var(--text-3); margin-top: 0.4rem; line-height: 1.5; }
+
+  /* ---------- Code ---------- */
+  .ca-code {
+    margin-top: var(--space-4);
+    padding: var(--space-5);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--ca-accent-3) 5%, var(--surface)), var(--surface));
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: var(--text-2);
+    position: relative;
+  }
+  .ca-code::before {
+    content: "";
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(var(--ca-accent), var(--ca-accent-3));
+    opacity: 0.6;
+  }
+  .ca-code code { white-space: pre; }
+
+  /* ---------- Demos (shared) ---------- */
+  .ca-demo {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, var(--ca-accent-2) 8%, transparent), transparent 55%),
+      var(--surface);
+  }
+  .ca-demo--split { grid-template-columns: 1fr 1fr; }
+  .ca-demo--particles { grid-template-columns: 1.7fr 1fr; }
+
+  .ca-demo__stage {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background:
+      linear-gradient(0deg, color-mix(in srgb, var(--ca-accent-3) 6%, #05050a), #05050a);
+    border: 1px solid color-mix(in srgb, var(--ca-accent-3) 14%, var(--border));
+    aspect-ratio: 16 / 11;
+  }
+  .ca-demo__stage--tall { aspect-ratio: 16 / 12; }
+  .ca-demo__stage--wide { aspect-ratio: 16 / 9; }
+  .ca-demo__stage--square { aspect-ratio: 1 / 1; }
+  .ca-demo__stage canvas { width: 100%; height: 100%; display: block; }
+
+  .ca-demo__panel { display: flex; flex-direction: column; gap: var(--space-3); }
+  .ca-demo__title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .ca-demo__note { font-size: 0.8rem; color: var(--text-3); line-height: 1.5; margin-top: auto; }
+  .ca-demo__actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+
+  /* sliders */
+  .ca-sliders { display: flex; flex-direction: column; gap: 0.65rem; }
+  .ca-slider { display: grid; gap: 0.3rem; font-size: 0.78rem; color: var(--text-2); }
+  .ca-slider span { font-family: var(--font-mono); letter-spacing: 0.03em; }
+  .ca-slider input[type="range"],
+  .ca-toggle input { accent-color: var(--ca-accent); }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ca-accent-3) 22%, var(--surface-2));
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px; height: 15px;
+    border-radius: 50%;
+    background: var(--ca-accent);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ca-accent) 50%, transparent);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 15px; height: 15px; border: 2px solid var(--bg);
+    border-radius: 50%; background: var(--ca-accent);
+  }
+
+  .ca-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.82rem;
+    color: var(--text-2);
+    cursor: pointer;
+  }
+
+  /* chips / tabs */
+  .ca-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .ca-chip {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.4em 0.7em;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-3);
+    cursor: pointer;
+    transition: all var(--dur-fast);
+  }
+  .ca-chip:hover { color: var(--text-2); border-color: var(--border-strong); }
+  .ca-chip.is-active {
+    color: var(--bg);
+    background: var(--ca-accent);
+    border-color: var(--ca-accent);
+  }
+
+  /* matrix readout */
+  .ca-matrix {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--ca-ink);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.15rem 0.6rem;
+    padding: var(--space-3);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--ca-accent-3) 8%, var(--surface-2));
+    border: 1px solid var(--border);
+    text-align: right;
+    max-width: 240px;
+  }
+
+  /* buttons */
+  .ca-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.6em 1.1em;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    background: var(--ca-accent);
+    color: #15080f;
+    cursor: pointer;
+    transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast);
+  }
+  .ca-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .ca-btn--ghost {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+  .ca-btn--ghost:hover { background: var(--surface-hover); box-shadow: none; }
+
+  /* order matters */
+  .ca-order { display: flex; flex-direction: column; gap: 0.5rem; }
+  .ca-order__label { font-size: 0.72rem; letter-spacing: 0.08em; color: var(--text-3); text-transform: uppercase; }
+  .ca-order__out { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ca-ink); min-height: 1.2em; }
+
+  /* interpolator legend */
+  .ca-legend { display: flex; flex-direction: column; gap: 0.5rem; }
+  .ca-legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    font-size: 0.82rem;
+    color: var(--text-2);
+    cursor: pointer;
+    padding: 0.25em 0;
+    transition: opacity var(--dur-fast);
+  }
+  .ca-legend li code { margin-left: auto; font-size: 0.72rem; color: var(--text-3); }
+  .ca-legend li.is-dim { opacity: 0.35; }
+  .ca-legend__sw { width: 12px; height: 12px; border-radius: 3px; background: var(--curve-color, var(--ca-accent)); flex-shrink: 0; }
+
+  /* particle hint */
+  .ca-particle-hint {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.6em 1.1em;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ca-accent-2) 40%, var(--border));
+    color: var(--text);
+    font-size: 0.84rem;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: opacity var(--dur-mid);
+  }
+  .ca-particle-hint.is-hidden { opacity: 0; pointer-events: none; }
+
+  /* formula */
+  .ca-formula {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem;
+    margin-block: var(--space-5);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--ca-accent-3) 5%, var(--surface));
+  }
+  .ca-formula__term {
+    font-size: var(--step-1);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .ca-formula__term--hl { color: var(--ca-ink); }
+  .ca-formula__op { font-size: var(--step-2); color: var(--text-3); font-weight: 300; }
+
+  /* steps */
+  .ca-steps { display: flex; flex-direction: column; gap: var(--space-3); margin-block: var(--space-5); }
+  .ca-steps li {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    font-size: 0.98rem;
+  }
+  .ca-steps__n {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--ca-accent) 32%, var(--border));
+    background: color-mix(in srgb, var(--ca-accent) 6%, var(--surface-2));
+    color: var(--ca-ink);
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .ca-steps strong { color: var(--text); }
+
+  /* dead-ends */
+  .ca-deadends { display: flex; flex-direction: column; gap: 0.6rem; margin-top: var(--space-5); }
+  .ca-deadends li {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: 0.8rem;
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+  }
+  .ca-deadends__try { font-weight: 600; color: var(--text); font-size: 0.92rem; }
+  .ca-deadends__arrow { color: var(--ca-ink); }
+  .ca-deadends__cost { color: var(--text-3); font-size: 0.88rem; }
+
+  /* shader cards */
+  .ca-shader-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin-block: var(--space-5);
+  }
+  .ca-shader-card {
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+  .ca-shader-card__tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ca-ink);
+  }
+  .ca-shader-card__lead { font-size: var(--step-1); font-weight: 600; margin-top: var(--space-2); }
+  .ca-shader-card__body { font-size: 0.88rem; color: var(--text-3); margin-top: var(--space-2); line-height: 1.55; }
+
+  /* callout */
+  .ca-callout {
+    display: flex;
+    gap: 0.7em;
+    align-items: flex-start;
+    margin-top: var(--space-5);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--ca-accent-2) 28%, var(--border));
+    background: color-mix(in srgb, var(--ca-accent-2) 7%, var(--surface));
+  }
+  .ca-callout :global(svg) { color: var(--ca-ink); flex-shrink: 0; margin-top: 0.2em; }
+  .ca-callout p { font-size: 0.9rem; color: var(--text-2); line-height: 1.55; }
+
+  /* video facade */
+  .ca-video {
+    position: relative;
+    margin-top: var(--space-5);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    aspect-ratio: 16 / 9;
+    background: #000;
+  }
+  .ca-video :global(iframe) { width: 100%; height: 100%; border: 0; display: block; }
+  .ca-video__play {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    background: none;
+  }
+  .ca-video__thumb { width: 100%; height: 100%; object-fit: cover; opacity: 0.78; transition: opacity var(--dur-mid), transform var(--dur-slow); }
+  .ca-video__veil {
+    position: absolute; inset: 0;
+    background: radial-gradient(60% 60% at 50% 50%, transparent, color-mix(in srgb, #000 55%, transparent));
+  }
+  .ca-video__btn {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--ca-accent) 90%, #fff);
+    color: #15080f;
+    box-shadow: 0 12px 40px -10px color-mix(in srgb, var(--ca-accent) 70%, transparent);
+    transition: transform var(--dur-fast) var(--ease-spring);
+  }
+  .ca-video__label {
+    position: absolute;
+    left: 50%; bottom: 1.6rem;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .ca-video__play:hover .ca-video__thumb { opacity: 0.92; transform: scale(1.02); }
+  .ca-video__play:hover .ca-video__btn { transform: translate(-50%, -50%) scale(1.08); }
+  .ca-video__fallback {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    margin-top: var(--space-3);
+    font-size: 0.85rem;
+    color: var(--text-2);
+  }
+  .ca-video__fallback:hover { color: var(--text); }
+
+  /* repos */
+  .ca-repos { margin-top: var(--space-5); max-width: 36rem; }
+  .ca-repo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    transition: border-color var(--dur-fast), transform var(--dur-fast) var(--ease-out);
+  }
+  .ca-repo:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+  .ca-repo__head { display: flex; align-items: center; gap: 0.5em; }
+  .ca-repo__title { font-weight: 600; font-size: 1.02rem; }
+  .ca-repo__go { margin-left: auto; color: var(--text-3); }
+  .ca-repo:hover .ca-repo__go { color: var(--ca-ink); }
+  .ca-repo__desc { font-size: 0.88rem; color: var(--text-3); line-height: 1.5; }
+
+  /* series */
+  .ca-series { margin-top: var(--space-6); }
+  .ca-series__title { font-size: 0.92rem; color: var(--text-2); margin-bottom: var(--space-3); }
+  .ca-series__list { display: flex; flex-direction: column; gap: 0.4rem; }
+  .ca-series__link {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 0.92rem;
+    color: var(--text-2);
+    transition: border-color var(--dur-fast), color var(--dur-fast);
+  }
+  .ca-series__link :global(svg:first-child) { color: var(--ca-ink); flex-shrink: 0; }
+  .ca-series__arrow { margin-left: auto; transition: transform var(--dur-fast) var(--ease-out); }
+  .ca-series__link:hover { color: var(--text); border-color: var(--border-strong); }
+  .ca-series__link:hover .ca-series__arrow { transform: translateX(3px); }
+
+  /* outro */
+  .ca-outro {
+    padding-block: clamp(3rem, 6vw, 4.5rem);
+    border-top: 1px solid var(--border);
+    background:
+      radial-gradient(ellipse 70% 90% at 50% 50%, color-mix(in srgb, var(--ca-accent-2) 10%, transparent), transparent 68%),
+      var(--bg);
+  }
+  .ca-outro__inner { text-align: center; }
+  .ca-outro__thanks {
+    font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem);
+    letter-spacing: -0.03em;
+    font-weight: 600;
+  }
+  .ca-outro__links { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; margin-top: var(--space-5); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 820px) {
+    .ca-demo,
+    .ca-demo--split,
+    .ca-demo--particles { grid-template-columns: 1fr; }
+    .ca-shader-split { grid-template-columns: 1fr; }
+    .ca-repos { max-width: none; }
+  }
+  @media (max-width: 560px) {
+    .ca-deadends li { grid-template-columns: 1fr; gap: 0.3rem; }
+    .ca-deadends__arrow { display: none; }
+    .ca-formula { gap: 0.5rem; }
+    .ca-formula__term { font-size: 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ca-scroll__line::after { animation: none; }
+  }
+</style>

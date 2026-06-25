@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0b0b0e"/>
+      <stop offset="1" stop-color="#121119"/>
+    </linearGradient>
+    <linearGradient id="aurora" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6d6af0"/>
+      <stop offset="0.5" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.8" cy="0.1" r="0.7">
+      <stop stop-color="#6d6af0" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#6d6af0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <g opacity="0.06" stroke="#fff">
+    <line x1="0" y1="157" x2="1200" y2="157"/>
+    <line x1="0" y1="315" x2="1200" y2="315"/>
+    <line x1="0" y1="472" x2="1200" y2="472"/>
+    <line x1="300" y1="0" x2="300" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="900" y1="0" x2="900" y2="630"/>
+  </g>
+  <g transform="translate(80,120)">
+    <rect width="84" height="84" rx="20" fill="url(#aurora)"/>
+    <path d="M26 60 L42 26 L58 60" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="33" y1="50" x2="51" y2="50" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <text x="80" y="320" font-family="Inter, sans-serif" font-size="76" font-weight="700" fill="#f4f4f6" letter-spacing="-3">AmirHossein Aghajari</text>
+  <text x="82" y="392" font-family="Inter, sans-serif" font-size="40" font-weight="500" fill="url(#aurora)" letter-spacing="-1">Engineering the way things move.</text>
+  <text x="82" y="470" font-family="monospace" font-size="26" fill="#a5a5af">Senior Android Engineer · UI &amp; Graphics · Open Source</text>
+  <text x="82" y="540" font-family="monospace" font-size="22" fill="#6f6f78">Kotlin · Java · Jetpack Compose · OpenGL</text>
+</svg>

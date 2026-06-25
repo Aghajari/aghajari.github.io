@@ -1,0 +1,78 @@
+---
+import Base from "@layouts/Base.astro";
+import PageHero from "@components/PageHero.astro";
+import SectionHeading from "@components/SectionHeading.astro";
+import RepoCard from "@components/RepoCard.astro";
+import Icon from "@components/Icon.astro";
+import { repos, ossCategories, ossSummary } from "@data/openSource";
+import { profile } from "@data/profile";
+
+const featured = repos.filter((r) => r.featured);
+const byCategory = ossCategories.map((cat) => ({
+  cat,
+  items: repos.filter((r) => r.category === cat),
+}));
+---
+
+<Base
+  title="Open Source"
+  description="Open-source libraries by AmirHossein Aghajari — Jetpack Compose, graphics, animation and Android tooling, used across hundreds of apps."
+>
+  <PageHero
+    eyebrow="Open Source"
+    title="Building in the open"
+    intro="For years almost everything I learned became a library. Here's the work — grouped by what it does."
+  >
+    <div class="oss-summary" data-reveal style="--reveal-delay:180ms">
+      <div class="oss-stat"><span class="oss-num">{ossSummary.totalRepos}</span><span class="oss-lbl">public repositories</span></div>
+      <div class="oss-stat"><span class="oss-num">1500+</span><span class="oss-lbl">stars on featured</span></div>
+      <a href={profile.socials.github} target="_blank" rel="noopener" class="btn btn--ghost oss-gh">
+        <Icon name="github" size={18} /> @{profile.githubUser}
+      </a>
+    </div>
+  </PageHero>
+
+  <!-- Featured -->
+  <section class="section">
+    <div class="container">
+      <SectionHeading
+        eyebrow="Flagship"
+        title="Flagship libraries"
+        intro="The most widely adopted work — each one built to solve a real problem in production."
+      />
+      <div class="grid grid-3">
+        {featured.map((r) => <RepoCard repo={r} feature />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- By category -->
+  {byCategory.map(({ cat, items }) => (
+    <section class="section-tight">
+      <div class="container">
+        <div class="cat-head" data-reveal>
+          <h2 class="h4 cat-title">{cat}</h2>
+          <span class="cat-count mono">{items.length}</span>
+        </div>
+        <div class="grid grid-3">
+          {items.map((r) => <RepoCard repo={r} />)}
+        </div>
+      </div>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .oss-summary {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6);
+    margin-top: var(--space-7);
+  }
+  .oss-stat { display: flex; flex-direction: column; }
+  .oss-num { font-size: var(--step-3); font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
+  .oss-lbl { color: var(--text-3); font-size: 0.82rem; margin-top: 0.2rem; }
+  .oss-gh { margin-left: auto; }
+  .cat-head { display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-6); }
+  .cat-title { letter-spacing: -0.02em; }
+  .cat-count { color: var(--text-3); font-size: 0.85rem; }
+  @media (max-width: 640px) { .oss-gh { margin-left: 0; } }
+</style>

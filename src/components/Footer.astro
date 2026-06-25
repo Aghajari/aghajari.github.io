@@ -1,0 +1,78 @@
+---
+import { primaryNav, profile } from "@data/profile";
+import Icon from "./Icon.astro";
+import ProfileAvatar from "./ProfileAvatar.astro";
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container-wide">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <ProfileAvatar size={40} class="profile-avatar--lg" />
+        <p class="muted">{profile.tagline}</p>
+        <div class="footer-socials">
+          <a href={profile.socials.github} target="_blank" rel="noopener" aria-label="GitHub"><Icon name="github" /></a>
+          <a href={profile.socials.medium} target="_blank" rel="noopener" aria-label="Medium"><Icon name="medium" /></a>
+          <a href={profile.socials.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn"><Icon name="linkedin" /></a>
+          <a href={profile.socials.email} aria-label="Email"><Icon name="mail" /></a>
+        </div>
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer">
+        <p class="footer-label">Explore</p>
+        {primaryNav.slice(0, 3).map((i) => <a href={i.href}>{i.label}</a>)}
+      </nav>
+      <nav class="footer-nav" aria-label="Footer secondary">
+        <p class="footer-label">More</p>
+        {primaryNav.slice(3).map((i) => <a href={i.href}>{i.label}</a>)}
+      </nav>
+    </div>
+
+    <div class="footer-base">
+      <p>© {year} {profile.name}.</p>
+      <p class="mono footer-built">Designed by AI, Debugged by Me.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding-block: clamp(3rem, 6vw, 4.5rem) var(--space-7);
+    margin-top: var(--space-9);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--space-6);
+    padding-bottom: var(--space-7);
+  }
+  .footer-brand :global(.profile-avatar) {
+    margin-bottom: var(--space-3);
+  }
+  .footer-brand p { max-width: 36ch; }
+  .footer-socials { display: flex; gap: var(--space-3); margin-top: var(--space-4); color: var(--text-2); }
+  .footer-socials a { transition: color var(--dur-fast), transform var(--dur-fast); }
+  .footer-socials a:hover { color: var(--text); transform: translateY(-2px); }
+
+  .footer-nav { display: flex; flex-direction: column; gap: 0.7rem; }
+  .footer-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3); margin-bottom: 0.2rem; }
+  .footer-nav a { color: var(--text-2); width: fit-content; transition: color var(--dur-fast); }
+  .footer-nav a:hover { color: var(--text); }
+
+  .footer-base {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: var(--space-3);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border);
+    color: var(--text-3); font-size: 0.85rem;
+  }
+  .footer-built { color: var(--text-3); }
+
+  @media (max-width: 760px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .footer-brand { grid-column: 1 / -1; }
+  }
+</style>

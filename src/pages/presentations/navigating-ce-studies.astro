@@ -1,0 +1,735 @@
+---
+import Base from "@layouts/Base.astro";
+import Icon from "@components/Icon.astro";
+import { profile } from "@data/profile";
+import { themeVars } from "@/lib/themes";
+import { getEntry } from "astro:content";
+import { presentationSeoProps, youtubeVideoId } from "@/lib/seo";
+
+const entry = await getEntry("presentations", "navigating-ce-studies");
+if (!entry) throw new Error("Missing presentation: navigating-ce-studies");
+const seo = presentationSeoProps(entry);
+
+const videoId = youtubeVideoId(entry.data.videoUrl!)!;
+const videoUrl = entry.data.videoUrl!;
+
+const meta = [
+  { icon: "mic", label: "Amirkabir University" },
+  { icon: "play", label: "35 min" },
+  { icon: "pen", label: "Persian" },
+  { icon: "spark", label: "Recorded" },
+] as const;
+
+const rail = [
+  { id: "watch", label: "Watch" },
+  { id: "about", label: "About" },
+  { id: "journey", label: "Journey" },
+  { id: "university", label: "University & Industry" },
+  { id: "courses", label: "Courses" },
+  { id: "growth", label: "Beyond Class" },
+  { id: "advice", label: "Advice" },
+];
+
+const keyMessages = [
+  {
+    icon: "code",
+    title: "Fundamentals endure",
+    body: "Data structures, algorithms, operating systems and architecture outlast every framework that will come and go. They're the ground you stand on.",
+  },
+  {
+    icon: "github",
+    title: "Build in public",
+    body: "Your GitHub and personal projects are the résumé that speaks before you do. Real, finished work matters more than a perfect transcript.",
+  },
+  {
+    icon: "spark",
+    title: "Learn beyond the syllabus",
+    body: "The classroom is a starting line, not a finish line. The most valuable skills are the ones you go and teach yourself.",
+  },
+  {
+    icon: "star",
+    title: "Quality over quantity",
+    body: "A few projects you genuinely care about, built well, beat a long list of half-finished ones. Depth signals far more than volume.",
+  },
+  {
+    icon: "mic",
+    title: "Teamwork is technical",
+    body: "No real software is built alone. Communication and collaboration are engineering skills — practise them as deliberately as you practise code.",
+  },
+  {
+    icon: "pen",
+    title: "Don't fear the gap",
+    body: "The distance between theory and practice isn't a flaw in your education. It's the space where engineers are actually made. Grow into it gradually.",
+  },
+];
+
+// Milestones use phase labels rather than exact years — the arc, not a CV.
+const milestones = [
+  {
+    phase: "Before university",
+    title: "Falling for code",
+    body: "Learning to program years before any lecture hall — building Android apps out of pure curiosity, long before it was a career plan.",
+  },
+  {
+    phase: "First steps",
+    title: "Into the industry early",
+    body: "Finding the first professional opportunities while still a student — discovering that real products teach what no course can.",
+  },
+  {
+    phase: "Competing",
+    title: "Telegram Android contests",
+    body: "Entering — and winning — global Telegram UI contests. A crash course in shipping polished, performant interfaces under pressure.",
+  },
+  {
+    phase: "University",
+    title: "Amirkabir Polytechnic",
+    body: "Studying Computer Engineering at one of Iran's leading technical universities — and learning to balance it against real work.",
+  },
+  {
+    phase: "Sharpening",
+    title: "ICPC & competitive programming",
+    body: "Training the muscle of thinking clearly and quickly — algorithms under a clock, with a team depending on you.",
+  },
+  {
+    phase: "Industry",
+    title: "Cafe Bazaar",
+    body: "Growing into an Android engineer and chapter lead — shipping software used by millions, and mentoring others along the way.",
+  },
+  {
+    phase: "Giving back",
+    title: "This talk",
+    body: "Returning to campus to share the map — so the next cohort can navigate the same terrain with a little more confidence.",
+  },
+];
+
+const courses = [
+  {
+    name: "Data Structures",
+    why: "The vocabulary of every program you'll ever write. Choosing the right structure is half of writing efficient software.",
+  },
+  {
+    name: "Algorithms",
+    why: "Teaches you to reason about cost and correctness — the habit of asking not just \u201cdoes it work?\u201d but \u201chow well?\u201d",
+  },
+  {
+    name: "Computer Architecture",
+    why: "Demystifies the machine underneath. Understanding caches, memory and the CPU makes you faster everywhere above it.",
+  },
+  {
+    name: "Operating Systems",
+    why: "Processes, threads, scheduling and memory — the concepts behind every concurrency bug and performance win you'll meet.",
+  },
+  {
+    name: "Database Systems",
+    why: "Almost every product stores and queries data. Knowing how databases really work pays off for an entire career.",
+  },
+  {
+    name: "Computer Networks",
+    why: "Modern software is distributed by default. The network is no longer optional knowledge — it's foundational.",
+  },
+];
+
+const advice = [
+  { title: "Build a real GitHub", body: "Treat it as a portfolio, not a dumping ground. A handful of thoughtful repos says more than a hundred forks." },
+  { title: "Make personal projects", body: "Pick problems you actually want solved. Motivation carries projects to completion — and finished work is what counts." },
+  { title: "Learn independently", body: "Don't wait for a course to cover something. The ability to teach yourself is the single highest-leverage skill you have." },
+  { title: "Choose quality over quantity", body: "Go deep on a few things rather than skimming many. Depth is what employers and collaborators can actually feel." },
+  { title: "Join competitions", body: "ICPC, hackathons, UI contests — they compress years of pressure-tested learning into days. Use them." },
+  { title: "Practise communication", body: "Write clearly, explain your reasoning, review others' work kindly. Teamwork is an engineering discipline." },
+  { title: "Drop the internship anxiety", body: "You don't need to have it all figured out by second year. Build steadily; the opportunities follow the skills." },
+  { title: "Separate two kinds of success", body: "Academic success and professional success overlap but aren't the same. Aim deliberately for the one you actually want." },
+];
+---
+
+<Base {...seo} flushFooter>
+  <article class="kn" data-kn-root style={themeVars("academic")}>
+    <!-- ===================== HERO ===================== -->
+    <header class="kn-hero">
+      <div class="kn-hero__bg" aria-hidden="true"></div>
+      <div class="container kn-hero__inner">
+        <div class="kn-hero__text">
+          <a href="/presentations" class="kn-back" data-reveal>
+            <Icon name="arrow-left" size={16} class="kn-back__arrow" /> All presentations
+          </a>
+          <p class="kn-eyebrow" data-reveal>University Talk · Keynote recap</p>
+          <h1 class="kn-title serif" data-reveal style="--reveal-delay:80ms">
+            Insights on Computer Engineering
+          </h1>
+          <p class="kn-lede" data-reveal style="--reveal-delay:140ms">
+            A reflective session for the students who are where I once was —
+            on falling for code before university, what a degree truly gives
+            you, the fundamentals that never expire, and the open source,
+            competitions and teamwork that turn a student into an engineer.
+          </p>
+          <div class="kn-meta" data-reveal style="--reveal-delay:200ms">
+            {meta.map((m) => (
+              <span class="kn-meta__chip"><Icon name={m.icon} size={13} /> {m.label}</span>
+            ))}
+          </div>
+          <div class="kn-byline" data-reveal style="--reveal-delay:260ms">
+            <span class="kn-byline__by">A talk by</span>
+            <span class="kn-byline__name">{profile.name}</span>
+            <span class="kn-byline__sep">·</span>
+            <span class="kn-byline__inst">Amirkabir University of Technology</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===================== CHAPTER RAIL ===================== -->
+    <nav class="kn-rail" aria-label="Sections" data-kn-rail>
+      <div class="container kn-rail__inner">
+        <ol class="kn-rail__list">
+          {rail.map((r) => (
+            <li>
+              <a href={`#${r.id}`} class="kn-rail__link" data-rail-link={r.id}>{r.label}</a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </nav>
+
+    <!-- ===================== RECORDING (top) ===================== -->
+    <section class="kn-section kn-section--alt" id="watch">
+      <div class="container container-narrow kn-section__head">
+        <p class="kn-kicker" data-reveal>The full session</p>
+        <h2 class="kn-h2 serif" data-reveal>Watch the talk — 35 minutes</h2>
+        <p class="kn-prose" data-reveal>
+          The complete recording, in Persian, captures the whole conversation —
+          the stories, the questions from the room, and the asides that don't
+          fit on a page. Then read on for the recap below.
+        </p>
+      </div>
+      <div class="container container-narrow">
+        <div class="kn-video" data-demo="youtube" data-video-id={videoId} data-reveal>
+          <button class="kn-video__play" data-yt-play type="button" aria-label="Play the talk on YouTube">
+            <img
+              class="kn-video__thumb"
+              src={`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`}
+              alt="Insights on Computer Engineering — university talk thumbnail"
+              loading="eager"
+              width="1280"
+              height="720"
+            />
+            <span class="kn-video__veil" aria-hidden="true"></span>
+            <span class="kn-video__btn" aria-hidden="true"><Icon name="play" size={26} /></span>
+            <span class="kn-video__label">Play the recording</span>
+          </button>
+        </div>
+        <a href={videoUrl} target="_blank" rel="noopener" class="kn-video__fallback">
+          Open on YouTube <Icon name="arrow-up-right" size={14} />
+        </a>
+      </div>
+    </section>
+
+    <!-- ===================== ABOUT ===================== -->
+    <section class="kn-section" id="about">
+      <div class="container container-narrow">
+        <p class="kn-kicker" data-reveal>About the talk</p>
+        <p class="kn-lead-prose serif" data-reveal>
+          This wasn't a lecture about a framework or an algorithm. It was an
+          honest conversation about the journey itself — the messy, non-linear
+          path from a curious student into a working software engineer.
+        </p>
+        <p class="kn-prose" data-reveal>
+          Standing in front of Computer Engineering students at Amirkabir
+          University of Technology, the aim was simple: to hand over the map I
+          wished I'd had. Not a list of answers, but a way of thinking about
+          university, industry, and the years where the two overlap.
+        </p>
+        <p class="kn-prose" data-reveal>
+          What follows is a recap of that session — the story, the ideas, and
+          the advice, in the order they unfolded.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== KEY MESSAGES ===================== -->
+    <section class="kn-section kn-section--alt">
+      <div class="container">
+        <div class="container-narrow kn-section__head">
+          <p class="kn-kicker" data-reveal>The heart of it</p>
+          <h2 class="kn-h2 serif" data-reveal>Six ideas worth carrying out the door</h2>
+        </div>
+        <div class="kn-cards">
+          {keyMessages.map((m, i) => (
+            <div class="kn-card" data-reveal style={`--reveal-delay:${i * 60}ms`}>
+              <span class="kn-card__icon"><Icon name={m.icon} size={18} /></span>
+              <h3 class="kn-card__title">{m.title}</h3>
+              <p class="kn-card__body">{m.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== QUOTE ===================== -->
+    <section class="kn-quote-band">
+      <div class="container container-narrow">
+        <blockquote class="kn-quote" data-reveal>
+          <p class="serif">University gives you the foundations. What you build on top of them is entirely up to you.</p>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- ===================== JOURNEY + TIMELINE ===================== -->
+    <section class="kn-section" id="journey">
+      <div class="container container-narrow kn-section__head">
+        <p class="kn-kicker" data-reveal>The academic journey</p>
+        <h2 class="kn-h2 serif" data-reveal>A path that started before the first lecture</h2>
+        <p class="kn-prose" data-reveal>
+          The story doesn't begin at university — it begins years earlier, with
+          a teenager learning to code for the joy of it. Here's the arc, from
+          first curiosity to standing back at the front of a classroom.
+        </p>
+      </div>
+
+      <div class="container container-narrow">
+        <ol class="kn-timeline">
+          {milestones.map((m, i) => (
+            <li class="kn-tl__item" data-reveal style={`--reveal-delay:${i * 50}ms`}>
+              <span class="kn-tl__dot" aria-hidden="true"></span>
+              <div class="kn-tl__body">
+                <span class="kn-tl__phase">{m.phase}</span>
+                <h3 class="kn-tl__title">{m.title}</h3>
+                <p class="kn-tl__text">{m.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===================== UNIVERSITY vs INDUSTRY ===================== -->
+    <section class="kn-section kn-section--alt" id="university">
+      <div class="container container-narrow kn-section__head">
+        <p class="kn-kicker" data-reveal>University &amp; industry</p>
+        <h2 class="kn-h2 serif" data-reveal>Two teachers, one engineer</h2>
+      </div>
+      <div class="container container-narrow">
+        <div class="kn-split" data-reveal>
+          <div class="kn-split__col">
+            <h3 class="kn-split__title">What university gives you</h3>
+            <ul class="kn-list">
+              <li>The deep fundamentals that don't change with trends.</li>
+              <li>A way of thinking rigorously about problems.</li>
+              <li>Time, peers, and permission to explore.</li>
+              <li>A shared language with other engineers.</li>
+            </ul>
+          </div>
+          <div class="kn-split__col">
+            <h3 class="kn-split__title">What only industry teaches</h3>
+            <ul class="kn-list">
+              <li>Shipping real things to real users.</li>
+              <li>Working within constraints, deadlines and teams.</li>
+              <li>Reading, maintaining and improving others' code.</li>
+              <li>That ‘good enough, shipped’ often beats ‘perfect, someday’.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="kn-prose" data-reveal>
+          The mistake is treating them as rivals. The students who grow fastest
+          let each one do what it does best — and start bridging the gap
+          themselves, early.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== COURSES ===================== -->
+    <section class="kn-section" id="courses">
+      <div class="container container-narrow kn-section__head">
+        <p class="kn-kicker" data-reveal>Courses that matter</p>
+        <h2 class="kn-h2 serif" data-reveal>The subjects that pay off for a whole career</h2>
+        <p class="kn-prose" data-reveal>
+          Whatever you specialise in later — mobile, backend, ML, systems —
+          these courses keep paying dividends. They're worth your full attention
+          while you have them.
+        </p>
+      </div>
+      <div class="container">
+        <div class="kn-courses">
+          {courses.map((c, i) => (
+            <div class="kn-course" data-reveal style={`--reveal-delay:${i * 50}ms`}>
+              <span class="kn-course__n mono">{String(i + 1).padStart(2, "0")}</span>
+              <div class="kn-course__body">
+                <h3 class="kn-course__name">{c.name}</h3>
+                <p class="kn-course__why">{c.why}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== QUOTE ===================== -->
+    <section class="kn-quote-band kn-quote-band--alt">
+      <div class="container container-narrow">
+        <blockquote class="kn-quote" data-reveal>
+          <p class="serif">Your GitHub is the résumé that speaks before you do.</p>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- ===================== BEYOND THE CLASSROOM ===================== -->
+    <section class="kn-section" id="growth">
+      <div class="container container-narrow kn-section__head">
+        <p class="kn-kicker" data-reveal>Beyond the classroom</p>
+        <h2 class="kn-h2 serif" data-reveal>Where the real growth happens</h2>
+      </div>
+
+      <div class="container container-narrow kn-prose-group">
+        <div class="kn-topic" data-reveal>
+          <h3 class="kn-topic__title"><Icon name="github" size={18} /> Open source &amp; personal projects</h3>
+          <p class="kn-prose">
+            The most formative work rarely comes from assignments. Releasing a
+            library, maintaining a repo people actually use, finishing a project
+            you cared about — that's where you learn to write software others can
+            depend on. It's also the most honest portfolio you'll ever have.
+          </p>
+        </div>
+
+        <div class="kn-topic" data-reveal>
+          <h3 class="kn-topic__title"><Icon name="star" size={18} /> Competitions &amp; practical experience</h3>
+          <p class="kn-prose">
+            ICPC sharpened how I think under pressure; the Telegram Android
+            contests taught me to ship polished, performant UI against the clock.
+            Competitions compress a great deal of growth into a short time — and
+            they're some of the most fun you'll have as a student.
+          </p>
+        </div>
+
+        <div class="kn-topic" data-reveal>
+          <h3 class="kn-topic__title"><Icon name="spark" size={18} /> Self-learning, deliberately</h3>
+          <p class="kn-prose">
+            The half-life of any specific technology is short; the ability to
+            teach yourself the next one is permanent. Treat self-learning as the
+            core skill it is, and the curriculum becomes a launchpad rather than
+            a ceiling.
+          </p>
+        </div>
+
+        <div class="kn-topic" data-reveal>
+          <h3 class="kn-topic__title"><Icon name="mic" size={18} /> Balancing work &amp; university</h3>
+          <p class="kn-prose">
+            Doing both at once is hard, and it's a skill in itself. The trick
+            isn't doing everything — it's choosing deliberately, protecting your
+            energy, and letting work and study feed each other instead of
+            competing.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== QUOTE ===================== -->
+    <section class="kn-quote-band">
+      <div class="container container-narrow">
+        <blockquote class="kn-quote" data-reveal>
+          <p class="serif">You don't need to know everything before you start. You need to start — and then keep learning.</p>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- ===================== ADVICE ===================== -->
+    <section class="kn-section kn-section--alt" id="advice">
+      <div class="container container-narrow kn-section__head">
+        <p class="kn-kicker" data-reveal>For students, specifically</p>
+        <h2 class="kn-h2 serif" data-reveal>Practical advice you can act on this week</h2>
+      </div>
+      <div class="container">
+        <div class="kn-advice">
+          {advice.map((a, i) => (
+            <div class="kn-advice__item" data-reveal style={`--reveal-delay:${i * 45}ms`}>
+              <span class="kn-advice__n mono">{String(i + 1).padStart(2, "0")}</span>
+              <div>
+                <h3 class="kn-advice__title">{a.title}</h3>
+                <p class="kn-advice__body">{a.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FINAL THOUGHTS ===================== -->
+    <section class="kn-section" id="final">
+      <div class="container container-narrow">
+        <p class="kn-kicker" data-reveal>Final thoughts</p>
+        <h2 class="kn-h2 serif" data-reveal>The map is yours now</h2>
+        <p class="kn-prose" data-reveal>
+          No two journeys into software look the same, and that's the point.
+          University and industry are not a fixed track but a pair of tools —
+          use them on your own terms. Build things you care about, learn
+          relentlessly, be generous with your teammates, and don't let anxiety
+          rush a process that rewards patience.
+        </p>
+        <p class="kn-prose" data-reveal>
+          If a single student left that room a little more confident about the
+          road ahead, the talk did its job.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== OUTRO ===================== -->
+    <section class="kn-outro">
+      <div class="container container-narrow kn-outro__inner">
+        <p class="kn-outro__thanks serif" data-reveal>Thank you.</p>
+        <div class="kn-outro__links" data-reveal>
+          <a href="/presentations" class="kn-btn kn-btn--ghost"><Icon name="arrow-left" size={16} /> All presentations</a>
+        </div>
+      </div>
+    </section>
+  </article>
+</Base>
+
+<script src="../../scripts/navigating-ce-studies.ts"></script>
+
+<style>
+  /* ============================================================
+     Navigating CE Studies — editorial keynote recap
+     Warm, typographic, reflective. Academic theme (gold / clay / sage).
+     ============================================================ */
+  .kn {
+    --kn-1: var(--t1, #d8a657);
+    --kn-2: var(--t2, #c47b5a);
+    --kn-3: var(--t3, #7c9a86);
+    --kn-ink: color-mix(in srgb, var(--kn-1) 60%, var(--text));
+    display: block;
+  }
+
+  /* ---------- Hero ---------- */
+  .kn-hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+  .kn-hero__bg {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(80% 70% at 88% 8%, color-mix(in srgb, var(--kn-1) 16%, transparent), transparent 60%),
+      radial-gradient(70% 80% at 4% 92%, color-mix(in srgb, var(--kn-3) 12%, transparent), transparent 60%),
+      linear-gradient(180deg, color-mix(in srgb, var(--kn-2) 6%, transparent), transparent 40%);
+  }
+  .kn-hero__inner {
+    position: relative; z-index: 1;
+    padding-block: clamp(3rem, 8vw, 6rem);
+  }
+  .kn-hero__text { max-width: 60ch; }
+  .kn-back { display: inline-flex; align-items: center; gap: 0.5em; color: var(--text-2); font-size: 0.88rem; margin-bottom: var(--space-6); }
+  .kn-back:hover { color: var(--text); }
+  .kn-back :global(.kn-back__arrow) { transition: transform var(--dur-fast); }
+  .kn-back:hover :global(.kn-back__arrow) { transform: translateX(-3px); }
+
+  .kn-eyebrow {
+    font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--kn-ink);
+  }
+  .kn-title {
+    margin-top: var(--space-4);
+    font-size: clamp(2.4rem, 1.4rem + 5vw, 4.6rem);
+    line-height: 1.04; letter-spacing: -0.02em; font-weight: 600;
+    color: var(--text);
+  }
+  .kn-lede {
+    margin-top: var(--space-5); max-width: 54ch;
+    font-size: var(--step-1); line-height: 1.7; color: var(--text-2);
+  }
+  .kn-meta { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: var(--space-6); }
+  .kn-meta__chip {
+    display: inline-flex; align-items: center; gap: 0.45em;
+    font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.03em;
+    padding: 0.4em 0.8em; border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--kn-2) 26%, var(--border));
+    background: color-mix(in srgb, var(--surface) 60%, transparent);
+    color: var(--text-2);
+  }
+  .kn-byline { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5em; margin-top: var(--space-6); font-size: 0.95rem; color: var(--text-3); }
+  .kn-byline__name { color: var(--text); font-weight: 600; }
+  .kn-byline__sep { opacity: 0.5; }
+  .kn-byline__inst { color: var(--text-2); }
+
+  /* ---------- Chapter rail (frosted, sticky) ---------- */
+  .kn-rail {
+    position: sticky; top: var(--header-h); z-index: 90;
+    isolation: isolate; border-bottom: 1px solid var(--border);
+  }
+  .kn-rail::before { content: ""; position: absolute; inset: 0; z-index: 0; background: var(--header-tint); pointer-events: none; }
+  .kn-rail::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; background: var(--header-glass);
+    -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%); pointer-events: none;
+  }
+  @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .kn-rail::before { opacity: 0; }
+  }
+  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .kn-rail::after { display: none; }
+    .kn-rail::before { opacity: 1; }
+  }
+  .kn-rail__inner { position: relative; z-index: 2; overflow-x: auto; scrollbar-width: none; }
+  .kn-rail__inner::-webkit-scrollbar { display: none; }
+  .kn-rail__list { display: flex; gap: clamp(0.4rem, 2.5vw, 1.8rem); padding-block: 0.8rem; min-width: max-content; }
+  .kn-rail__link {
+    display: inline-flex; align-items: center; padding: 0.35em 0.2em;
+    color: var(--text-3); font-size: 0.85rem; border-bottom: 2px solid transparent;
+    transition: color var(--dur-fast); white-space: nowrap;
+  }
+  .kn-rail__link:hover { color: var(--text-2); }
+  .kn-rail__link.is-active { color: var(--text); border-bottom-color: var(--kn-1); }
+
+  /* ---------- Sections / prose ---------- */
+  .kn-section { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
+  .kn-section--alt {
+    background:
+      radial-gradient(100% 60% at 50% 0%, color-mix(in srgb, var(--kn-1) 5%, transparent), transparent 60%),
+      var(--bg-soft);
+    border-block: 1px solid var(--border);
+  }
+  .kn-section__head { margin-bottom: var(--space-6); }
+
+  .kn-kicker {
+    font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--kn-ink); margin-bottom: var(--space-3);
+  }
+  .kn-h2 { font-size: var(--step-3); letter-spacing: -0.02em; line-height: 1.1; color: var(--text); }
+  .kn-prose { font-size: var(--step-1); line-height: 1.8; color: var(--text-2); max-width: 64ch; margin-top: var(--space-4); }
+  .kn-prose:first-of-type { margin-top: var(--space-4); }
+  .kn-lead-prose {
+    font-size: var(--step-2); line-height: 1.5; color: var(--text);
+    max-width: 38ch; margin-bottom: var(--space-2); font-weight: 500;
+  }
+  .kn-prose-group .kn-topic + .kn-topic { margin-top: var(--space-7); }
+  .kn-topic__title { display: inline-flex; align-items: center; gap: 0.5em; font-size: var(--step-1); letter-spacing: -0.01em; }
+  .kn-topic__title :global(svg) { color: var(--kn-ink); }
+
+  /* ---------- Key message cards ---------- */
+  .kn-cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-4);
+  }
+  .kn-card {
+    padding: var(--space-5); border-radius: var(--radius-lg);
+    border: 1px solid var(--border); background: var(--surface);
+    transition: border-color var(--dur-mid), transform var(--dur-mid);
+  }
+  .kn-card:hover { border-color: color-mix(in srgb, var(--kn-1) 30%, var(--border)); transform: translateY(-3px); }
+  .kn-card__icon {
+    display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px;
+    border: 1px solid color-mix(in srgb, var(--kn-1) 28%, var(--border));
+    background: color-mix(in srgb, var(--kn-1) 9%, transparent);
+    color: var(--kn-ink); margin-bottom: var(--space-3);
+  }
+  .kn-card__title { font-size: 1.1rem; letter-spacing: -0.01em; }
+  .kn-card__body { font-size: 0.92rem; line-height: 1.6; color: var(--text-2); margin-top: 0.5rem; }
+
+  /* ---------- Quote band ---------- */
+  .kn-quote-band { padding-block: clamp(3rem, 7vw, 5.5rem); background: var(--bg); }
+  .kn-quote-band--alt { background: var(--bg-soft); border-block: 1px solid var(--border); }
+  .kn-quote { position: relative; text-align: center; }
+  .kn-quote::before {
+    content: "\201C"; display: block; font-family: var(--font-serif);
+    font-size: clamp(3rem, 8vw, 5rem); line-height: 0.6; color: color-mix(in srgb, var(--kn-1) 50%, transparent);
+    margin-bottom: var(--space-3);
+  }
+  .kn-quote p { font-size: clamp(1.4rem, 1rem + 2.2vw, 2.4rem); line-height: 1.35; letter-spacing: -0.02em; color: var(--text); font-weight: 500; text-wrap: balance; }
+
+  /* ---------- Timeline ---------- */
+  .kn-timeline { position: relative; margin-left: 6px; padding-left: clamp(1.4rem, 4vw, 2.2rem); }
+  .kn-timeline::before {
+    content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 1px;
+    background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--kn-1) 40%, var(--border)) 10%, color-mix(in srgb, var(--kn-3) 40%, var(--border)) 90%, transparent);
+  }
+  .kn-tl__item { position: relative; padding-bottom: var(--space-6); }
+  .kn-tl__item:last-child { padding-bottom: 0; }
+  .kn-tl__dot {
+    position: absolute; left: calc(-1 * clamp(1.4rem, 4vw, 2.2rem) - 6px); top: 4px;
+    width: 13px; height: 13px; border-radius: 50%;
+    background: var(--bg); border: 2px solid var(--kn-1);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--kn-1) 12%, transparent);
+  }
+  .kn-tl__phase {
+    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--kn-ink);
+  }
+  .kn-tl__title { font-size: 1.2rem; letter-spacing: -0.01em; margin-top: 0.3rem; }
+  .kn-tl__text { font-size: 0.95rem; line-height: 1.65; color: var(--text-2); margin-top: 0.4rem; max-width: 56ch; }
+
+  /* ---------- Split (university vs industry) ---------- */
+  .kn-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+  .kn-split__col {
+    padding: var(--space-5); border-radius: var(--radius-lg);
+    border: 1px solid var(--border); background: var(--surface);
+  }
+  .kn-split__title { font-size: 1.1rem; letter-spacing: -0.01em; margin-bottom: var(--space-3); color: var(--kn-ink); }
+  .kn-list { display: flex; flex-direction: column; gap: 0.7rem; }
+  .kn-list li {
+    position: relative; padding-left: 1.4em; font-size: 0.95rem; line-height: 1.55; color: var(--text-2);
+  }
+  .kn-list li::before {
+    content: ""; position: absolute; left: 0; top: 0.6em; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--kn-1);
+  }
+
+  /* ---------- Courses ---------- */
+  .kn-courses { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); }
+  .kn-course {
+    display: flex; gap: var(--space-4); padding: var(--space-5);
+    border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--surface);
+    transition: border-color var(--dur-mid);
+  }
+  .kn-course:hover { border-color: color-mix(in srgb, var(--kn-3) 32%, var(--border)); }
+  .kn-course__n {
+    flex-shrink: 0; font-size: 0.95rem; font-weight: 600; color: color-mix(in srgb, var(--kn-1) 70%, var(--text-3));
+    line-height: 1.4;
+  }
+  .kn-course__name { font-size: 1.1rem; letter-spacing: -0.01em; }
+  .kn-course__why { font-size: 0.9rem; line-height: 1.6; color: var(--text-2); margin-top: 0.4rem; }
+
+  /* ---------- Advice ---------- */
+  .kn-advice { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .kn-advice__item { display: flex; gap: var(--space-4); padding: var(--space-5); background: var(--surface); }
+  .kn-advice__n { flex-shrink: 0; font-size: 0.82rem; font-weight: 600; color: var(--kn-ink); padding-top: 0.15em; }
+  .kn-advice__title { font-size: 1.02rem; letter-spacing: -0.01em; }
+  .kn-advice__body { font-size: 0.9rem; line-height: 1.6; color: var(--text-2); margin-top: 0.35rem; }
+
+  /* ---------- Buttons ---------- */
+  .kn-btn {
+    display: inline-flex; align-items: center; gap: 0.5em; padding: 0.6em 1.1em;
+    border-radius: var(--radius-pill); font-size: 0.88rem; font-weight: 500;
+    border: 1px solid var(--border-strong); color: var(--text); background: transparent;
+    transition: background-color var(--dur-fast), transform var(--dur-fast);
+  }
+  .kn-btn--ghost:hover { background: var(--surface-hover); transform: translateY(-1px); }
+
+  /* ---------- Video facade ---------- */
+  .kn-video {
+    position: relative; border-radius: var(--radius-lg); overflow: hidden;
+    border: 1px solid var(--border); aspect-ratio: 16 / 9; background: #000;
+  }
+  .kn-video :global(iframe) { width: 100%; height: 100%; border: 0; display: block; }
+  .kn-video__play { position: absolute; inset: 0; width: 100%; border: 0; padding: 0; cursor: pointer; background: none; }
+  .kn-video__thumb { width: 100%; height: 100%; object-fit: cover; opacity: 0.82; transition: opacity var(--dur-mid), transform var(--dur-slow); }
+  .kn-video__veil { position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 50%, transparent, color-mix(in srgb, #000 55%, transparent)); }
+  .kn-video__btn {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%;
+    background: color-mix(in srgb, var(--kn-1) 92%, #fff); color: #1c1407;
+    box-shadow: 0 12px 40px -10px color-mix(in srgb, var(--kn-1) 70%, transparent);
+    transition: transform var(--dur-fast) var(--ease-spring);
+  }
+  .kn-video__label {
+    position: absolute; left: 50%; bottom: 1.6rem; transform: translateX(-50%);
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: #fff;
+  }
+  .kn-video__play:hover .kn-video__thumb { opacity: 0.95; transform: scale(1.02); }
+  .kn-video__play:hover .kn-video__btn { transform: translate(-50%, -50%) scale(1.08); }
+  .kn-video__fallback { display: inline-flex; align-items: center; gap: 0.4em; margin-top: var(--space-3); font-size: 0.85rem; color: var(--text-2); }
+  .kn-video__fallback:hover { color: var(--text); }
+
+  /* ---------- Outro ---------- */
+  .kn-outro {
+    padding-block: clamp(3rem, 6vw, 4.5rem); border-top: 1px solid var(--border);
+    background: radial-gradient(ellipse 70% 90% at 50% 50%, color-mix(in srgb, var(--kn-1) 9%, transparent), transparent 68%), var(--bg);
+  }
+  .kn-outro__inner { text-align: center; }
+  .kn-outro__thanks { font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem); letter-spacing: -0.02em; font-weight: 600; }
+  .kn-outro__links { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; margin-top: var(--space-5); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    .kn-split { grid-template-columns: 1fr; }
+  }
+</style>
