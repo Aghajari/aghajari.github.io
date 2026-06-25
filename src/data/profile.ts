@@ -39,5 +39,6 @@ export const primaryNav: NavItem[] = [
   { label: "Open Source", href: "/open-source" },
   { label: "Publications", href: "/publications" },
   { label: "Presentations", href: "/presentations" },
+  { label: "Reading", href: "/reading" },
   { label: "Contact", href: "/contact" },
 ];

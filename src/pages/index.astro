@@ -4,8 +4,10 @@ import Base from "@layouts/Base.astro";
 import SectionHeading from "@components/SectionHeading.astro";
 import ArticleCard from "@components/ArticleCard.astro";
 import TalkCard from "@components/TalkCard.astro";
+import BookCard from "@components/BookCard.astro";
 import Icon from "@components/Icon.astro";
 import { profile, stats } from "@data/profile";
+import { topRatedBooks } from "@data/reading";
 import { personJsonLd, websiteJsonLd } from "@/lib/seo";
 
 const pubs = (await getCollection("publications")).sort(
@@ -19,6 +21,7 @@ const talks = (await getCollection("presentations")).sort((a, b) => {
   return db - da;
 });
 const featuredTalks = talks.filter((t) => t.data.featured);
+const topBooks = topRatedBooks(5);
 ---
 
 <Base description={profile.description} jsonLd={[personJsonLd(), websiteJsonLd()]}>
@@ -104,6 +107,23 @@ const featuredTalks = talks.filter((t) => t.data.featured);
     </div>
   </section>
 
+  <!-- ===================== READING ===================== -->
+  {topBooks.length > 0 && (
+    <section class="section home-reading">
+      <div class="container">
+        <SectionHeading
+          eyebrow="Reading"
+          title="Five-star shelf"
+          intro="The books that hit hardest — pulled from a small, curated library, not a tracker."
+          link={{ href: "/reading", label: "Browse the library" }}
+        />
+        <div class="home-books">
+          {topBooks.map((book) => <BookCard book={book} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
   <!-- ===================== CLOSING ===================== -->
   <section class="section">
     <div class="container">
@@ -127,6 +147,8 @@ const featuredTalks = talks.filter((t) => t.data.featured);
     </div>
   </section>
 </Base>
+
+<script src="../scripts/reading.ts"></script>
 
 <style>
   /* ---------- Hero ---------- */
@@ -228,6 +250,37 @@ const featuredTalks = talks.filter((t) => t.data.featured);
 
   /* ---------- Writing layout ---------- */
   .pub-feature { margin-bottom: var(--space-5); }
+
+  /* ---------- Reading shelf ---------- */
+  .home-reading {
+    border-top: 1px solid var(--border);
+    background:
+      radial-gradient(90% 50% at 50% 100%, color-mix(in srgb, var(--accent) 4%, transparent), transparent 65%),
+      var(--bg);
+  }
+  .home-books {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.75rem);
+    align-items: end;
+    justify-items: center;
+  }
+  .home-books :global(.book-card) {
+    width: 100%;
+    max-width: 200px;
+  }
+  @media (max-width: 1080px) {
+    .home-books { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .home-books :global(.book-card:nth-child(n + 5)) { display: none; }
+  }
+  @media (max-width: 860px) {
+    .home-books { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .home-books :global(.book-card:nth-child(n + 4)) { display: none; }
+  }
+  @media (max-width: 580px) {
+    .home-books { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .home-books :global(.book-card:nth-child(n + 3)) { display: none; }
+  }
 
   /* ---------- Closing CTA ---------- */
   .home-cta {

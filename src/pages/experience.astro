@@ -27,22 +27,24 @@ const lastYear = yearStops.length - 1;
       </div>
 
       <div class="yt" data-yeartimeline>
-        <div class="yt-rail" role="tablist" aria-label="Career by year">
-          {yearStops.map((y, i) => (
-            <button
-              type="button"
-              role="tab"
-              class:list={["yt-year", { "is-active": i === lastYear }]}
-              data-year-index={i}
-              data-kind={y.kind}
-              tabindex={i === lastYear ? 0 : -1}
-              aria-selected={i === lastYear ? "true" : "false"}
-              aria-label={`${y.year}: ${y.place}`}
-            >
-              <span class="yt-dot" aria-hidden="true"></span>
-              <span class="yt-num">{y.year}</span>
-            </button>
-          ))}
+        <div class="yt-rail-wrap">
+          <div class="yt-rail" role="tablist" aria-label="Career by year">
+            {yearStops.map((y, i) => (
+              <button
+                type="button"
+                role="tab"
+                class:list={["yt-year", { "is-active": i === lastYear }]}
+                data-year-index={i}
+                data-kind={y.kind}
+                tabindex={i === lastYear ? 0 : -1}
+                aria-selected={i === lastYear ? "true" : "false"}
+                aria-label={`${y.year}: ${y.place}`}
+              >
+                <span class="yt-dot" aria-hidden="true"></span>
+                <span class="yt-num">{y.year}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         <div class="yt-panel">
@@ -91,15 +93,23 @@ const lastYear = yearStops.length - 1;
   .yt { --yt-c: var(--accent); }
 
   /* —— Rail of years —— */
+  .yt-rail-wrap {
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-width: none;
+    margin-bottom: var(--space-5);
+    /* Headroom for active dot scale + ring shadow (overflow-x clips on Y otherwise) */
+    padding-top: 0.65rem;
+    margin-top: -0.65rem;
+  }
+  .yt-rail-wrap::-webkit-scrollbar { display: none; }
+
   .yt-rail {
     position: relative;
     display: flex;
     justify-content: space-between;
     gap: var(--space-2);
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding: 0.4rem 0 1.4rem;
-    margin-bottom: var(--space-5);
+    padding: 0.35rem 0 1.4rem;
   }
   .yt-rail::-webkit-scrollbar { display: none; }
   .yt-rail::before {
@@ -141,6 +151,7 @@ const lastYear = yearStops.length - 1;
     border-radius: 50%;
     background: var(--bg);
     border: 2px solid var(--border-strong);
+    transform-origin: center;
     transition:
       transform var(--dur-mid) var(--ease-spring),
       background var(--dur-fast),

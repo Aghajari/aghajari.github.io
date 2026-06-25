@@ -1,0 +1,107 @@
+---
+import Base from "@layouts/Base.astro";
+import PageHero from "@components/PageHero.astro";
+import BookCard from "@components/BookCard.astro";
+import { books, sortBooks } from "@data/reading";
+
+const library = sortBooks(books, "reading");
+---
+
+<Base
+  title="Reading"
+  description="A curated personal library — the books that shaped how AmirHossein Aghajari thinks, beyond software engineering."
+>
+  <PageHero
+    eyebrow="The Library"
+    title="Books that shaped me"
+    intro="Not a reading tracker — a small, curated shelf. Every volume here left a mark on how I think, work, or see the world. Pull one out."
+  >
+    <div class="lib-stats" data-reveal style="--reveal-delay:180ms">
+      <span class="mono">{books.length} volumes</span>
+      <span class="dot-sep">·</span>
+      <span class="mono">always growing</span>
+    </div>
+  </PageHero>
+
+  <section class="section lib-section" data-reading-root>
+    <div class="container">
+      <div class="lib-sort" data-reveal>
+        <label class="lib-sort__label" for="lib-sort">Sort by</label>
+        <select id="lib-sort" class="lib-sort__select" data-sort-select aria-label="Sort books">
+          <option value="reading" selected>Reading date</option>
+          <option value="title">Title</option>
+          <option value="author">Author name</option>
+          <option value="rating">Rating</option>
+          <option value="published">Publishing date</option>
+        </select>
+      </div>
+
+      <div class="lib-shelf" data-reveal style="--reveal-delay:80ms">
+        {library.map((book) => <BookCard book={book} />)}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lib-stats {
+    display: flex; flex-wrap: wrap; gap: 0.6em; align-items: center;
+    margin-top: var(--space-6); color: var(--text-3); font-size: 0.85rem;
+  }
+  .dot-sep { opacity: 0.5; }
+
+  .lib-section { padding-top: clamp(2rem, 5vw, 3.5rem); }
+
+  .lib-sort {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: clamp(2.5rem, 6vw, 4rem);
+  }
+  .lib-sort__label {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .lib-sort__select {
+    appearance: none;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    padding: 0.55em 2.2em 0.55em 1em;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+      no-repeat right 0.85em center / 12px,
+      var(--surface);
+    cursor: pointer;
+    transition: border-color var(--dur-fast), background var(--dur-fast);
+  }
+  .lib-sort__select:hover { border-color: var(--border-strong); }
+  .lib-sort__select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .lib-shelf {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: clamp(2rem, 4vw, 3.5rem) clamp(1rem, 3vw, 2rem);
+    align-items: end;
+    justify-items: center;
+  }
+
+  @media (max-width: 480px) {
+    .lib-shelf {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.25rem 0.75rem;
+    }
+  }
+</style>
+
+<script src="../scripts/reading.ts"></script>
