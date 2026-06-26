@@ -211,13 +211,16 @@ function bindTheme() {
     );
 
     root.classList.add("theme-transition");
+    const header = document.getElementById("site-header");
+    const pinHeader = () => {
+      header?.style.setProperty("transform", "translate3d(0,0,0)");
+      header?.style.setProperty("z-index", "2147483647");
+    };
+    pinHeader();
     const restoreNames = suspendViewTransitionNames();
     const transition = startViewTransition(() => {
       applyTheme(next);
-      document.getElementById("site-header")?.style.setProperty(
-        "transform",
-        "translate3d(0,0,0)",
-      );
+      pinHeader();
     });
 
     transition.ready
@@ -242,10 +245,8 @@ function bindTheme() {
       restoreNames();
       root.classList.remove("theme-transition");
       updateHeaderScroll();
-      document.getElementById("site-header")?.style.setProperty(
-        "transform",
-        "translate3d(0,0,0)",
-      );
+      header?.style.setProperty("transform", "translate3d(0,0,0)");
+      header?.style.setProperty("z-index", "9999");
     });
   };
 

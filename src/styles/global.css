@@ -649,8 +649,17 @@ html.theme-transition::view-transition-new(root) {
 html.theme-transition [data-astro-transition-scope] {
   view-transition-name: none !important;
 }
-/* Keep persisted chrome live — update via CSS variables like ca-rail/mt-rail. */
+/* Keep persisted chrome + presentation chapter rails live during theme swap
+   (they share header glass/tint CSS variables — snapshots cause mobile flicker). */
 html.theme-transition #site-header,
-html.theme-transition #site-footer {
+html.theme-transition #site-footer,
+html.theme-transition :is(.mt-rail, .ca-rail, .kn-rail) {
   view-transition-name: none !important;
+}
+html.theme-transition #site-header {
+  z-index: 2147483647 !important;
+}
+/* Chapter rails stay below site chrome, above in-page content. */
+:is(.mt-rail, .ca-rail, .kn-rail) {
+  z-index: 50;
 }
