@@ -2,6 +2,7 @@ import {
   highlightCode,
   highlightPresentationCode,
 } from "../lib/syntax-highlight";
+import { initPresentationRail } from "../lib/presentation-rail";
 
 type Cleanup = () => void;
 type RenderFn = (
@@ -1987,40 +1988,7 @@ function initMT() {
     });
   }
   function initRail() {
-    const links = Array.from(
-      document.querySelectorAll<HTMLAnchorElement>("[data-rail-link]"),
-    );
-    if (!links.length) return;
-    const ratios = new Map<string, number>();
-    const sections = links
-      .map((l) => document.getElementById(l.dataset.railLink ?? ""))
-      .filter((s): s is HTMLElement => !!s);
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) =>
-          ratios.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0),
-        );
-        let bestId = "";
-        let best = 0;
-        ratios.forEach((r, id) => {
-          if (r > best) {
-            best = r;
-            bestId = id;
-          }
-        });
-        links.forEach((l) =>
-          l.classList.toggle(
-            "is-active",
-            l.dataset.railLink === bestId && best > 0,
-          ),
-        );
-      },
-      { rootMargin: "-20% 0px -55% 0px", threshold: [0, 0.15, 0.4, 0.75] },
-    );
-
-    sections.forEach((s) => io.observe(s));
-    cleanups.push(() => io.disconnect());
+    initPresentationRail(root, (fn) => cleanups.push(fn));
   }
   const heroCanvas =
     root.querySelector<HTMLCanvasElement>('[data-demo="hero"]');

@@ -7,14 +7,15 @@ interface Props {
   src: string;
   alt: string;
   theme: ThemeKey;
-  variant?: "card" | "hero";
+  variant?: "card" | "hero" | "plain";
 }
 const { src, alt, theme, variant = "card" } = Astro.props;
+const plain = variant === "plain";
 ---
 
 <div
   class:list={["pub-cover", `pub-cover--${variant}`]}
-  style={themeVars(theme)}
+  style={plain ? undefined : themeVars(theme)}
 >
   <img
     class="pub-cover__img"
@@ -24,13 +25,19 @@ const { src, alt, theme, variant = "card" } = Astro.props;
     decoding="async"
     fetchpriority={variant === "hero" ? "high" : "auto"}
   />
-  <div class="pub-cover__tint" aria-hidden="true"></div>
-  <div class="pub-cover__scrim" aria-hidden="true"></div>
-  <div class="pub-cover__fx" aria-hidden="true">
-    <ThemeVisual theme={theme} />
-  </div>
-  <div class="pub-cover__grain" aria-hidden="true"></div>
-  <div class="pub-cover__vignette" aria-hidden="true"></div>
+  {
+    !plain && (
+      <>
+        <div class="pub-cover__tint" aria-hidden="true" />
+        <div class="pub-cover__scrim" aria-hidden="true" />
+        <div class="pub-cover__fx" aria-hidden="true">
+          <ThemeVisual theme={theme} />
+        </div>
+        <div class="pub-cover__grain" aria-hidden="true" />
+        <div class="pub-cover__vignette" aria-hidden="true" />
+      </>
+    )
+  }
 </div>
 
 <style>
@@ -150,6 +157,16 @@ const { src, alt, theme, variant = "card" } = Astro.props;
     -webkit-mask-image: linear-gradient(to bottom, black 8%, transparent 80%);
   }
 
+  .pub-cover--plain {
+    background: var(--surface);
+  }
+  .pub-cover--plain .pub-cover__img {
+    transform: scale(1.02);
+    filter: none;
+    transition: transform 1.1s var(--ease-out);
+    will-change: transform;
+  }
+
   @keyframes cover-drift {
     from {
       transform: scale(1.05) translate3d(0, 0, 0);
@@ -169,7 +186,10 @@ const { src, alt, theme, variant = "card" } = Astro.props;
     .pub-cover--hero .pub-cover__img {
       filter: saturate(0.75) brightness(0.8) contrast(1.06);
     }
-    :global(.article-card:hover) .pub-cover--card .pub-cover__img {
+    :global(.article-card:hover) .pub-cover--card .pub-cover__img,
+    :global(.article-card:focus-visible) .pub-cover--card .pub-cover__img,
+    :global(.article-card:hover) .pub-cover--plain .pub-cover__img,
+    :global(.article-card:focus-visible) .pub-cover--plain .pub-cover__img {
       transform: scale(1.02);
     }
   }

@@ -37,6 +37,7 @@ const lastYear = yearStops.length - 1;
                   class:list={["yt-year", { "is-active": i === lastYear }]}
                   data-year-index={i}
                   data-kind={y.kind}
+                  data-tint={y.tint}
                   tabindex={i === lastYear ? 0 : -1}
                   aria-selected={i === lastYear ? "true" : "false"}
                   aria-label={`${y.year}: ${y.place}`}
@@ -56,6 +57,7 @@ const lastYear = yearStops.length - 1;
                 class:list={["yt-card", { "is-active": i === lastYear }]}
                 data-year-card={i}
                 data-kind={y.kind}
+                data-tint={y.tint}
               >
                 <span class="yt-card__year" aria-hidden="true">
                   {y.year}
@@ -130,6 +132,8 @@ const lastYear = yearStops.length - 1;
     display: flex;
     justify-content: space-between;
     gap: var(--space-2);
+    width: max-content;
+    min-width: 100%;
     padding: 0.35rem 0 1.4rem;
   }
   .yt-rail::-webkit-scrollbar {
@@ -226,6 +230,9 @@ const lastYear = yearStops.length - 1;
   .yt-year[data-kind="contribution"] {
     --yt-c: #52b87a;
   }
+  .yt-year[data-tint="green"] {
+    --yt-c: #52b87a;
+  }
 
   /* —— Reveal panel —— */
   .yt-panel {
@@ -255,6 +262,9 @@ const lastYear = yearStops.length - 1;
     --yt-c: #9aa8c7;
   }
   .yt-card[data-kind="contribution"] {
+    --yt-c: #52b87a;
+  }
+  .yt-card[data-tint="green"] {
     --yt-c: #52b87a;
   }
   .yt-card.is-active {

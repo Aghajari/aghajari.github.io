@@ -1,0 +1,169 @@
+/* Touch / coarse-pointer feedback — clipped to each element's border-radius. */
+
+html.is-coarse :is(
+  button,
+  .btn,
+  .card,
+  .tag,
+  a.card,
+  [role="button"],
+  [class*="-btn"],
+  [class*="-chip"],
+  [class*="-tab"],
+  [class*="-pill"],
+  [class*="-card"],
+  [class*="-course"],
+  [class*="-repo"],
+  [class*="-video__play"],
+  [class*="-video__fallback"],
+  [class*="-series__link"],
+  [class*="-continue"],
+  [class*="-scroll"],
+  [class*="-back"],
+  .stats-journey,
+  .contact-email,
+  .contact-card,
+  .mobile-link,
+  .theme-toggle,
+  .menu-btn
+) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Clip press feedback on compact controls — not cards (keep card radius + shadow). */
+html.is-coarse :is(
+  button,
+  .btn,
+  .tag,
+  [class*="-btn"],
+  [class*="-chip"],
+  [class*="-tab"],
+  [class*="-pill"],
+  .mobile-link,
+  .theme-toggle,
+  .menu-btn
+) {
+  overflow: hidden;
+}
+
+/* Press feedback — brightness respects border-radius (no square tap flash). */
+html.is-coarse :is(
+  button:not(:disabled),
+  .btn,
+  a.card,
+  [class*="-btn"],
+  [class*="-chip"],
+  [class*="-tab"],
+  [class*="-pill"],
+  [class*="-card"],
+  [class*="-course"],
+  [class*="-repo"],
+  [class*="-video__play"],
+  [class*="-video__fallback"],
+  [class*="-series__link"],
+  [class*="-continue"],
+  [class*="-scroll"],
+  [class*="-back"],
+  [class*="-rail__link"],
+  .stats-journey,
+  .contact-email,
+  .contact-card,
+  .mobile-link,
+  .nav-link,
+  .theme-toggle,
+  .menu-btn
+):active {
+  filter: brightness(0.93);
+  transition: filter 0.12s var(--ease-out);
+}
+
+/* Prevent sticky :hover lift/glow after tap on touch devices. */
+html.is-coarse :is(
+  .card,
+  .btn,
+  .article-card,
+  .talk-card,
+  .repo-card,
+  [class*="-btn"],
+  [class*="-chip"],
+  [class*="-continue"],
+  [class*="-scroll"],
+  [class*="-back"],
+  [class*="-repo"],
+  [class*="-course"],
+  [class*="-card"],
+  [class*="-video__play"],
+  [class*="-series__link"],
+  .stats-journey,
+  .contact-email,
+  .contact-card
+):hover {
+  transform: none !important;
+}
+
+html.is-coarse :is(.card, .article-card, .talk-card, .repo-card):hover {
+  box-shadow: revert-layer;
+}
+
+html.is-coarse [data-theme="light"]
+  :is(.card, .article-card, .talk-card, .repo-card):hover {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+html.is-coarse .stats-journey:hover {
+  box-shadow: inset 0 1px 0 var(--surface-highlight) !important;
+}
+
+html.is-coarse .stats-journey.sheen::before {
+  display: none;
+}
+
+html.is-coarse .home-cta.sheen::before {
+  display: none;
+}
+
+html.is-coarse :is(.contact-email, .contact-card).sheen::before {
+  display: none;
+}
+
+html.is-coarse :is(.contact-email, .contact-card):hover {
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+}
+
+html.is-coarse .stats-journey:hover .arrow {
+  transform: none !important;
+}
+
+html.is-coarse .sheen:hover::before {
+  opacity: 0 !important;
+}
+
+html.is-coarse :is(
+  .article-card,
+  [class*="-video__play"]
+):hover :is(img, [class*="__thumb"]) {
+  transform: none !important;
+  filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-coarse :is(
+    button:not(:disabled),
+    .btn,
+    a.card,
+    [class*="-btn"],
+    [class*="-chip"],
+    [class*="-tab"],
+    [class*="-rail__link"],
+    .stats-journey,
+    .contact-email,
+    .contact-card,
+    .mobile-link,
+    .theme-toggle,
+    .menu-btn
+  ):active {
+    filter: none;
+    transition: none;
+  }
+}

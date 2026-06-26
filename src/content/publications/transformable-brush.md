@@ -16,7 +16,7 @@ technologies:
   - "Kotlin"
   - "Brush / Shader"
   - "Performance"
-featured: true
+featured: false
 order: 5
 ---
 

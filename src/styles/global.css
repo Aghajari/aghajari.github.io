@@ -237,7 +237,6 @@ ol {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 4px;
 }
 
 ::selection {
@@ -367,16 +366,20 @@ p {
   color: var(--btn-fg);
   border: 1px solid transparent;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transition:
     transform var(--dur-fast) var(--ease-out),
     background-color var(--dur-fast) var(--ease-out),
     box-shadow var(--dur-fast) var(--ease-out),
-    opacity var(--dur-fast) var(--ease-out);
+    opacity var(--dur-fast) var(--ease-out),
+    filter var(--dur-fast) var(--ease-out);
 }
 
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
 }
 
 .btn:active {
@@ -389,9 +392,11 @@ p {
   border-color: var(--border-strong);
 }
 
-.btn--ghost:hover {
-  background: var(--surface-hover);
-  box-shadow: none;
+@media (hover: hover) and (pointer: fine) {
+  .btn--ghost:hover {
+    background: var(--surface-hover);
+    box-shadow: none;
+  }
 }
 
 .btn--accent {
@@ -406,8 +411,10 @@ p {
 .btn .arrow {
   transition: transform var(--dur-fast) var(--ease-out);
 }
-.btn:hover .arrow {
-  transform: translateX(3px);
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover .arrow {
+    transform: translateX(3px);
+  }
 }
 .tag {
   display: inline-flex;
@@ -435,22 +442,28 @@ p {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   contain: content;
+  -webkit-tap-highlight-color: transparent;
   transition:
     border-color var(--dur-mid) var(--ease-out),
     transform var(--dur-mid) var(--ease-out),
-    background-color var(--dur-mid) var(--ease-out);
+    background-color var(--dur-mid) var(--ease-out),
+    box-shadow var(--dur-mid) var(--ease-out),
+    filter var(--dur-fast) var(--ease-out);
 }
 
-.card:hover {
-  border-color: var(--border-strong);
-  transform: translateY(-4px);
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-4px);
+  }
+
+  [data-theme="light"] .card:hover {
+    box-shadow: var(--shadow-md);
+  }
 }
 
 [data-theme="light"] .card {
   box-shadow: var(--shadow-sm);
-}
-[data-theme="light"] .card:hover {
-  box-shadow: var(--shadow-md);
 }
 
 /* Surface sheen that follows hover via JS-set custom props */
@@ -471,9 +484,12 @@ p {
   opacity: 0;
   transition: opacity var(--dur-mid) var(--ease-out);
   z-index: -1;
+  border-radius: inherit;
 }
-.sheen:hover::before {
-  opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+  .sheen:hover::before {
+    opacity: 1;
+  }
 }
 .grid {
   display: grid;

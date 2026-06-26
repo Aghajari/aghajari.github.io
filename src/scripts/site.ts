@@ -13,6 +13,60 @@ function getScrollY() {
   return window.scrollY || document.documentElement.scrollTop || 0;
 }
 
+function homeAnchorOffset() {
+  const header =
+    document.getElementById("site-header")?.getBoundingClientRect().height ??
+    68;
+  const root = document.documentElement;
+  const space7 = getComputedStyle(root).getPropertyValue("--space-7").trim();
+  const rootPx = parseFloat(getComputedStyle(root).fontSize) || 16;
+  const gap = space7.endsWith("rem")
+    ? parseFloat(space7) * rootPx
+    : parseFloat(space7) || 48;
+  return header + gap;
+}
+
+function scrollToHomeAnchor(
+  hash: string,
+  behavior: ScrollBehavior = "smooth",
+) {
+  const target = document.querySelector<HTMLElement>(hash);
+  if (!target?.classList.contains("home-anchor")) return false;
+  const top =
+    target.getBoundingClientRect().top + getScrollY() - homeAnchorOffset();
+  window.scrollTo({ top: Math.max(0, top), behavior });
+  return true;
+}
+
+function bindHomeAnchors() {
+  const isHome = (location.pathname.replace(/\/$/, "") || "/") === "/";
+  if (!isHome) return;
+
+  const syncHash = (behavior: ScrollBehavior = "auto") => {
+    if (location.hash) scrollToHomeAnchor(location.hash, behavior);
+  };
+
+  requestAnimationFrame(() => requestAnimationFrame(() => syncHash("auto")));
+
+  const onClick = (e: MouseEvent) => {
+    const link = (e.target as Element).closest<HTMLAnchorElement>(
+      'a[href^="#"]',
+    );
+    if (!link?.hash) return;
+    if (
+      !document.querySelector(link.hash)?.classList.contains("home-anchor")
+    ) {
+      return;
+    }
+    e.preventDefault();
+    history.pushState(null, "", link.hash);
+    scrollToHomeAnchor(link.hash, "smooth");
+  };
+
+  document.addEventListener("click", onClick);
+  addCleanup(() => document.removeEventListener("click", onClick));
+}
+
 function updateHeaderScroll() {
   const header = document.getElementById("site-header");
   if (!header) return;
@@ -243,7 +297,18 @@ function bindAnimationPause() {
 }
 
 /** Single delegated listener — rAF-throttled sheen on hover */
+function bindCoarsePointer() {
+  const mq = window.matchMedia("(hover: none), (pointer: coarse)");
+  const apply = () => {
+    document.documentElement.classList.toggle("is-coarse", mq.matches);
+  };
+  apply();
+  mq.addEventListener("change", apply);
+  addCleanup(() => mq.removeEventListener("change", apply));
+}
+
 function bindSheen() {
+  if (window.matchMedia("(hover: none), (pointer: coarse)").matches) return;
   let frame = 0;
   let active: HTMLElement | null = null;
 
@@ -302,6 +367,7 @@ function bindHeaderLayer() {
 
 function init() {
   runCleanups();
+  bindCoarsePointer();
   bindHeaderScroll();
   bindHeaderLayer();
   bindMobileMenu();
@@ -309,6 +375,7 @@ function init() {
   bindReveal();
   bindAnimationPause();
   bindSheen();
+  bindHomeAnchors();
 }
 
 init();
@@ -326,4 +393,9 @@ document.addEventListener("astro:after-swap", () => {
 document.addEventListener("astro:page-load", () => {
   updateHeaderScroll();
   updateActiveNav();
+  if (location.hash) {
+    requestAnimationFrame(() =>
+      scrollToHomeAnchor(location.hash, "auto"),
+    );
+  }
 });

@@ -13,7 +13,7 @@ const channels = [
     handle: "@theAghajari",
     href: profile.socials.telegram,
     icon: "telegram",
-    note: "Quick chats & questions",
+    note: "Usually the quickest reply",
     accent: "#2aabee",
   },
   {
@@ -21,7 +21,7 @@ const channels = [
     handle: `@${profile.githubUser}`,
     href: profile.socials.github,
     icon: "github",
-    note: "Code, libraries & issues",
+    note: "Libraries, code & ideas",
     accent: "#a78bfa",
   },
   {
@@ -29,7 +29,7 @@ const channels = [
     handle: "@aghajari",
     href: profile.socials.medium,
     icon: "medium",
-    note: "Articles & deep dives",
+    note: "Writing & follow-ups",
     accent: "#34d399",
   },
   {
@@ -37,7 +37,7 @@ const channels = [
     handle: "amir-aghajari",
     href: profile.socials.linkedin,
     icon: "linkedin",
-    note: "Professional network",
+    note: "Professional hellos",
     accent: "#38bdf8",
   },
 ] as const;
@@ -45,12 +45,12 @@ const channels = [
 
 <Base
   title="Contact"
-  description="Say hello to AmirHossein Aghajari — always happy to talk UI engineering, graphics, performance, open source and speaking."
+  description="Say hi to AmirHossein Aghajari — always happy to chat about Android, engineering, open source, or anything about softwares."
 >
   <PageHero
     eyebrow="Say hello"
     title="Let's talk"
-    intro="I love a good engineering conversation — UI, graphics, performance, open source, or a talk. No agenda needed; reach out on whichever channel feels easiest."
+    intro="Stuck on a problem, curious about something here, or just want to compare notes — I'd love to hear from you. No agenda needed; pick whichever channel feels most like you."
   />
 
   <section class="section">
@@ -85,7 +85,7 @@ const channels = [
       <a href={profile.socials.email} class="contact-email sheen" data-reveal>
         <span class="ce-icon"><Icon name="mail" size={20} /></span>
         <div class="ce-text">
-          <span class="ce-label">Prefer email?</span>
+          <span class="ce-label">Or drop me an email</span>
           <span class="ce-addr mono">{email}</span>
         </div>
         <Icon name="arrow-up-right" size={18} class="ce-arrow" />
@@ -118,12 +118,32 @@ const channels = [
     transition:
       border-color var(--dur-mid) var(--ease-out),
       transform var(--dur-mid) var(--ease-out),
-      box-shadow var(--dur-mid) var(--ease-out);
+      box-shadow var(--dur-mid) var(--ease-out),
+      filter var(--dur-fast) var(--ease-out);
   }
-  .contact-card:hover {
-    transform: translateY(-4px);
-    border-color: color-mix(in srgb, var(--ch) 50%, var(--border));
-    box-shadow: 0 22px 50px -30px color-mix(in srgb, var(--ch) 80%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .contact-card:hover {
+      transform: translateY(-4px);
+      border-color: color-mix(in srgb, var(--ch) 50%, var(--border));
+      box-shadow: 0 22px 50px -30px color-mix(in srgb, var(--ch) 80%, transparent);
+    }
+    .contact-card:hover .cc-glow {
+      opacity: 1;
+    }
+    .contact-card:hover .cc-icon {
+      color: #fff;
+      background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--ch) 92%, #fff),
+        var(--ch)
+      );
+      border-color: transparent;
+      transform: scale(1.04);
+    }
+    .contact-card:hover .cc-arrow {
+      transform: translate(2px, -2px);
+      color: color-mix(in srgb, var(--ch) 70%, var(--text));
+    }
   }
   /* soft corner glow on hover */
   .cc-glow {
@@ -140,9 +160,6 @@ const channels = [
     filter: blur(24px);
     transition: opacity var(--dur-mid) var(--ease-out);
     pointer-events: none;
-  }
-  .contact-card:hover .cc-glow {
-    opacity: 1;
   }
 
   .cc-icon {
@@ -161,17 +178,6 @@ const channels = [
       border-color var(--dur-mid),
       transform var(--dur-mid) var(--ease-out);
   }
-  .contact-card:hover .cc-icon {
-    color: #fff;
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--ch) 92%, #fff),
-      var(--ch)
-    );
-    border-color: transparent;
-    transform: scale(1.04);
-  }
-
   .cc-text {
     display: flex;
     flex-direction: column;
@@ -201,12 +207,10 @@ const channels = [
       transform var(--dur-fast) var(--ease-out),
       color var(--dur-fast);
   }
-  .contact-card:hover .cc-arrow {
-    transform: translate(2px, -2px);
-    color: color-mix(in srgb, var(--ch) 70%, var(--text));
-  }
   .contact-email {
     position: relative;
+    isolation: isolate;
+    overflow: hidden;
     display: flex;
     align-items: center;
     gap: var(--space-4);
@@ -224,13 +228,29 @@ const channels = [
     transition:
       border-color var(--dur-mid) var(--ease-out),
       transform var(--dur-mid) var(--ease-out),
-      box-shadow var(--dur-mid) var(--ease-out);
+      box-shadow var(--dur-mid) var(--ease-out),
+      filter var(--dur-fast) var(--ease-out);
   }
-  .contact-email:hover {
-    transform: translateY(-3px);
-    border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
-    box-shadow: 0 18px 44px -28px
-      color-mix(in srgb, var(--accent) 50%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .contact-email:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+      box-shadow: 0 18px 44px -28px
+        color-mix(in srgb, var(--accent) 50%, transparent);
+    }
+    .contact-email:hover .ce-icon {
+      color: #fff;
+      background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--accent) 92%, #fff),
+        var(--accent)
+      );
+      border-color: transparent;
+    }
+    .contact-email:hover .ce-arrow {
+      transform: translate(2px, -2px);
+      color: var(--text);
+    }
   }
   .ce-icon {
     display: grid;
@@ -246,15 +266,6 @@ const channels = [
       color var(--dur-mid),
       background-color var(--dur-mid),
       border-color var(--dur-mid);
-  }
-  .contact-email:hover .ce-icon {
-    color: #fff;
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--accent) 92%, #fff),
-      var(--accent)
-    );
-    border-color: transparent;
   }
   .ce-text {
     display: flex;
@@ -280,10 +291,6 @@ const channels = [
     transition:
       transform var(--dur-fast) var(--ease-out),
       color var(--dur-fast);
-  }
-  .contact-email:hover .ce-arrow {
-    transform: translate(2px, -2px);
-    color: var(--text);
   }
 
   @media (max-width: 620px) {

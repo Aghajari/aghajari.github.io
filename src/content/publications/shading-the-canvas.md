@@ -17,7 +17,7 @@ technologies:
   - "GLSL"
   - "Shaders"
   - "Graphics"
-featured: true
+featured: false
 order: 10
 ---
 

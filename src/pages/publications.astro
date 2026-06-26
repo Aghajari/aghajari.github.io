@@ -15,7 +15,7 @@ const seriesCount = new Set(pubs.map((p) => p.data.series).filter(Boolean))
 
 <Base
   title="Publications"
-  description="Technical writing by AmirHossein Aghajari — deep dives on graphics, animation, performance and systems. Previews here; full articles on Medium."
+  description="Technical writing by AmirHossein Aghajari — deep dives on performance, systems, concurrency, and the Android stack. Previews here; full articles on Medium."
   jsonLd={[
     breadcrumbJsonLd([
       { name: "Home", path: "/" },
@@ -26,7 +26,7 @@ const seriesCount = new Set(pubs.map((p) => p.data.series).filter(Boolean))
   <PageHero
     eyebrow="Writing · Medium"
     title="Writing about the internals"
-    intro="I write to understand. These are previews of every article — graphics, animation, performance and low-level systems — each linking to the full piece on Medium."
+    intro="I write to understand. These are previews of every article — performance, systems, concurrency, and graphics when the topic goes there — each linking to the full piece on Medium."
   >
     <div class="pub-stats" data-reveal style="--reveal-delay:180ms">
       <span class="mono">{pubs.length} articles</span>
@@ -42,7 +42,7 @@ const seriesCount = new Set(pubs.map((p) => p.data.series).filter(Boolean))
       {
         latest && (
           <div class="latest">
-            <ArticleCard entry={latest} feature />
+            <ArticleCard entry={latest} feature animatedCover={false} />
           </div>
         )
       }

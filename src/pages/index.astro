@@ -6,7 +6,7 @@ import ArticleCard from "@components/ArticleCard.astro";
 import TalkCard from "@components/TalkCard.astro";
 import BookCard from "@components/BookCard.astro";
 import Icon from "@components/Icon.astro";
-import { profile, stats } from "@data/profile";
+import { profile, homeJourney } from "@data/profile";
 import { topRatedBooks } from "@data/reading";
 import { personJsonLd, websiteJsonLd } from "@/lib/seo";
 
@@ -22,6 +22,18 @@ const talks = (await getCollection("presentations")).sort((a, b) => {
 });
 const featuredTalks = talks.filter((t) => t.data.featured);
 const topBooks = topRatedBooks(5);
+
+const homeStats = [
+  { value: "9", suffix: "+", label: "Years building" },
+  { value: String(pubs.length), suffix: "", label: "Technical articles" },
+  { value: String(talks.length), suffix: "", label: "Presentations" },
+  { value: "60", suffix: "+", label: "Open-source libraries" },
+];
+
+const heroLead = profile.heroLead
+  .replace("{name}", profile.name)
+  .replace("{role}", profile.role)
+  .replace("{company}", profile.company);
 ---
 
 <Base
@@ -39,15 +51,14 @@ const topBooks = topRatedBooks(5);
         way things <span class="text-gradient hero-move">move.</span>
       </h1>
       <p class="lead hero-statement" data-reveal style="--reveal-delay:140ms">
-        I'm {profile.name} — an Android engineer. I build systems, motion and graphics,
-        and I write about how they work underneath.
+        {heroLead}
       </p>
 
       <div class="hero-actions" data-reveal style="--reveal-delay:220ms">
-        <a href="/presentations" class="btn btn--accent">
+        <a href="#speaking" class="btn btn--accent">
           Explore the talks <Icon name="arrow" size={18} class="arrow" />
         </a>
-        <a href="/publications" class="btn btn--ghost">
+        <a href="#writing" class="btn btn--ghost">
           <Icon name="pen" size={17} /> Read the writing
         </a>
       </div>
@@ -62,15 +73,15 @@ const topBooks = topRatedBooks(5);
       </ul>
     </div>
 
-    <div class="scroll-hint" aria-hidden="true">
+    <a href="#stats" class="scroll-hint" aria-label="Scroll to highlights">
       <span class="scroll-track"><span class="scroll-thumb"></span></span>
-    </div>
+    </a>
   </section>
   <section class="section-tight stats-section">
-    <div class="container">
+    <div id="stats" class="container stats-band home-anchor">
       <ul class="stats-grid">
         {
-          stats.map((s) => (
+          homeStats.map((s) => (
             <li class="stat" data-reveal>
               <span class="stat-value">
                 {s.value}
@@ -81,31 +92,44 @@ const topBooks = topRatedBooks(5);
           ))
         }
       </ul>
+      <a href={homeJourney.cta.href} class="stats-journey sheen" data-reveal>
+        <span class="stats-journey__copy">
+          <span class="stats-journey__label">{homeJourney.cta.label}</span>
+          <span class="stats-journey__hint muted">{homeJourney.cta.hint}</span>
+        </span>
+        <Icon name="arrow" size={18} class="arrow" />
+      </a>
     </div>
   </section>
   <section class="section home-talks">
     <div class="container">
-      <SectionHeading
-        eyebrow="Speaking"
-        title="Talks, rebuilt for the web"
-        intro="The work I care about most — conference talks turned into interactive pages you can explore at your own pace."
-        link={{ href: "/presentations", label: "All presentations" }}
-      />
+      <div id="speaking" class="home-anchor">
+        <SectionHeading
+          eyebrow="Speaking"
+          title="Talks, rebuilt for the web"
+          intro="Conference talks turned into interactive pages — from concurrency and OS internals to animation and graphics."
+          link={{ href: "/presentations", label: "All presentations" }}
+        />
+      </div>
       <div class="grid grid-3">
         {featuredTalks.map((t) => <TalkCard entry={t} />)}
       </div>
     </div>
   </section>
-  <section class="section">
+  <section class="section home-writing">
     <div class="container">
-      <SectionHeading
-        eyebrow="Writing"
-        title="Explaining what happens underneath"
-        intro="Deep dives on graphics, animation and performance — previewed here, read in full on Medium."
-        link={{ href: "/publications", label: "All publications" }}
-      />
+      <div id="writing" class="home-anchor">
+        <SectionHeading
+          eyebrow="Writing"
+          title="Explaining what happens underneath"
+          intro="Technical writing on how software actually works — from threads to the GPU."
+          link={{ href: "/publications", label: "All publications" }}
+        />
+      </div>
       <div class="pub-feature">
-        {featuredPubs[0] && <ArticleCard entry={featuredPubs[0]} feature />}
+        {featuredPubs[0] && (
+          <ArticleCard entry={featuredPubs[0]} feature animatedCover={false} />
+        )}
       </div>
       <div class="grid grid-2 pub-rest">
         {featuredPubs.slice(1).map((p) => <ArticleCard entry={p} />)}
@@ -116,12 +140,14 @@ const topBooks = topRatedBooks(5);
     topBooks.length > 0 && (
       <section class="section home-reading">
         <div class="container">
-          <SectionHeading
-            eyebrow="Reading"
-            title="Five-star shelf"
-            intro="The books that hit hardest — pulled from a small, curated library, not a tracker."
-            link={{ href: "/reading", label: "Browse the library" }}
-          />
+          <div id="reading" class="home-anchor">
+            <SectionHeading
+              eyebrow="Reading"
+              title="Five-star shelf"
+              intro="My personal archive of notes and takeaways. No tracking—just the high-signal ideas that changed how I work, lead, and see the world."
+              link={{ href: "/reading", label: "Browse the library" }}
+            />
+          </div>
           <div class="home-books">
             {topBooks.map((book) => (
               <BookCard book={book} />
@@ -131,9 +157,9 @@ const topBooks = topRatedBooks(5);
       </section>
     )
   }
-  <section class="section">
+  <section class="section home-contact">
     <div class="container">
-      <div class="home-cta" data-reveal>
+      <div id="contact" class="home-cta home-anchor sheen" data-reveal>
         <p class="eyebrow">Say hello</p>
         <h2 class="home-cta__title">
           Happy to talk <span class="text-gradient">engineering.</span>
@@ -233,6 +259,8 @@ const topBooks = topRatedBooks(5);
     left: 50%;
     transform: translateX(-50%);
     z-index: 1;
+    color: inherit;
+    text-decoration: none;
   }
   .scroll-track {
     display: block;
@@ -267,15 +295,28 @@ const topBooks = topRatedBooks(5);
   .stats-section {
     border-block: 1px solid var(--border);
   }
+  .home-anchor {
+    scroll-margin-top: calc(var(--header-h) + var(--space-7));
+  }
+  .stats-band {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(var(--space-5), 4vw, var(--space-7));
+  }
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-5);
     list-style: none;
+    width: 100%;
+    justify-items: center;
+    text-align: center;
   }
   .stat {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 0.35rem;
   }
   .stat-value {
@@ -292,10 +333,81 @@ const topBooks = topRatedBooks(5);
     color: var(--text-3);
     font-size: 0.85rem;
   }
+  .stats-journey {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    box-shadow: inset 0 1px 0 var(--surface-highlight);
+    transition:
+      border-color var(--dur-mid) var(--ease-out),
+      transform var(--dur-mid) var(--ease-out),
+      box-shadow var(--dur-mid) var(--ease-out),
+      filter var(--dur-fast) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .stats-journey:hover {
+      border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+      box-shadow:
+        inset 0 1px 0 var(--surface-highlight),
+        0 10px 28px -22px color-mix(in srgb, var(--accent) 35%, transparent);
+      transform: translateY(-1px);
+    }
+    .stats-journey:hover .arrow {
+      transform: translateX(4px);
+    }
+  }
+  .stats-journey__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+  .stats-journey__label {
+    font-size: 0.92rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .stats-journey__hint {
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+  .stats-journey .arrow {
+    flex-shrink: 0;
+    color: var(--accent);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  @media (min-width: 901px) {
+    .stats-band {
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
+    .stats-grid {
+      flex: 0 1 auto;
+      max-width: 42rem;
+    }
+  }
+  @media (max-width: 900px) {
+    .stats-journey {
+      width: 100%;
+      max-width: 28rem;
+      justify-content: space-between;
+    }
+  }
   @media (max-width: 640px) {
     .stats-grid {
       grid-template-columns: repeat(2, 1fr);
       gap: var(--space-6) var(--space-5);
+    }
+    .stats-journey__label,
+    .stats-journey__hint {
+      white-space: normal;
     }
   }
   .home-talks {
@@ -358,6 +470,7 @@ const topBooks = topRatedBooks(5);
   }
   .home-cta {
     position: relative;
+    isolation: isolate;
     overflow: hidden;
     text-align: center;
     padding: clamp(2.5rem, 6vw, 4.5rem) var(--space-5);
@@ -370,6 +483,16 @@ const topBooks = topRatedBooks(5);
         transparent 60%
       ),
       var(--surface);
+    transition: border-color var(--dur-mid) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .home-cta:hover {
+      border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
+    }
+  }
+  .home-cta > * {
+    position: relative;
+    z-index: 1;
   }
   .home-cta__title {
     font-size: var(--step-4);

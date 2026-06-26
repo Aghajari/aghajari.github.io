@@ -17,7 +17,7 @@ technologies:
   - "Operating Systems"
   - "Concurrency"
   - "Scheduling"
-featured: false
+featured: true
 order: 4
 ---
 

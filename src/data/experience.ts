@@ -18,6 +18,8 @@ export type YearStop = {
   role: string;
   note: string;
   kind: Milestone["kind"];
+  /** Optional accent override for the interactive year rail/card. */
+  tint?: "green";
 };
 
 export const yearStops: YearStop[] = [
@@ -32,7 +34,7 @@ export const yearStops: YearStop[] = [
     year: "2018",
     place: "Freelance · Independent",
     role: "Open-source author",
-    note: "Building the portfolio one custom Android view at a time.",
+    note: "Android apps and open-source libraries — the portfolio that opened doors.",
     kind: "work",
   },
   {
@@ -60,14 +62,15 @@ export const yearStops: YearStop[] = [
     year: "2022",
     place: "Cafe Bazaar, Tehran",
     role: "Senior Android Engineer",
-    note: "Joined one of the region's biggest app marketplaces and dove into the Jetpack Compose migration.",
+    note: "Joined one of the region's biggest app marketplaces — Compose migration, performance, and platform work at scale.",
     kind: "work",
+    tint: "green",
   },
   {
     year: "2023",
     place: "South Korea → Tehran",
     role: "WorldSkills Champion",
-    note: "Best of Nation in Mobile App Development at WorldSkills 2022 — then back to shipping Compose.",
+    note: "WorldSkills Champion — then back to shipping at Cafe Bazaar.",
     kind: "award",
   },
   {
@@ -81,7 +84,7 @@ export const yearStops: YearStop[] = [
     year: "2025",
     place: "Cafe Bazaar · Telegram · AndroidX",
     role: "System Owner & contributor",
-    note: "Won the Telegram profile-redesign contest, contributed to AndroidX, and graduated.",
+    note: "Telegram contest win merged upstream, AndroidX contribution, and graduation.",
     kind: "award",
   },
   {
@@ -159,11 +162,11 @@ export const milestones: Milestone[] = [
     orgUrl: "https://cafebazaar.ir",
     location: "Tehran, Iran",
     summary:
-      "Built one of the largest Android app marketplaces in the region, and helped lead its migration to Jetpack Compose.",
+      "Helped build and harden one of the region's largest Android products — leading the new design system migration while raising performance and engineering standards.",
     points: [
-      "Drove the move to a fully Compose UI, building missing primitives along the way (e.g. ComposeLayoutAnimation).",
-      "Focused on rendering performance, animation quality and a consistent motion language across the product.",
-      "Contributed to shared UI infrastructure used across feature teams.",
+      "Led the Compose migration and shared primitives teams still depend on (e.g. ComposeLayoutAnimation).",
+      "Improved rendering performance and motion consistency alongside architecture reviews and code-health work.",
+      "Built shared infrastructure and practices adopted across feature teams.",
     ],
     kind: "work",
   },
@@ -189,7 +192,7 @@ export const milestones: Milestone[] = [
     orgUrl: "https://aut.ac.ir",
     location: "Tehran, Iran",
     summary:
-      "Studying computer engineering — from compilers and operating systems to graphics — and writing about what I learn.",
+      "Studying computer engineering — compilers, operating systems, and hands-on systems projects — and writing about what I learn.",
     points: [
       "Hands-on systems work: kernel threads in xv6, a MiniJava→C compiler, information-retrieval engines.",
     ],
@@ -214,7 +217,7 @@ export const milestones: Milestone[] = [
       "Rebuilt the Android application for an e-learning platform with a focus on stability and speed.",
     points: [
       "Eliminated ~90% of reported crashes and cut load time by ~50% through code and database optimization.",
-      "Streamlined the UI, reducing the clicks needed for common tasks by ~40%.",
+      "Rebuilt core flows for stability and speed; streamlined common tasks by ~40% fewer taps.",
     ],
     kind: "work",
   },
@@ -225,7 +228,7 @@ export const milestones: Milestone[] = [
     summary:
       "Five years of shipping Android, iOS and backend software — and building the open-source portfolio that became my calling card.",
     points: [
-      "Authored 35+ open-source projects and 10+ custom Android views, earning 1K+ GitHub stars.",
+      "Authored 35+ open-source projects and reusable Android components, earning 1K+ GitHub stars.",
       "Built Titan, a transpiler for Open-Source Android libraries.",
       "Engineered 20+ APIs and 5+ libraries in Go, Node.js and PHP.",
     ],

@@ -17,7 +17,7 @@ technologies:
   - "Reflection"
   - "ClassLoader"
   - "Dynamic Proxy"
-featured: false
+featured: true
 order: 3
 ---
 

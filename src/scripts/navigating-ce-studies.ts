@@ -1,4 +1,5 @@
 import { layoutForViewport, renderComputer } from "./ce-computer-visual";
+import { initPresentationRail } from "../lib/presentation-rail";
 
 type Cleanup = () => void;
 type RenderFn = (
@@ -180,42 +181,7 @@ function initKN() {
     cleanups.push(() => btn.removeEventListener("click", onClick));
   });
 
-  /* Sticky rail — highlight the section currently in view */
-  const links = Array.from(
-    document.querySelectorAll<HTMLAnchorElement>("[data-rail-link]"),
-  );
-  if (links.length) {
-    const ratios = new Map<string, number>();
-    const sections = links
-      .map((l) => document.getElementById(l.dataset.railLink ?? ""))
-      .filter((s): s is HTMLElement => !!s);
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) =>
-          ratios.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0),
-        );
-        let bestId = "";
-        let best = 0;
-        ratios.forEach((r, id) => {
-          if (r > best) {
-            best = r;
-            bestId = id;
-          }
-        });
-        links.forEach((l) =>
-          l.classList.toggle(
-            "is-active",
-            l.dataset.railLink === bestId && best > 0,
-          ),
-        );
-      },
-      { rootMargin: "-20% 0px -55% 0px", threshold: [0, 0.15, 0.4, 0.75] },
-    );
-
-    sections.forEach((s) => io.observe(s));
-    cleanups.push(() => io.disconnect());
-  }
+  initPresentationRail(root, (fn) => cleanups.push(fn));
 }
 
 document.addEventListener("astro:page-load", initKN);

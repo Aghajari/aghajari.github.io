@@ -9,8 +9,10 @@ import Icon from "./Icon.astro";
 interface Props {
   entry: CollectionEntry<"publications">;
   feature?: boolean;
+  /** Shader/tint overlay — defaults to match `feature`. Set false for image-only hero. */
+  animatedCover?: boolean;
 }
-const { entry, feature = false } = Astro.props;
+const { entry, feature = false, animatedCover = feature } = Astro.props;
 const { data } = entry;
 const t = themes[data.theme];
 const cover = getPublicationCover(entry);
@@ -28,7 +30,7 @@ const cover = getPublicationCover(entry);
           src={cover.local}
           alt={cover.alt}
           theme={data.theme}
-          variant="card"
+          variant={animatedCover ? "card" : "plain"}
         />
       ) : (
         <ThemeVisual theme={data.theme} />
@@ -142,9 +144,15 @@ const cover = getPublicationCover(entry);
     transform: translateX(4px);
   }
 
-  .article-card:hover :global(.pub-cover__img) {
+  .article-card:hover :global(.pub-cover--card .pub-cover__img),
+  .article-card:focus-visible :global(.pub-cover--card .pub-cover__img) {
     transform: scale(1.06);
     filter: saturate(0.86) brightness(0.88) contrast(1.04);
+  }
+
+  .article-card:hover :global(.pub-cover--plain .pub-cover__img),
+  .article-card:focus-visible :global(.pub-cover--plain .pub-cover__img) {
+    transform: scale(1.06);
   }
 
   @media (min-width: 880px) {

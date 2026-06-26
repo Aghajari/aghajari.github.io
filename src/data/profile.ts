@@ -8,10 +8,12 @@ export const profile = {
   tagline: "Engineering the way things move.",
   // SEO / meta
   description:
-    "AmirHossein Aghajari — Android Chapter Lead at Cafe Bazaar. Software engineer building beautiful, performant softwares — and writing about the internals.",
+    "AmirHossein Aghajari — Android Chapter Lead at Cafe Bazaar. Leading architecture, quality, and performance on a large Android product — open-source author and writer on systems, concurrency, and the stack underneath.",
   // Long-form intro statement
   statement:
-    "I build the layer where software meets the eye — interfaces, motion, and graphics — and I care about what happens underneath them. For nearly a decade I've shipped Android products, crafted open-source libraries used in hundreds of apps, and written about the internals of animation, rendering, and performance.",
+    "I lead Android engineering at scale — standards, architecture, and how teams ship reliable software. I've owned large codebases, contributed upstream to AndroidX, and gone deep on concurrency, performance, and rendering when the work demands it. Open source and writing are how I pressure-test what I learn.",
+  heroLead:
+    "I'm {name} — {role} at {company}. Leading Android at scale, contributing in the open, and writing about what I learn — from thread schedulers to the pixels on screen.",
   // Hero rotating descriptors
   facets: [],
   socials: {
@@ -24,12 +26,13 @@ export const profile = {
   githubUser: "aghajari",
 };
 
-export const stats = [
-  { value: "9", suffix: "+", label: "Years engineering" },
-  { value: "3", suffix: "", label: "Talks on the site" },
-  { value: "2", suffix: "", label: "Interactive editions" },
-  { value: "10", suffix: "", label: "Technical articles" },
-];
+export const homeJourney = {
+  cta: {
+    href: "/experience",
+    label: "Follow the full journey",
+    hint: "Where I was, year by year",
+  },
+};
 
 export type NavItem = { label: string; href: string };
 
