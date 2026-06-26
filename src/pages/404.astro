@@ -3,15 +3,24 @@ import Base from "@layouts/Base.astro";
 import Icon from "@components/Icon.astro";
 ---
 
-<Base title="Page not found" description="The page you're looking for doesn't exist." noindex>
+<Base
+  title="Page not found"
+  description="The page you're looking for doesn't exist."
+  noindex
+  flushFooter
+>
   <section class="nf grid-bg">
     <div class="nf-glow" aria-hidden="true"></div>
     <div class="container nf-inner">
       <p class="eyebrow">Error 404</p>
       <h1 class="display nf-code text-gradient">404</h1>
-      <p class="lead nf-text">This page drifted off-screen. Let's get you back to something real.</p>
+      <p class="lead nf-text">
+        This page drifted off-screen. Let's get you back to something real.
+      </p>
       <div class="nf-actions">
-        <a href="/" class="btn btn--accent">Back home <Icon name="arrow" size={18} class="arrow" /></a>
+        <a href="/" class="btn btn--accent"
+          >Back home <Icon name="arrow" size={18} class="arrow" /></a
+        >
         <a href="/publications" class="btn btn--ghost">Read the writing</a>
       </div>
     </div>
@@ -19,10 +28,47 @@ import Icon from "@components/Icon.astro";
 </Base>
 
 <style>
-  .nf { position: relative; min-height: 78vh; display: flex; align-items: center; overflow: hidden; }
-  .nf-glow { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); width: min(700px, 80vw); aspect-ratio: 1; background: radial-gradient(closest-side, var(--glow), transparent 70%); filter: blur(20px); }
-  .nf-inner { position: relative; z-index: 1; text-align: center; }
-  .nf-code { font-size: clamp(5rem, 18vw, 13rem); line-height: 0.9; background-size: 200% 200%; animation: aurora-pan 8s var(--ease-in-out) infinite; }
-  .nf-text { margin: var(--space-4) auto var(--space-6); max-width: 40ch; }
-  .nf-actions { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+  .nf {
+    position: relative;
+    min-height: calc(100dvh - var(--header-h));
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .nf-glow {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(700px, 80vw);
+    aspect-ratio: 1;
+    background: radial-gradient(closest-side, var(--glow), transparent 70%);
+    filter: blur(20px);
+  }
+
+  .nf-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .nf-code {
+    font-size: clamp(5rem, 18vw, 13rem);
+    line-height: 0.9;
+    background-size: 200% 200%;
+    animation: aurora-pan 8s var(--ease-in-out) infinite;
+  }
+
+  .nf-text {
+    margin: var(--space-4) auto var(--space-6);
+    max-width: 40ch;
+  }
+
+  .nf-actions {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 </style>

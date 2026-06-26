@@ -11,7 +11,7 @@ import { topRatedBooks } from "@data/reading";
 import { personJsonLd, websiteJsonLd } from "@/lib/seo";
 
 const pubs = (await getCollection("publications")).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 const featuredPubs = pubs.filter((p) => p.data.featured).slice(0, 3);
 
@@ -24,8 +24,10 @@ const featuredTalks = talks.filter((t) => t.data.featured);
 const topBooks = topRatedBooks(5);
 ---
 
-<Base description={profile.description} jsonLd={[personJsonLd(), websiteJsonLd()]}>
-  <!-- ===================== HERO ===================== -->
+<Base
+  description={profile.description}
+  jsonLd={[personJsonLd(), websiteJsonLd()]}
+>
   <section class="hero grid-bg">
     <div class="hero-glow" aria-hidden="true"></div>
     <div class="container hero-inner">
@@ -37,8 +39,8 @@ const topBooks = topRatedBooks(5);
         way things <span class="text-gradient hero-move">move.</span>
       </h1>
       <p class="lead hero-statement" data-reveal style="--reveal-delay:140ms">
-        I'm {profile.name} — an Android engineer. I build systems,
-        motion and graphics, and I write about how they work underneath.
+        I'm {profile.name} — an Android engineer. I build systems, motion and graphics,
+        and I write about how they work underneath.
       </p>
 
       <div class="hero-actions" data-reveal style="--reveal-delay:220ms">
@@ -50,7 +52,12 @@ const topBooks = topRatedBooks(5);
         </a>
       </div>
 
-      <ul class="hero-facets" data-reveal style="--reveal-delay:300ms" aria-label="Focus areas">
+      <ul
+        class="hero-facets"
+        data-reveal
+        style="--reveal-delay:300ms"
+        aria-label="Focus areas"
+      >
         {profile.facets.map((f) => <li class="tag">{f}</li>)}
       </ul>
     </div>
@@ -59,22 +66,23 @@ const topBooks = topRatedBooks(5);
       <span class="scroll-track"><span class="scroll-thumb"></span></span>
     </div>
   </section>
-
-  <!-- ===================== STATS ===================== -->
   <section class="section-tight stats-section">
     <div class="container">
       <ul class="stats-grid">
-        {stats.map((s) => (
-          <li class="stat" data-reveal>
-            <span class="stat-value">{s.value}<span class="stat-suffix">{s.suffix}</span></span>
-            <span class="stat-label">{s.label}</span>
-          </li>
-        ))}
+        {
+          stats.map((s) => (
+            <li class="stat" data-reveal>
+              <span class="stat-value">
+                {s.value}
+                <span class="stat-suffix">{s.suffix}</span>
+              </span>
+              <span class="stat-label">{s.label}</span>
+            </li>
+          ))
+        }
       </ul>
     </div>
   </section>
-
-  <!-- ===================== TALKS (first — what matters most) ===================== -->
   <section class="section home-talks">
     <div class="container">
       <SectionHeading
@@ -88,8 +96,6 @@ const topBooks = topRatedBooks(5);
       </div>
     </div>
   </section>
-
-  <!-- ===================== WRITING ===================== -->
   <section class="section">
     <div class="container">
       <SectionHeading
@@ -106,25 +112,25 @@ const topBooks = topRatedBooks(5);
       </div>
     </div>
   </section>
-
-  <!-- ===================== READING ===================== -->
-  {topBooks.length > 0 && (
-    <section class="section home-reading">
-      <div class="container">
-        <SectionHeading
-          eyebrow="Reading"
-          title="Five-star shelf"
-          intro="The books that hit hardest — pulled from a small, curated library, not a tracker."
-          link={{ href: "/reading", label: "Browse the library" }}
-        />
-        <div class="home-books">
-          {topBooks.map((book) => <BookCard book={book} />)}
+  {
+    topBooks.length > 0 && (
+      <section class="section home-reading">
+        <div class="container">
+          <SectionHeading
+            eyebrow="Reading"
+            title="Five-star shelf"
+            intro="The books that hit hardest — pulled from a small, curated library, not a tracker."
+            link={{ href: "/reading", label: "Browse the library" }}
+          />
+          <div class="home-books">
+            {topBooks.map((book) => (
+              <BookCard book={book} />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
-  )}
-
-  <!-- ===================== CLOSING ===================== -->
+      </section>
+    )
+  }
   <section class="section">
     <div class="container">
       <div class="home-cta" data-reveal>
@@ -139,7 +145,12 @@ const topBooks = topRatedBooks(5);
           <a href="/contact" class="btn btn--accent">
             Get in touch <Icon name="arrow" size={18} class="arrow" />
           </a>
-          <a href={profile.socials.linkedin} target="_blank" rel="noopener" class="btn btn--ghost">
+          <a
+            href={profile.socials.linkedin}
+            target="_blank"
+            rel="noopener"
+            class="btn btn--ghost"
+          >
             <Icon name="linkedin" size={17} /> LinkedIn
           </a>
         </div>
@@ -151,7 +162,6 @@ const topBooks = topRatedBooks(5);
 <script src="../scripts/reading.ts"></script>
 
 <style>
-  /* ---------- Hero ---------- */
   .hero {
     position: relative;
     min-height: min(92vh, 880px);
@@ -184,16 +194,38 @@ const topBooks = topRatedBooks(5);
     opacity: 1;
     filter: blur(28px);
   }
-  .hero-inner { position: relative; z-index: 1; max-width: 980px; }
-  .hero-eyebrow { margin-bottom: var(--space-5); }
-  .hero-title { font-size: clamp(2.8rem, 1.6rem + 6vw, 6.4rem); }
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 980px;
+  }
+  .hero-eyebrow {
+    margin-bottom: var(--space-5);
+  }
+  .hero-title {
+    font-size: clamp(2.8rem, 1.6rem + 6vw, 6.4rem);
+  }
   .hero-move {
     background-size: 220% 220%;
     animation: aurora-pan 8s var(--ease-in-out) infinite;
   }
-  .hero-statement { margin-top: var(--space-5); max-width: 62ch; line-height: 1.65; }
-  .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
-  .hero-facets { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-7); }
+  .hero-statement {
+    margin-top: var(--space-5);
+    max-width: 62ch;
+    line-height: 1.65;
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+  .hero-facets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-7);
+  }
 
   .scroll-hint {
     position: absolute;
@@ -203,19 +235,38 @@ const topBooks = topRatedBooks(5);
     z-index: 1;
   }
   .scroll-track {
-    display: block; width: 22px; height: 36px;
-    border: 1.5px solid var(--border-strong); border-radius: var(--radius-pill);
+    display: block;
+    width: 22px;
+    height: 36px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-pill);
     position: relative;
   }
   .scroll-thumb {
-    position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
-    width: 3px; height: 7px; border-radius: 2px; background: var(--text-2);
+    position: absolute;
+    top: 7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--text-2);
     animation: scroll-bob 1.8s var(--ease-in-out) infinite;
   }
-  @keyframes scroll-bob { 0%,100% { transform: translate(-50%, 0); opacity: 1; } 50% { transform: translate(-50%, 10px); opacity: 0.3; } }
-
-  /* ---------- Stats ---------- */
-  .stats-section { border-block: 1px solid var(--border); }
+  @keyframes scroll-bob {
+    0%,
+    100% {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+    50% {
+      transform: translate(-50%, 10px);
+      opacity: 0.3;
+    }
+  }
+  .stats-section {
+    border-block: 1px solid var(--border);
+  }
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -234,28 +285,40 @@ const topBooks = topRatedBooks(5);
     line-height: 1;
     font-variant-numeric: tabular-nums;
   }
-  .stat-suffix { color: var(--accent); }
-  .stat-label { color: var(--text-3); font-size: 0.85rem; }
-  @media (max-width: 640px) {
-    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-6) var(--space-5); }
+  .stat-suffix {
+    color: var(--accent);
   }
-
-  /* ---------- Talks accent ---------- */
+  .stat-label {
+    color: var(--text-3);
+    font-size: 0.85rem;
+  }
+  @media (max-width: 640px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-6) var(--space-5);
+    }
+  }
   .home-talks {
     background:
-      radial-gradient(100% 60% at 50% 0%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 60%),
+      radial-gradient(
+        100% 60% at 50% 0%,
+        color-mix(in srgb, var(--accent) 5%, transparent),
+        transparent 60%
+      ),
       var(--bg);
     border-bottom: 1px solid var(--border);
   }
-
-  /* ---------- Writing layout ---------- */
-  .pub-feature { margin-bottom: var(--space-5); }
-
-  /* ---------- Reading shelf ---------- */
+  .pub-feature {
+    margin-bottom: var(--space-5);
+  }
   .home-reading {
     border-top: 1px solid var(--border);
     background:
-      radial-gradient(90% 50% at 50% 100%, color-mix(in srgb, var(--accent) 4%, transparent), transparent 65%),
+      radial-gradient(
+        90% 50% at 50% 100%,
+        color-mix(in srgb, var(--accent) 4%, transparent),
+        transparent 65%
+      ),
       var(--bg);
   }
   .home-books {
@@ -270,19 +333,29 @@ const topBooks = topRatedBooks(5);
     max-width: 200px;
   }
   @media (max-width: 1080px) {
-    .home-books { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .home-books :global(.book-card:nth-child(n + 5)) { display: none; }
+    .home-books {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .home-books :global(.book-card:nth-child(n + 5)) {
+      display: none;
+    }
   }
   @media (max-width: 860px) {
-    .home-books { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .home-books :global(.book-card:nth-child(n + 4)) { display: none; }
+    .home-books {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .home-books :global(.book-card:nth-child(n + 4)) {
+      display: none;
+    }
   }
   @media (max-width: 580px) {
-    .home-books { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .home-books :global(.book-card:nth-child(n + 3)) { display: none; }
+    .home-books {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .home-books :global(.book-card:nth-child(n + 3)) {
+      display: none;
+    }
   }
-
-  /* ---------- Closing CTA ---------- */
   .home-cta {
     position: relative;
     overflow: hidden;
@@ -291,7 +364,11 @@ const topBooks = topRatedBooks(5);
     border-radius: var(--radius-xl, var(--radius-lg));
     border: 1px solid var(--border);
     background:
-      radial-gradient(120% 140% at 50% 0%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 60%),
+      radial-gradient(
+        120% 140% at 50% 0%,
+        color-mix(in srgb, var(--accent) 9%, transparent),
+        transparent 60%
+      ),
       var(--surface);
   }
   .home-cta__title {
@@ -300,9 +377,15 @@ const topBooks = topRatedBooks(5);
     line-height: 1.1;
     margin-top: var(--space-3);
   }
-  .home-cta__text { margin: var(--space-4) auto 0; max-width: 48ch; }
+  .home-cta__text {
+    margin: var(--space-4) auto 0;
+    max-width: 48ch;
+  }
   .home-cta__actions {
-    display: flex; flex-wrap: wrap; gap: var(--space-3);
-    justify-content: center; margin-top: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    justify-content: center;
+    margin-top: var(--space-6);
   }
 </style>

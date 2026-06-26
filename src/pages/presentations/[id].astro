@@ -33,20 +33,39 @@ const comingSoon = data.status === "coming-soon";
 <Base {...seo}>
   <article class="talk" style={themeVars(data.theme)}>
     <header class="talk-hero">
-      <div class="talk-hero-visual" aria-hidden="true"><ThemeVisual theme={data.theme} /></div>
+      <div class="talk-hero-visual" aria-hidden="true">
+        <ThemeVisual theme={data.theme} />
+      </div>
       <div class="talk-hero-overlay"></div>
       <div class="container talk-hero-inner">
         <a href="/presentations" class="back-link" data-reveal>
           <Icon name="arrow-left" size={16} class="back-arrow" /> All presentations
         </a>
         <div class="talk-badges" data-reveal style="--reveal-delay:60ms">
-          <span class="talk-topic"><Icon name="mic" size={14} /> {data.topic}</span>
-          {comingSoon && <span class="talk-soon">Full experience coming soon</span>}
+          <span class="talk-topic"
+            ><Icon name="mic" size={14} /> {data.topic}</span
+          >
+          {
+            comingSoon && (
+              <span class="talk-soon">Full experience coming soon</span>
+            )
+          }
         </div>
-        <h1 class="talk-title" data-reveal style="--reveal-delay:120ms">{data.title}</h1>
+        <h1 class="talk-title" data-reveal style="--reveal-delay:120ms">
+          {data.title}
+        </h1>
         <div class="talk-meta" data-reveal style="--reveal-delay:180ms">
           <span>{data.event}</span>
-          {data.date && <><span class="dot-sep">·</span><span>{formatDate(data.date)}</span></>}
+          {
+            data.date && (
+              <>
+                <>
+                  <span class="dot-sep">·</span>
+                  <span>{formatDate(data.date)}</span>
+                </>
+              </>
+            )
+          }
         </div>
       </div>
     </header>
@@ -54,39 +73,62 @@ const comingSoon = data.status === "coming-soon";
     <div class="container talk-body">
       <p class="lead talk-desc" data-reveal>{data.description}</p>
 
-      {data.technologies.length > 0 && (
-        <div class="tag-row talk-tags" data-reveal>
-          {data.technologies.map((tech) => <span class="tag">{tech}</span>)}
-        </div>
-      )}
+      {
+        data.technologies.length > 0 && (
+          <div class="tag-row talk-tags" data-reveal>
+            {data.technologies.map((tech) => (
+              <span class="tag">{tech}</span>
+            ))}
+          </div>
+        )
+      }
 
       <div class="talk-resources" data-reveal>
-        {data.slidesUrl && (
-          <a href={data.slidesUrl} target="_blank" rel="noopener" class="btn btn--ghost">
-            <Icon name="slides" size={17} /> Slides
-          </a>
-        )}
-        {data.videoUrl && (
-          <a href={data.videoUrl} target="_blank" rel="noopener" class="btn btn--ghost">
-            <Icon name="play" size={17} /> Watch
-          </a>
-        )}
+        {
+          data.slidesUrl && (
+            <a
+              href={data.slidesUrl}
+              target="_blank"
+              rel="noopener"
+              class="btn btn--ghost"
+            >
+              <Icon name="slides" size={17} /> Slides
+            </a>
+          )
+        }
+        {
+          data.videoUrl && (
+            <a
+              href={data.videoUrl}
+              target="_blank"
+              rel="noopener"
+              class="btn btn--ghost"
+            >
+              <Icon name="play" size={17} /> Watch
+            </a>
+          )
+        }
       </div>
 
-      {comingSoon && (
-        <div class="talk-placeholder card" data-reveal>
-          <span class="tp-icon"><Icon name="spark" size={22} /></span>
-          <h2 class="tp-title">A bespoke page is on the way</h2>
-          <p class="muted tp-body">
-            This presentation will get its own fully custom experience — designed
-            around its topic, with slides, speaker notes, screenshots and live
-            demos. Until then, here's the gist.
-          </p>
-          <a href="/presentations" class="talk-back-cta">
-            Back to all presentations <Icon name="arrow" size={16} class="arrow" />
-          </a>
-        </div>
-      )}
+      {
+        comingSoon && (
+          <div class="talk-placeholder card" data-reveal>
+            <span class="tp-icon">
+              <Icon name="spark" size={22} />
+            </span>
+            <h2 class="tp-title">A bespoke page is on the way</h2>
+            <p class="muted tp-body">
+              This presentation will get its own fully custom experience —
+              designed around its topic, with slides, speaker notes, screenshots
+              and live demos. Until then, here's the gist.
+            </p>
+            <a href="/presentations" class="talk-back-cta">
+              Back to all presentations{" "}
+              <Icon name="arrow" size={16} class="arrow" />
+            </a>
+          </div>
+        )
+      }
     </div>
   </article>
 </Base>
@@ -95,50 +137,117 @@ const comingSoon = data.status === "coming-soon";
   .talk-hero {
     position: relative;
     min-height: clamp(360px, 52vh, 520px);
-    display: flex; align-items: flex-end; overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
     border-bottom: 1px solid var(--border);
   }
-  .talk-hero-visual { position: absolute; inset: 0; }
-  .talk-hero-visual :global(.tv) { border-radius: 0; }
+  .talk-hero-visual {
+    position: absolute;
+    inset: 0;
+  }
+  .talk-hero-visual :global(.tv) {
+    border-radius: 0;
+  }
   .talk-hero-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, var(--hero-scrim-top) 0%, var(--hero-scrim-mid) 36%, transparent 54%, var(--hero-scrim-bottom) 90%, var(--scrim-end));
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      var(--hero-scrim-top) 0%,
+      var(--hero-scrim-mid) 36%,
+      transparent 54%,
+      var(--hero-scrim-bottom) 90%,
+      var(--scrim-end)
+    );
   }
   .talk-hero-inner {
-    position: relative; z-index: 1;
+    position: relative;
+    z-index: 1;
     padding-block: clamp(2.5rem, 6vw, 4.5rem);
   }
-  .back-link { display: inline-flex; align-items: center; gap: 0.5em; color: var(--text-2); font-size: 0.88rem; margin-bottom: var(--space-5); }
-  .back-link:hover { color: var(--text); }
-  .back-link :global(.back-arrow) { transition: transform var(--dur-fast); }
-  .back-link:hover :global(.back-arrow) { transform: translateX(-3px); }
-
-  .talk-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: var(--space-4); }
-  .talk-topic, .talk-soon {
-    display: inline-flex; align-items: center; gap: 0.4em;
-    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase;
-    padding: 0.35em 0.8em; border-radius: var(--radius-pill);
-    border: 1px solid color-mix(in srgb, var(--t2) 45%, var(--border));
-    background: color-mix(in srgb, var(--surface) 82%, transparent); backdrop-filter: blur(8px);
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--text-2);
+    font-size: 0.88rem;
+    margin-bottom: var(--space-5);
   }
-  .talk-topic { color: color-mix(in srgb, var(--t2) 75%, var(--text-2)); }
-  .talk-soon { color: var(--text-2); }
+  .back-link:hover {
+    color: var(--text);
+  }
+  .back-link :global(.back-arrow) {
+    transition: transform var(--dur-fast);
+  }
+  .back-link:hover :global(.back-arrow) {
+    transform: translateX(-3px);
+  }
+
+  .talk-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--space-4);
+  }
+  .talk-topic,
+  .talk-soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.35em 0.8em;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--t2) 45%, var(--border));
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    backdrop-filter: blur(8px);
+  }
+  .talk-topic {
+    color: color-mix(in srgb, var(--t2) 75%, var(--text-2));
+  }
+  .talk-soon {
+    color: var(--text-2);
+  }
   .talk-title {
     font-size: clamp(2rem, 1.3rem + 4vw, 4rem);
     letter-spacing: -0.03em;
     max-width: 20ch;
     color: var(--text);
   }
-  .talk-meta { display: flex; gap: 0.5em; margin-top: var(--space-4); font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-3); }
-  .dot-sep { opacity: 0.5; }
+  .talk-meta {
+    display: flex;
+    gap: 0.5em;
+    margin-top: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-3);
+  }
+  .dot-sep {
+    opacity: 0.5;
+  }
 
   /* Dark theme — cinematic hero tint over canvas */
   :global([data-theme="dark"]) .talk-hero-overlay {
-    background: linear-gradient(180deg, var(--scrim-soft), transparent 40%, var(--scrim-bottom) 90%, var(--scrim-end));
+    background: linear-gradient(
+      180deg,
+      var(--scrim-soft),
+      transparent 40%,
+      var(--scrim-bottom) 90%,
+      var(--scrim-end)
+    );
   }
-  :global([data-theme="dark"]) .talk-hero-inner { color: var(--on-media-text); }
-  :global([data-theme="dark"]) .back-link { color: var(--on-media-text-2); }
-  :global([data-theme="dark"]) .back-link:hover { color: var(--on-media-text); }
+  :global([data-theme="dark"]) .talk-hero-inner {
+    color: var(--on-media-text);
+  }
+  :global([data-theme="dark"]) .back-link {
+    color: var(--on-media-text-2);
+  }
+  :global([data-theme="dark"]) .back-link:hover {
+    color: var(--on-media-text);
+  }
   :global([data-theme="dark"]) .talk-topic,
   :global([data-theme="dark"]) .talk-soon {
     border-color: color-mix(in srgb, var(--t2) 45%, var(--media-chrome-border));
@@ -147,35 +256,81 @@ const comingSoon = data.status === "coming-soon";
   :global([data-theme="dark"]) .talk-topic {
     color: color-mix(in srgb, var(--t2) 75%, var(--media-chrome-text));
   }
-  :global([data-theme="dark"]) .talk-soon { color: var(--on-media-text-2); }
+  :global([data-theme="dark"]) .talk-soon {
+    color: var(--on-media-text-2);
+  }
   :global([data-theme="dark"]) .talk-title {
     color: var(--on-media-text);
     text-shadow: 0 2px 36px var(--scrim-text);
   }
-  :global([data-theme="dark"]) .talk-meta { color: var(--on-media-text-3); }
+  :global([data-theme="dark"]) .talk-meta {
+    color: var(--on-media-text-3);
+  }
 
-  .talk-body { padding-top: clamp(2.5rem, 6vw, 4rem); max-width: 760px; }
-  .talk-desc { font-size: var(--step-2); color: var(--text); line-height: 1.5; }
-  .talk-tags { margin-top: var(--space-5); }
-  .talk-resources { display: flex; gap: var(--space-3); margin-top: var(--space-5); flex-wrap: wrap; }
-  .talk-resources:empty { display: none; }
+  .talk-body {
+    padding-top: clamp(2.5rem, 6vw, 4rem);
+    max-width: 760px;
+  }
+  .talk-desc {
+    font-size: var(--step-2);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .talk-tags {
+    margin-top: var(--space-5);
+  }
+  .talk-resources {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+    flex-wrap: wrap;
+  }
+  .talk-resources:empty {
+    display: none;
+  }
 
   .talk-placeholder {
-    margin-top: var(--space-7); padding: clamp(2rem, 5vw, 3.5rem); text-align: center;
+    margin-top: var(--space-7);
+    padding: clamp(2rem, 5vw, 3.5rem);
+    text-align: center;
     background:
-      radial-gradient(120% 140% at 50% 0%, color-mix(in srgb, var(--t2) 12%, transparent), transparent 60%),
+      radial-gradient(
+        120% 140% at 50% 0%,
+        color-mix(in srgb, var(--t2) 12%, transparent),
+        transparent 60%
+      ),
       var(--surface);
   }
   .tp-icon {
-    display: inline-grid; place-items: center; width: 52px; height: 52px;
-    border-radius: var(--radius-md); margin-bottom: var(--space-4);
+    display: inline-grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-4);
     background: color-mix(in srgb, var(--t2) 16%, var(--surface-2));
     border: 1px solid color-mix(in srgb, var(--t2) 35%, var(--border));
     color: color-mix(in srgb, var(--t2) 80%, var(--text));
   }
-  .tp-title { font-size: var(--step-2); letter-spacing: -0.02em; }
-  .tp-body { max-width: 50ch; margin: var(--space-3) auto var(--space-5); }
-  .talk-back-cta { display: inline-flex; align-items: center; gap: 0.5em; color: var(--text); font-size: 0.9rem; }
-  .talk-back-cta .arrow { transition: transform var(--dur-fast) var(--ease-out); }
-  .talk-back-cta:hover .arrow { transform: translateX(4px); }
+  .tp-title {
+    font-size: var(--step-2);
+    letter-spacing: -0.02em;
+  }
+  .tp-body {
+    max-width: 50ch;
+    margin: var(--space-3) auto var(--space-5);
+  }
+  .talk-back-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+  .talk-back-cta .arrow {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .talk-back-cta:hover .arrow {
+    transform: translateX(4px);
+  }
 </style>

@@ -38,52 +38,132 @@ const lc = langColor[repo.language] ?? "var(--accent)";
   </div>
   <p class="rc-tagline">{repo.tagline}</p>
   <p class="rc-desc muted">{repo.description}</p>
-  {feature && repo.highlight && (
-    <p class="rc-highlight">
-      <Icon name="spark" size={14} class="rc-spark" />
-      <span>{repo.highlight}</span>
-    </p>
-  )}
+  {
+    feature && repo.highlight && (
+      <p class="rc-highlight">
+        <Icon name="spark" size={14} class="rc-spark" />
+        <span>{repo.highlight}</span>
+      </p>
+    )
+  }
   <div class="rc-foot">
-    <span class="rc-lang"><span class="rc-dot" style={`background:${lc}`}></span>{repo.language}</span>
-    <span class="rc-open">View on GitHub <Icon name="arrow-up-right" size={14} class="arrow" /></span>
+    <span class="rc-lang"
+      ><span class="rc-dot" style={`background:${lc}`}></span>{
+        repo.language
+      }</span
+    >
+    <span class="rc-open"
+      >View on GitHub <Icon
+        name="arrow-up-right"
+        size={14}
+        class="arrow"
+      /></span
+    >
   </div>
 </a>
 
 <style>
-  .repo-card { display: flex; flex-direction: column; gap: 0.7rem; padding: var(--space-5); height: 100%; }
-  .feature { gap: 0.85rem; }
-  .rc-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-  .rc-id { display: inline-flex; align-items: center; gap: 0.5em; }
-  .rc-gh { color: var(--text-2); }
-  .rc-name { font-weight: 600; letter-spacing: -0.01em; font-size: 1.05rem; }
-  .feature .rc-name { font-size: var(--step-1); }
-  .rc-stars {
-    display: inline-flex; align-items: center; gap: 0.3em;
-    font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-2);
+  .repo-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: var(--space-5);
+    height: 100%;
   }
-  .rc-stars :global(svg) { color: #f5b94a; }
-  .rc-tagline { font-weight: 500; color: var(--text); }
-  .rc-desc { font-size: 0.9rem; line-height: 1.55; }
+  .feature {
+    gap: 0.85rem;
+  }
+  .rc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .rc-id {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+  .rc-gh {
+    color: var(--text-2);
+  }
+  .rc-name {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-size: 1.05rem;
+  }
+  .feature .rc-name {
+    font-size: var(--step-1);
+  }
+  .rc-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-2);
+  }
+  .rc-stars :global(svg) {
+    color: #f5b94a;
+  }
+  .rc-tagline {
+    font-weight: 500;
+    color: var(--text);
+  }
+  .rc-desc {
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
   .rc-highlight {
-    display: flex; gap: 0.55em;
-    font-size: 0.85rem; color: var(--text-2);
+    display: flex;
+    gap: 0.55em;
+    font-size: 0.85rem;
+    color: var(--text-2);
     padding: var(--space-3);
     border-radius: var(--radius-md);
     background: var(--surface-2);
     border: 1px solid var(--border);
     line-height: 1.5;
   }
-  .rc-spark { color: var(--accent); flex-shrink: 0; margin-top: 0.15em; }
-  .rc-foot {
-    margin-top: auto; padding-top: var(--space-3);
-    display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
-    font-size: 0.8rem; color: var(--text-3);
+  .rc-spark {
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 0.15em;
   }
-  .rc-lang { display: inline-flex; align-items: center; gap: 0.45em; font-family: var(--font-mono); }
-  .rc-dot { width: 9px; height: 9px; border-radius: 50%; }
-  .rc-open { display: inline-flex; align-items: center; gap: 0.35em; color: var(--text-2); }
-  .rc-open .arrow { transition: transform var(--dur-fast) var(--ease-out); }
-  .repo-card:hover .rc-open { color: var(--text); }
-  .repo-card:hover .rc-open .arrow { transform: translate(2px, -2px); }
+  .rc-foot {
+    margin-top: auto;
+    padding-top: var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    font-size: 0.8rem;
+    color: var(--text-3);
+  }
+  .rc-lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    font-family: var(--font-mono);
+  }
+  .rc-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+  .rc-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    color: var(--text-2);
+  }
+  .rc-open .arrow {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .repo-card:hover .rc-open {
+    color: var(--text);
+  }
+  .repo-card:hover .rc-open .arrow {
+    transform: translate(2px, -2px);
+  }
 </style>

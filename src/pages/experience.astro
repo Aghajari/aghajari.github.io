@@ -16,53 +16,59 @@ const lastYear = yearStops.length - 1;
     title="A journey, not a résumé"
     intro="From freelance open-source author to senior engineer and chapter lead — the milestones that shaped how I build."
   />
-
-  <!-- ===================== INTERACTIVE YEAR TIMELINE ===================== -->
   <section class="section-tight yt-section">
     <div class="container">
       <div class="yt-head" data-reveal>
         <p class="eyebrow">By the year</p>
         <h2 class="h4 yt-headline">Where in the world was I?</h2>
-        <p class="muted yt-sub">Tap a year — I'll tell you where I was and what I was up to.</p>
+        <p class="muted yt-sub">
+          Tap a year — I'll tell you where I was and what I was up to.
+        </p>
       </div>
 
       <div class="yt" data-yeartimeline>
         <div class="yt-rail-wrap">
           <div class="yt-rail" role="tablist" aria-label="Career by year">
-            {yearStops.map((y, i) => (
-              <button
-                type="button"
-                role="tab"
-                class:list={["yt-year", { "is-active": i === lastYear }]}
-                data-year-index={i}
-                data-kind={y.kind}
-                tabindex={i === lastYear ? 0 : -1}
-                aria-selected={i === lastYear ? "true" : "false"}
-                aria-label={`${y.year}: ${y.place}`}
-              >
-                <span class="yt-dot" aria-hidden="true"></span>
-                <span class="yt-num">{y.year}</span>
-              </button>
-            ))}
+            {
+              yearStops.map((y, i) => (
+                <button
+                  type="button"
+                  role="tab"
+                  class:list={["yt-year", { "is-active": i === lastYear }]}
+                  data-year-index={i}
+                  data-kind={y.kind}
+                  tabindex={i === lastYear ? 0 : -1}
+                  aria-selected={i === lastYear ? "true" : "false"}
+                  aria-label={`${y.year}: ${y.place}`}
+                >
+                  <span class="yt-dot" aria-hidden="true" />
+                  <span class="yt-num">{y.year}</span>
+                </button>
+              ))
+            }
           </div>
         </div>
 
         <div class="yt-panel">
-          {yearStops.map((y, i) => (
-            <article
-              class:list={["yt-card", { "is-active": i === lastYear }]}
-              data-year-card={i}
-              data-kind={y.kind}
-            >
-              <span class="yt-card__year" aria-hidden="true">{y.year}</span>
-              <div class="yt-card__main">
-                <p class="yt-card__label">Where I was</p>
-                <h3 class="yt-card__place">{y.place}</h3>
-                <p class="yt-card__role">{y.role}</p>
-                <p class="yt-card__note">{y.note}</p>
-              </div>
-            </article>
-          ))}
+          {
+            yearStops.map((y, i) => (
+              <article
+                class:list={["yt-card", { "is-active": i === lastYear }]}
+                data-year-card={i}
+                data-kind={y.kind}
+              >
+                <span class="yt-card__year" aria-hidden="true">
+                  {y.year}
+                </span>
+                <div class="yt-card__main">
+                  <p class="yt-card__label">Where I was</p>
+                  <h3 class="yt-card__place">{y.place}</h3>
+                  <p class="yt-card__role">{y.role}</p>
+                  <p class="yt-card__note">{y.note}</p>
+                </div>
+              </article>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -71,9 +77,14 @@ const lastYear = yearStops.length - 1;
   <section class="section exp-section">
     <div class="container container-narrow">
       <ol class="timeline">
-        {milestones.map((m, i) => (
-          <ExperienceMilestone milestone={m} revealDelay={Math.min(i, 6) * 45} />
-        ))}
+        {
+          milestones.map((m, i) => (
+            <ExperienceMilestone
+              milestone={m}
+              revealDelay={Math.min(i, 6) * 45}
+            />
+          ))
+        }
       </ol>
     </div>
   </section>
@@ -82,15 +93,23 @@ const lastYear = yearStops.length - 1;
 <script src="../scripts/year-timeline.ts"></script>
 
 <style>
-  /* ============================================================
-     Interactive year timeline
-     ============================================================ */
-  .yt-section { padding-top: clamp(1.5rem, 3vw, 2.5rem); }
-  .yt-head { margin-bottom: var(--space-6); }
-  .yt-headline { margin-top: var(--space-2); letter-spacing: -0.02em; }
-  .yt-sub { margin-top: var(--space-2); }
+  .yt-section {
+    padding-top: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .yt-head {
+    margin-bottom: var(--space-6);
+  }
+  .yt-headline {
+    margin-top: var(--space-2);
+    letter-spacing: -0.02em;
+  }
+  .yt-sub {
+    margin-top: var(--space-2);
+  }
 
-  .yt { --yt-c: var(--accent); }
+  .yt {
+    --yt-c: var(--accent);
+  }
 
   /* —— Rail of years —— */
   .yt-rail-wrap {
@@ -102,7 +121,9 @@ const lastYear = yearStops.length - 1;
     padding-top: 0.65rem;
     margin-top: -0.65rem;
   }
-  .yt-rail-wrap::-webkit-scrollbar { display: none; }
+  .yt-rail-wrap::-webkit-scrollbar {
+    display: none;
+  }
 
   .yt-rail {
     position: relative;
@@ -111,7 +132,9 @@ const lastYear = yearStops.length - 1;
     gap: var(--space-2);
     padding: 0.35rem 0 1.4rem;
   }
-  .yt-rail::-webkit-scrollbar { display: none; }
+  .yt-rail::-webkit-scrollbar {
+    display: none;
+  }
   .yt-rail::before {
     content: "";
     position: absolute;
@@ -162,17 +185,30 @@ const lastYear = yearStops.length - 1;
     font-family: var(--font-mono);
     font-size: 0.8rem;
     letter-spacing: 0.01em;
-    transition: color var(--dur-fast), font-weight var(--dur-fast);
+    transition:
+      color var(--dur-fast),
+      font-weight var(--dur-fast);
   }
-  .yt-year:hover { color: var(--text-2); }
-  .yt-year:hover .yt-dot { border-color: var(--yt-c); transform: scale(1.15); }
-  .yt-year:focus-visible { outline: none; }
+  .yt-year:hover {
+    color: var(--text-2);
+  }
+  .yt-year:hover .yt-dot {
+    border-color: var(--yt-c);
+    transform: scale(1.15);
+  }
+  .yt-year:focus-visible {
+    outline: none;
+  }
   .yt-year:focus-visible .yt-dot {
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--yt-c) 40%, transparent);
   }
 
-  .yt-year.is-active { color: var(--text); }
-  .yt-year.is-active .yt-num { font-weight: 600; }
+  .yt-year.is-active {
+    color: var(--text);
+  }
+  .yt-year.is-active .yt-num {
+    font-weight: 600;
+  }
   .yt-year.is-active .yt-dot {
     transform: scale(1.55);
     background: var(--yt-c);
@@ -181,12 +217,20 @@ const lastYear = yearStops.length - 1;
   }
 
   /* per-kind accents on the rail */
-  .yt-year[data-kind="award"] { --yt-c: #d4a843; }
-  .yt-year[data-kind="education"] { --yt-c: #9aa8c7; }
-  .yt-year[data-kind="contribution"] { --yt-c: #52b87a; }
+  .yt-year[data-kind="award"] {
+    --yt-c: #d4a843;
+  }
+  .yt-year[data-kind="education"] {
+    --yt-c: #9aa8c7;
+  }
+  .yt-year[data-kind="contribution"] {
+    --yt-c: #52b87a;
+  }
 
   /* —— Reveal panel —— */
-  .yt-panel { position: relative; }
+  .yt-panel {
+    position: relative;
+  }
   .yt-card {
     --yt-c: var(--accent);
     display: none;
@@ -197,19 +241,35 @@ const lastYear = yearStops.length - 1;
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     background:
-      radial-gradient(120% 150% at 0% 0%, color-mix(in srgb, var(--yt-c) 8%, transparent), transparent 55%),
+      radial-gradient(
+        120% 150% at 0% 0%,
+        color-mix(in srgb, var(--yt-c) 8%, transparent),
+        transparent 55%
+      ),
       var(--surface);
   }
-  .yt-card[data-kind="award"] { --yt-c: #d4a843; }
-  .yt-card[data-kind="education"] { --yt-c: #9aa8c7; }
-  .yt-card[data-kind="contribution"] { --yt-c: #52b87a; }
+  .yt-card[data-kind="award"] {
+    --yt-c: #d4a843;
+  }
+  .yt-card[data-kind="education"] {
+    --yt-c: #9aa8c7;
+  }
+  .yt-card[data-kind="contribution"] {
+    --yt-c: #52b87a;
+  }
   .yt-card.is-active {
     display: grid;
     animation: yt-in 0.4s var(--ease-out);
   }
   @keyframes yt-in {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .yt-card__year {
@@ -248,8 +308,13 @@ const lastYear = yearStops.length - 1;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .yt-card.is-active { animation: none; }
-    .yt-dot, .yt-year:hover .yt-dot { transition: none; }
+    .yt-card.is-active {
+      animation: none;
+    }
+    .yt-dot,
+    .yt-year:hover .yt-dot {
+      transition: none;
+    }
   }
 
   @media (max-width: 540px) {
@@ -258,7 +323,9 @@ const lastYear = yearStops.length - 1;
       gap: var(--space-3);
       padding: var(--space-5);
     }
-    .yt-card__year { font-size: 2.4rem; }
+    .yt-card__year {
+      font-size: 2.4rem;
+    }
   }
 
   .exp-section {
@@ -365,7 +432,8 @@ const lastYear = yearStops.length - 1;
   :global(.tl-card:not(.tl-card--spotlight):hover) {
     border-color: color-mix(in srgb, var(--border-strong) 80%, var(--border));
     box-shadow:
-      inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 80%, transparent),
+      inset 0 1px 0
+        color-mix(in srgb, var(--surface-highlight) 80%, transparent),
       0 8px 24px -20px color-mix(in srgb, var(--text) 8%, transparent);
     transform: translateY(-2px);
   }
@@ -376,7 +444,11 @@ const lastYear = yearStops.length - 1;
     --spot-fill: color-mix(in srgb, var(--spot) 5%, var(--surface));
     --spot-ink: color-mix(in srgb, var(--spot) 45%, var(--text-2));
     border-color: var(--spot-line);
-    background: linear-gradient(180deg, var(--spot-fill) 0%, var(--surface) 36%);
+    background: linear-gradient(
+      180deg,
+      var(--spot-fill) 0%,
+      var(--surface) 36%
+    );
     box-shadow:
       inset 0 1px 0 color-mix(in srgb, var(--spot) 10%, transparent),
       inset 0 0 0 1px color-mix(in srgb, var(--spot) 6%, transparent);
@@ -535,7 +607,8 @@ const lastYear = yearStops.length - 1;
   :global(.tl-org a) {
     color: var(--text);
     text-decoration: none;
-    border-bottom: 1px solid color-mix(in srgb, var(--border-strong) 80%, transparent);
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--border-strong) 80%, transparent);
     transition: border-color var(--dur-fast);
   }
 
@@ -621,8 +694,13 @@ const lastYear = yearStops.length - 1;
     font-size: 0.83rem;
     padding: 0.45em 0.85em;
     border-radius: var(--radius-pill);
-    border: 1px solid color-mix(in srgb, var(--spot, var(--accent)) 22%, var(--border));
-    background: color-mix(in srgb, var(--spot, var(--accent)) 5%, var(--surface));
+    border: 1px solid
+      color-mix(in srgb, var(--spot, var(--accent)) 22%, var(--border));
+    background: color-mix(
+      in srgb,
+      var(--spot, var(--accent)) 5%,
+      var(--surface)
+    );
     color: color-mix(in srgb, var(--spot, var(--accent)) 55%, var(--text-2));
     text-decoration: none;
     transition:
@@ -633,8 +711,16 @@ const lastYear = yearStops.length - 1;
   }
 
   :global(.tl-link:hover) {
-    border-color: color-mix(in srgb, var(--spot, var(--accent)) 38%, var(--border));
-    background: color-mix(in srgb, var(--spot, var(--accent)) 9%, var(--surface));
+    border-color: color-mix(
+      in srgb,
+      var(--spot, var(--accent)) 38%,
+      var(--border)
+    );
+    background: color-mix(
+      in srgb,
+      var(--spot, var(--accent)) 9%,
+      var(--surface)
+    );
     color: var(--text);
     transform: translateY(-1px);
   }

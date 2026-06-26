@@ -22,7 +22,7 @@ export interface Book {
   /** Official cover artwork — local path under `public/books/`. */
   cover: string;
   /**
-   * Binding colour for the 3D spine + edges, sampled from the cover art.
+   * Binding color for the 3D spine + edges, sampled from the cover art.
    * Regenerate with `node scripts/extract-spine-colors.mjs`. Spine lettering
    * auto-switches to dark ink on light bindings.
    */
@@ -140,7 +140,7 @@ export const books: Book[] = [
     review:
       "Although many told me they didn\u2019t like this particular book by Dostoyevsky, I really enjoyed it. It\u2019s a relatively simple story, yet it has its own brilliant moments. Take the scene where the narrator realizes that \u2018by a single turn of a roulette wheel everything\u2026 has become changed.\u2019 It brilliantly shows how quickly a life can pivot on a single bet, and how hypocritical society is about success and failure.",
     quote:
-      "What could you say to me that I do not already know? Well, wherein lies my difficulty? It lies in the fact that **by a single turn of a roulette wheel everything for me, has become changed.** Yet, had things befallen otherwise, these moralists would have been among the first (yes, I feel persuaded of it) to approach me with friendly jests and congratulations. Yes, they would never have turned from me as they are doing now! **No; tomorrow all shall be ended!**",
+      "What could you say to me that I do not already know? Well, wherein lies my difficulty? It lies in the fact that **by a single turn of a roulette wheel everything for me, has become changed.** Yet, had things befallen otherwise, these moralists would have been among the first (yes, I feel persuaded of it) to approach me with friendly jests and congratulations. Yes, they would never have turned from me as they are doing now!\n\n**No; tomorrow all shall be ended!**",
   },
   {
     slug: "the-picture-of-dorian-gray",
@@ -261,7 +261,7 @@ export const books: Book[] = [
     review:
       "A comforting and deeply relatable book about regrets and the choices that define us. My absolute favorite part was the chess metaphor, where Mrs. Elm reminds Nora that \u2018a pawn is never just a pawn. A pawn is a queen-in-waiting. All you need to do is find a way to keep moving forward.\u2019 It\u2019s an incredibly beautiful reminder that even when we feel small and ordinary, we still have the power to change our lives if we just keep taking one step at a time. While the plot felt a little predictable toward the end, the emotional core and these moving philosophical insights made it a very worthwhile read.",
     quote:
-      "\u2018You need to realise something if you are ever to succeed at chess,\u2019 she said, as if Nora had nothing bigger to think about. \u2018And the thing you need to realise is this: **the game is never over until it is over. It isn\u2019t over if there is a single pawn still on the board. If one side is down to a pawn and a king, and the other side has every player, there is still a game. And even if you were a pawn \u2013 maybe we all are \u2013 then you should remember that a pawn is the most magical piece of all. It might look small and ordinary but it isn\u2019t. Because a pawn is never just a pawn. A pawn is a queen-in-waiting. All you need to do is find a way to keep moving forward. One square after another. And you can get to the other side and unlock all kinds of power.**\u2019 Nora stared at the books around her. \u2018So, are you saying I only have pawns to play with?\u2019 \u2018I am saying that **the thing that looks the most ordinary might end up being the thing that leads you to victory. You have to keep going.** Like that day in the river. Do you remember?\u2019",
+      "\u2018You need to realise something if you are ever to succeed at chess,\u2019 she said, as if Nora had nothing bigger to think about. \u2018And the thing you need to realise is this: **the game is never over until it is over. It isn\u2019t over if there is a single pawn still on the board. If one side is down to a pawn and a king, and the other side has every player, there is still a game. And even if you were a pawn \u2013 maybe we all are \u2013 then you should remember that a pawn is the most magical piece of all. It might look small and ordinary but it isn\u2019t. Because a pawn is never just a pawn. A pawn is a queen-in-waiting. All you need to do is find a way to keep moving forward. One square after another. And you can get to the other side and unlock all kinds of power.**\u2019 Nora stared at the books around her. \u2018So, are you saying I only have pawns to play with?\u2019\n\u2018I am saying that **the thing that looks the most ordinary might end up being the thing that leads you to victory. You have to keep going.** Like that day in the river. Do you remember?\u2019",
   },
   {
     slug: "the-stranger",
@@ -297,7 +297,7 @@ export const books: Book[] = [
     review:
       "The psychological insights are incredible, especially the dialogue about what truly makes someone \u2018sick.\u2019 The doctor\u2019s reminder that suppressing your uniqueness is a \u2018distortion of nature\u2019 is such a powerful and comforting message. It perfectly captures Coelho\u2019s gift for finding deep spiritual truths in simple conversations. Highly recommended!",
     quote:
-      "\u201cSo to go back to your question. What was it again?\u201d **\u201cAm I cured?\u201d \u201cNo. You\u2019re someone who is different, but who wants to be the same as everyone else. And that, in my view, is a serious illness.\u201d** \u201cIs wanting to be different a serious illness?\u201d **\u201cIt is if you force yourself to be the same as everyone else: it causes neuroses, psychoses and paranoia. It\u2019s a distortion of nature, it goes against God\u2019s laws, for in all the world\u2019s woods and forests, He did not create a single leaf the same as another.** But you think it\u2019s mad to be different and **that\u2019s why you chose to live in Villete,\u201d**",
+      "\u201cSo to go back to your question. What was it again?\u201d\n**\u201cAm I cured?\u201d\n \u201cNo. You\u2019re someone who is different, but who wants to be the same as everyone else. And that, in my view, is a serious illness.\u201d**\n \u201cIs wanting to be different a serious illness?\u201d\n **\u201cIt is if you force yourself to be the same as everyone else: it causes neuroses, psychoses and paranoia. It\u2019s a distortion of nature, it goes against God\u2019s laws, for in all the world\u2019s woods and forests, He did not create a single leaf the same as another.** But you think it\u2019s mad to be different and **that\u2019s why you chose to live in Villete,\u201d**",
   },
   {
     slug: "notes-from-underground",
@@ -425,11 +425,26 @@ export const books: Book[] = [
   },
 ];
 
-export type LibrarySort = "reading" | "title" | "author" | "rating" | "published";
+export type LibrarySort =
+  | "reading"
+  | "title"
+  | "author"
+  | "rating"
+  | "published";
 
 const MONTH_INDEX: Record<string, number> = {
-  jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
-  jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+  jan: 1,
+  feb: 2,
+  mar: 3,
+  apr: 4,
+  may: 5,
+  jun: 6,
+  jul: 7,
+  aug: 8,
+  sep: 9,
+  oct: 10,
+  nov: 11,
+  dec: 12,
 };
 
 /** Turn "May 2022" into 202205 for sorting; uncertain dates become 0. */
@@ -447,14 +462,17 @@ export function sortBooks(list: Book[], mode: LibrarySort = "reading"): Book[] {
       case "title":
         return a.title.localeCompare(b.title);
       case "author":
-        return a.author.localeCompare(b.author) || a.title.localeCompare(b.title);
+        return (
+          a.author.localeCompare(b.author) || a.title.localeCompare(b.title)
+        );
       case "rating":
         return b.rating - a.rating || a.title.localeCompare(b.title);
       case "published":
         return b.year - a.year || a.title.localeCompare(b.title);
       case "reading":
       default: {
-        const diff = readingDateSortKey(b.readingDate) - readingDateSortKey(a.readingDate);
+        const diff =
+          readingDateSortKey(b.readingDate) - readingDateSortKey(a.readingDate);
         return diff || a.title.localeCompare(b.title);
       }
     }

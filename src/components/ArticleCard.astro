@@ -22,11 +22,18 @@ const cover = getPublicationCover(entry);
   data-reveal
 >
   <div class="ac-visual">
-    {cover ? (
-      <PublicationCover src={cover.local} alt={cover.alt} theme={data.theme} variant="card" />
-    ) : (
-      <ThemeVisual theme={data.theme} />
-    )}
+    {
+      cover ? (
+        <PublicationCover
+          src={cover.local}
+          alt={cover.alt}
+          theme={data.theme}
+          variant="card"
+        />
+      ) : (
+        <ThemeVisual theme={data.theme} />
+      )
+    }
     <span class="ac-domain">{t.label}</span>
   </div>
   <div class="ac-body">
@@ -34,7 +41,16 @@ const cover = getPublicationCover(entry);
       <span>{formatDate(data.date)}</span>
       <span class="dot-sep">·</span>
       <span>{data.readingTime} min read</span>
-      {data.series && <><span class="dot-sep">·</span><span class="ac-series">{data.series}</span></>}
+      {
+        data.series && (
+          <>
+            <>
+              <span class="dot-sep">·</span>
+              <span class="ac-series">{data.series}</span>
+            </>
+          </>
+        )
+      }
     </div>
     <h3 class="ac-title">{data.title}</h3>
     <p class="ac-summary muted">{data.subtitle}</p>
@@ -56,7 +72,9 @@ const cover = getPublicationCover(entry);
     aspect-ratio: 16 / 10;
     border-bottom: 1px solid var(--border);
   }
-  .feature .ac-visual { aspect-ratio: 16 / 8; }
+  .feature .ac-visual {
+    aspect-ratio: 16 / 8;
+  }
   .ac-domain {
     position: absolute;
     top: var(--space-3);
@@ -90,15 +108,24 @@ const cover = getPublicationCover(entry);
     font-size: 0.75rem;
     color: var(--text-3);
   }
-  .ac-series { color: var(--accent); }
-  .dot-sep { opacity: 0.5; }
+  .ac-series {
+    color: var(--accent);
+  }
+  .dot-sep {
+    opacity: 0.5;
+  }
   .ac-title {
     font-size: var(--step-2);
     letter-spacing: -0.02em;
     line-height: 1.15;
   }
-  .feature .ac-title { font-size: var(--step-3); }
-  .ac-summary { font-size: 0.95rem; line-height: 1.55; }
+  .feature .ac-title {
+    font-size: var(--step-3);
+  }
+  .ac-summary {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
   .ac-cta {
     margin-top: auto;
     padding-top: var(--space-3);
@@ -108,8 +135,12 @@ const cover = getPublicationCover(entry);
     font-size: 0.88rem;
     color: var(--text);
   }
-  .ac-cta .arrow { transition: transform var(--dur-fast) var(--ease-out); }
-  .article-card:hover .ac-cta .arrow { transform: translateX(4px); }
+  .ac-cta .arrow {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .article-card:hover .ac-cta .arrow {
+    transform: translateX(4px);
+  }
 
   .article-card:hover :global(.pub-cover__img) {
     transform: scale(1.06);
@@ -117,8 +148,19 @@ const cover = getPublicationCover(entry);
   }
 
   @media (min-width: 880px) {
-    .feature { flex-direction: row; }
-    .feature .ac-visual { aspect-ratio: auto; width: 52%; border-bottom: none; border-right: 1px solid var(--border); }
-    .feature .ac-body { width: 48%; justify-content: center; padding: var(--space-7); }
+    .feature {
+      flex-direction: row;
+    }
+    .feature .ac-visual {
+      aspect-ratio: auto;
+      width: 52%;
+      border-bottom: none;
+      border-right: 1px solid var(--border);
+    }
+    .feature .ac-body {
+      width: 48%;
+      justify-content: center;
+      padding: var(--space-7);
+    }
   }
 </style>

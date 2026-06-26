@@ -6,10 +6,11 @@ import ArticleCard from "@components/ArticleCard.astro";
 import { breadcrumbJsonLd } from "@/lib/seo";
 
 const pubs = (await getCollection("publications")).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 const [latest, ...rest] = pubs;
-const seriesCount = new Set(pubs.map((p) => p.data.series).filter(Boolean)).size;
+const seriesCount = new Set(pubs.map((p) => p.data.series).filter(Boolean))
+  .size;
 ---
 
 <Base
@@ -38,11 +39,13 @@ const seriesCount = new Set(pubs.map((p) => p.data.series).filter(Boolean)).size
 
   <section class="section">
     <div class="container">
-      {latest && (
-        <div class="latest">
-          <ArticleCard entry={latest} feature />
-        </div>
-      )}
+      {
+        latest && (
+          <div class="latest">
+            <ArticleCard entry={latest} feature />
+          </div>
+        )
+      }
       <div class="grid grid-3">
         {rest.map((p) => <ArticleCard entry={p} />)}
       </div>
@@ -52,9 +55,18 @@ const seriesCount = new Set(pubs.map((p) => p.data.series).filter(Boolean)).size
 
 <style>
   .pub-stats {
-    display: flex; flex-wrap: wrap; gap: 0.6em; align-items: center;
-    margin-top: var(--space-6); color: var(--text-3); font-size: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    align-items: center;
+    margin-top: var(--space-6);
+    color: var(--text-3);
+    font-size: 0.85rem;
   }
-  .dot-sep { opacity: 0.5; }
-  .latest { margin-bottom: var(--space-6); }
+  .dot-sep {
+    opacity: 0.5;
+  }
+  .latest {
+    margin-bottom: var(--space-6);
+  }
 </style>

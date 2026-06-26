@@ -24,9 +24,22 @@ const byCategory = ossCategories.map((cat) => ({
     intro="For years almost everything I learned became a library. Here's the work — grouped by what it does."
   >
     <div class="oss-summary" data-reveal style="--reveal-delay:180ms">
-      <div class="oss-stat"><span class="oss-num">{ossSummary.totalRepos}</span><span class="oss-lbl">public repositories</span></div>
-      <div class="oss-stat"><span class="oss-num">1500+</span><span class="oss-lbl">stars on featured</span></div>
-      <a href={profile.socials.github} target="_blank" rel="noopener" class="btn btn--ghost oss-gh">
+      <div class="oss-stat">
+        <span class="oss-num">{ossSummary.totalRepos}</span><span
+          class="oss-lbl">public repositories</span
+        >
+      </div>
+      <div class="oss-stat">
+        <span class="oss-num">1500+</span><span class="oss-lbl"
+          >stars on featured</span
+        >
+      </div>
+      <a
+        href={profile.socials.github}
+        target="_blank"
+        rel="noopener"
+        class="btn btn--ghost oss-gh"
+      >
         <Icon name="github" size={18} /> @{profile.githubUser}
       </a>
     </div>
@@ -47,32 +60,67 @@ const byCategory = ossCategories.map((cat) => ({
   </section>
 
   <!-- By category -->
-  {byCategory.map(({ cat, items }) => (
-    <section class="section-tight">
-      <div class="container">
-        <div class="cat-head" data-reveal>
-          <h2 class="h4 cat-title">{cat}</h2>
-          <span class="cat-count mono">{items.length}</span>
+  {
+    byCategory.map(({ cat, items }) => (
+      <section class="section-tight">
+        <div class="container">
+          <div class="cat-head" data-reveal>
+            <h2 class="h4 cat-title">{cat}</h2>
+            <span class="cat-count mono">{items.length}</span>
+          </div>
+          <div class="grid grid-3">
+            {items.map((r) => (
+              <RepoCard repo={r} />
+            ))}
+          </div>
         </div>
-        <div class="grid grid-3">
-          {items.map((r) => <RepoCard repo={r} />)}
-        </div>
-      </div>
-    </section>
-  ))}
+      </section>
+    ))
+  }
 </Base>
 
 <style>
   .oss-summary {
-    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6);
     margin-top: var(--space-7);
   }
-  .oss-stat { display: flex; flex-direction: column; }
-  .oss-num { font-size: var(--step-3); font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
-  .oss-lbl { color: var(--text-3); font-size: 0.82rem; margin-top: 0.2rem; }
-  .oss-gh { margin-left: auto; }
-  .cat-head { display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-6); }
-  .cat-title { letter-spacing: -0.02em; }
-  .cat-count { color: var(--text-3); font-size: 0.85rem; }
-  @media (max-width: 640px) { .oss-gh { margin-left: 0; } }
+  .oss-stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .oss-num {
+    font-size: var(--step-3);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .oss-lbl {
+    color: var(--text-3);
+    font-size: 0.82rem;
+    margin-top: 0.2rem;
+  }
+  .oss-gh {
+    margin-left: auto;
+  }
+  .cat-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+  }
+  .cat-title {
+    letter-spacing: -0.02em;
+  }
+  .cat-count {
+    color: var(--text-3);
+    font-size: 0.85rem;
+  }
+  @media (max-width: 640px) {
+    .oss-gh {
+      margin-left: 0;
+    }
+  }
 </style>

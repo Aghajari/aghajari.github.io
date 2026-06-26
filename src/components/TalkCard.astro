@@ -36,56 +36,68 @@ const speakerLine =
   <div class="tc-visual">
     <TalkCardVisual talkId={entry.id} theme={data.theme} />
     <span class="tc-domain">{t.domain}</span>
-    {comingSoon ? (
-      <span class="tc-badge">Coming soon</span>
-    ) : (
-      <span class="tc-badge tc-badge--live">
-        <Icon name={liveIcon} size={11} /> {liveLabel}
-      </span>
-    )}
-    {data.duration && (
-      <span class="tc-duration mono">
-        <Icon name="play" size={12} /> {data.duration}
-      </span>
-    )}
+    {
+      comingSoon ? (
+        <span class="tc-badge">Coming soon</span>
+      ) : (
+        <span class="tc-badge tc-badge--live">
+          <Icon name={liveIcon} size={11} /> {liveLabel}
+        </span>
+      )
+    }
+    {
+      data.duration && (
+        <span class="tc-duration mono">
+          <Icon name="play" size={12} /> {data.duration}
+        </span>
+      )
+    }
   </div>
 
   <div class="tc-body">
     <div class="tc-meta mono">
       <span>{data.event}</span>
-      {data.date && (
-        <>
-          <span class="dot-sep">·</span>
-          <span>{formatDate(data.date)}</span>
-        </>
-      )}
-      {data.language && (
-        <>
-          <span class="dot-sep">·</span>
-          <span>{data.language}</span>
-        </>
-      )}
+      {
+        data.date && (
+          <>
+            <span class="dot-sep">·</span>
+            <span>{formatDate(data.date)}</span>
+          </>
+        )
+      }
+      {
+        data.language && (
+          <>
+            <span class="dot-sep">·</span>
+            <span>{data.language}</span>
+          </>
+        )
+      }
     </div>
 
     <h3 class="tc-title">{data.title}</h3>
     <p class="tc-topic">{data.topic}</p>
     <p class="tc-desc muted">{data.description}</p>
 
-    {speakerLine && (
-      <p class="tc-speakers">
-        <Icon name="mic" size={14} />
-        <span>{speakerLine}</span>
-      </p>
-    )}
+    {
+      speakerLine && (
+        <p class="tc-speakers">
+          <Icon name="mic" size={14} />
+          <span>{speakerLine}</span>
+        </p>
+      )
+    }
 
-    {visibleTags.length > 0 && (
-      <div class="tag-row tc-tags">
-        {visibleTags.map((tech) => (
-          <span class="tag">{tech}</span>
-        ))}
-        {extraTags > 0 && <span class="tag tag--more">+{extraTags}</span>}
-      </div>
-    )}
+    {
+      visibleTags.length > 0 && (
+        <div class="tag-row tc-tags">
+          {visibleTags.map((tech) => (
+            <span class="tag">{tech}</span>
+          ))}
+          {extraTags > 0 && <span class="tag tag--more">+{extraTags}</span>}
+        </div>
+      )
+    }
 
     <span class="tc-cta">
       {live ? cta : "View"}
@@ -157,7 +169,8 @@ const speakerLine =
     text-transform: uppercase;
     padding: 0.32em 0.68em;
     border-radius: var(--radius-pill);
-    border: 1px solid color-mix(in srgb, var(--t2) 40%, var(--media-chrome-border));
+    border: 1px solid
+      color-mix(in srgb, var(--t2) 40%, var(--media-chrome-border));
     color: color-mix(in srgb, var(--t2) 80%, var(--media-chrome-text));
     background: color-mix(in srgb, var(--media-chrome-bg) 86%, transparent);
     backdrop-filter: blur(10px);
@@ -200,7 +213,9 @@ const speakerLine =
     font-size: 0.74rem;
     color: var(--text-3);
   }
-  .dot-sep { opacity: 0.5; }
+  .dot-sep {
+    opacity: 0.5;
+  }
 
   .tc-title {
     font-size: var(--step-2);
@@ -237,7 +252,9 @@ const speakerLine =
     flex-shrink: 0;
   }
 
-  .tc-tags { margin-top: 0.15rem; }
+  .tc-tags {
+    margin-top: 0.15rem;
+  }
   .tag--more {
     color: var(--text-3);
     border-style: dashed;
@@ -253,7 +270,13 @@ const speakerLine =
     color: var(--text);
     transition: color var(--dur-fast);
   }
-  .tc-cta .arrow { transition: transform var(--dur-fast) var(--ease-out); }
-  .talk-card:hover .tc-cta { color: color-mix(in srgb, var(--t2) 75%, var(--text)); }
-  .talk-card:hover .tc-cta .arrow { transform: translateX(4px); }
+  .tc-cta .arrow {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .talk-card:hover .tc-cta {
+    color: color-mix(in srgb, var(--t2) 75%, var(--text));
+  }
+  .talk-card:hover .tc-cta .arrow {
+    transform: translateX(4px);
+  }
 </style>

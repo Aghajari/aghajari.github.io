@@ -1,16 +1,14 @@
-/* ============================================================
-   Experience — interactive "where was I?" year timeline.
-   Click (or arrow-key) a year to reveal that year's stop.
-   Lifecycle-managed for Astro View Transitions.
-   ============================================================ */
-
 type Cleanup = () => void;
 const ROOT_SELECTOR = "[data-yeartimeline]";
 let cleanups: Cleanup[] = [];
 
 function destroy() {
   cleanups.forEach((fn) => {
-    try { fn(); } catch { /* noop */ }
+    try {
+      fn();
+    } catch {
+      /* noop */
+    }
   });
   cleanups = [];
 }
@@ -20,8 +18,12 @@ function init() {
   const root = document.querySelector<HTMLElement>(ROOT_SELECTOR);
   if (!root) return;
 
-  const years = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-year-index]"));
-  const cards = Array.from(root.querySelectorAll<HTMLElement>("[data-year-card]"));
+  const years = Array.from(
+    root.querySelectorAll<HTMLButtonElement>("[data-year-index]"),
+  );
+  const cards = Array.from(
+    root.querySelectorAll<HTMLElement>("[data-year-card]"),
+  );
   if (!years.length) return;
 
   const select = (idx: number, focus = false) => {
@@ -31,7 +33,11 @@ function init() {
       y.setAttribute("aria-selected", on ? "true" : "false");
       y.tabIndex = on ? 0 : -1;
       if (on) {
-        y.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+        y.scrollIntoView({
+          block: "nearest",
+          inline: "center",
+          behavior: "smooth",
+        });
         if (focus) y.focus();
       }
     });

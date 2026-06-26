@@ -36,14 +36,19 @@ function bindHeaderScroll() {
 
 function updateActiveNav() {
   const path = location.pathname.replace(/\/$/, "") || "/";
-  document.querySelectorAll<HTMLAnchorElement>(".nav-link, .mobile-link").forEach((link) => {
-    const href = link.getAttribute("href");
-    if (!href) return;
-    const active = href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
-    link.classList.toggle("active", active);
-    if (active) link.setAttribute("aria-current", "page");
-    else link.removeAttribute("aria-current");
-  });
+  document
+    .querySelectorAll<HTMLAnchorElement>(".nav-link, .mobile-link")
+    .forEach((link) => {
+      const href = link.getAttribute("href");
+      if (!href) return;
+      const active =
+        href === "/"
+          ? path === "/"
+          : path === href || path.startsWith(href + "/");
+      link.classList.toggle("active", active);
+      if (active) link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
+    });
 }
 
 function bindMobileMenu() {
@@ -83,14 +88,18 @@ function bindMobileMenu() {
   backdrop?.addEventListener("click", onClose);
   document.addEventListener("keydown", onKeyDown);
   mq.addEventListener("change", onMqChange);
-  mobileNav.querySelectorAll("a").forEach((a) => a.addEventListener("click", onClose));
+  mobileNav
+    .querySelectorAll("a")
+    .forEach((a) => a.addEventListener("click", onClose));
 
   addCleanup(() => {
     menuBtn.removeEventListener("click", onToggle);
     backdrop?.removeEventListener("click", onClose);
     document.removeEventListener("keydown", onKeyDown);
     mq.removeEventListener("change", onMqChange);
-    mobileNav.querySelectorAll("a").forEach((a) => a.removeEventListener("click", onClose));
+    mobileNav
+      .querySelectorAll("a")
+      .forEach((a) => a.removeEventListener("click", onClose));
     document.body.classList.remove("nav-open");
     header.classList.remove("menu-open");
   });
@@ -103,6 +112,20 @@ function applyTheme(next: string) {
   } catch (e) {}
 }
 
+/** Strip Astro morph names so book covers don't enter the VT overlay during theme swap. */
+function suspendViewTransitionNames() {
+  const patched: HTMLElement[] = [];
+  document
+    .querySelectorAll<HTMLElement>("[data-astro-transition-scope]")
+    .forEach((el) => {
+      patched.push(el);
+      el.style.setProperty("view-transition-name", "none", "important");
+    });
+  return () => {
+    patched.forEach((el) => el.style.removeProperty("view-transition-name"));
+  };
+}
+
 function bindTheme() {
   const btn = document.getElementById("theme-toggle");
   if (!btn) return;
@@ -111,8 +134,12 @@ function bindTheme() {
     const root = document.documentElement;
     const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const startViewTransition = (document as any).startViewTransition?.bind(document);
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const startViewTransition = (document as any).startViewTransition?.bind(
+      document,
+    );
 
     // No View Transitions support (or reduced motion) — swap instantly.
     if (!startViewTransition || reduce) {
@@ -126,10 +153,11 @@ function bindTheme() {
     const y = rect.top + rect.height / 2;
     const endRadius = Math.hypot(
       Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
+      Math.max(y, window.innerHeight - y),
     );
 
     root.classList.add("theme-transition");
+    const restoreNames = suspendViewTransitionNames();
     const transition = startViewTransition(() => applyTheme(next));
 
     transition.ready
@@ -145,12 +173,13 @@ function bindTheme() {
             duration: 500,
             easing: "cubic-bezier(0.4, 0, 0.2, 1)",
             pseudoElement: "::view-transition-new(root)",
-          }
+          },
         );
       })
       .catch(() => {});
 
     transition.finished.finally(() => {
+      restoreNames();
       root.classList.remove("theme-transition");
     });
   };
@@ -174,7 +203,7 @@ function bindReveal() {
         }
       });
     },
-    { rootMargin: "0px 0px -8% 0px", threshold: 0.05 }
+    { rootMargin: "0px 0px -8% 0px", threshold: 0.05 },
   );
   els.forEach((el) => io.observe(el));
   addCleanup(() => io.disconnect());
@@ -183,7 +212,7 @@ function bindReveal() {
 /** Pause decorative CSS animations when off-screen */
 function bindAnimationPause() {
   const targets = document.querySelectorAll<HTMLElement>(
-    ".tv, .hero-glow, .hero-move, .pub-cover--hero"
+    ".tv, .hero-glow, .hero-move, .pub-cover--hero",
   );
   if (!("IntersectionObserver" in window) || targets.length === 0) return;
 
@@ -193,7 +222,7 @@ function bindAnimationPause() {
         entry.target.classList.toggle("is-animating", entry.isIntersecting);
       });
     },
-    { rootMargin: "120px 0px" }
+    { rootMargin: "120px 0px" },
   );
   targets.forEach((el) => {
     el.classList.add("is-animating");
@@ -240,9 +269,30 @@ function bindSheen() {
   });
 }
 
+function bindHeaderLayer() {
+  const header = document.getElementById("site-header");
+  if (!header) return;
+
+  const pin = () => {
+    header.style.setProperty("transform", "translate3d(0,0,0)");
+    header.style.setProperty("z-index", "9999");
+  };
+
+  const onVisibility = () => {
+    if (document.visibilityState === "visible") pin();
+  };
+
+  pin();
+  document.addEventListener("visibilitychange", onVisibility);
+  addCleanup(() =>
+    document.removeEventListener("visibilitychange", onVisibility),
+  );
+}
+
 function init() {
   runCleanups();
   bindHeaderScroll();
+  bindHeaderLayer();
   bindMobileMenu();
   bindTheme();
   bindReveal();

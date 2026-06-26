@@ -3,7 +3,13 @@
  * Each theme has its own accent so an OpenGL article and a Compose article
  * never feel identical.
  */
-export type ThemeKey = "shader" | "motion" | "compose" | "systems" | "audio" | "academic";
+export type ThemeKey =
+  | "shader"
+  | "motion"
+  | "compose"
+  | "systems"
+  | "audio"
+  | "academic";
 
 export type ThemeMeta = {
   label: string;

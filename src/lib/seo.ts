@@ -10,7 +10,8 @@ export function absoluteUrl(path: string, origin = SITE_ORIGIN) {
 export function youtubeVideoId(url: string) {
   try {
     const u = new URL(url);
-    if (u.hostname.includes("youtu.be")) return u.pathname.slice(1).split("/")[0] || null;
+    if (u.hostname.includes("youtu.be"))
+      return u.pathname.slice(1).split("/")[0] || null;
     if (u.hostname.includes("youtube.com")) return u.searchParams.get("v");
   } catch {
     return null;
@@ -28,7 +29,10 @@ export function youtubeEmbedUrl(videoId: string) {
 
 type BreadcrumbItem = { name: string; path: string };
 
-export function breadcrumbJsonLd(items: BreadcrumbItem[], origin = SITE_ORIGIN) {
+export function breadcrumbJsonLd(
+  items: BreadcrumbItem[],
+  origin = SITE_ORIGIN,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -85,11 +89,13 @@ type PresentationSeoInput = {
 export function presentationJsonLd(
   talk: PresentationSeoInput,
   pagePath: string,
-  origin = SITE_ORIGIN
+  origin = SITE_ORIGIN,
 ) {
   const pageUrl = absoluteUrl(pagePath, origin);
   const videoId = talk.videoUrl ? youtubeVideoId(talk.videoUrl) : null;
-  const image = videoId ? youtubeOgImage(videoId) : absoluteUrl("/og-default.svg", origin);
+  const image = videoId
+    ? youtubeOgImage(videoId)
+    : absoluteUrl("/og-default.svg", origin);
   const published = talk.date?.toISOString();
 
   const crumbs = breadcrumbJsonLd(
@@ -98,7 +104,7 @@ export function presentationJsonLd(
       { name: "Presentations", path: "/presentations" },
       { name: talk.title, path: pagePath },
     ],
-    origin
+    origin,
   );
 
   const learningResource = {
@@ -111,10 +117,12 @@ export function presentationJsonLd(
     inLanguage: talk.language ?? "en",
     learningResourceType: "Presentation",
     educationalLevel: "Professional",
-    author: (talk.speakers?.length ? talk.speakers : [profile.name]).map((name) => ({
-      "@type": "Person",
-      name,
-    })),
+    author: (talk.speakers?.length ? talk.speakers : [profile.name]).map(
+      (name) => ({
+        "@type": "Person",
+        name,
+      }),
+    ),
     about: talk.topic,
     keywords: talk.technologies?.join(", "),
     ...(published && { datePublished: published }),
@@ -153,12 +161,14 @@ export function presentationJsonLd(
 export function publicationJsonLd(
   entry: CollectionEntry<"publications">,
   coverImage?: string,
-  origin = SITE_ORIGIN
+  origin = SITE_ORIGIN,
 ) {
   const { data, id } = entry;
   const pagePath = `/publications/${id}`;
   const pageUrl = absoluteUrl(pagePath, origin);
-  const image = coverImage ? absoluteUrl(coverImage, origin) : absoluteUrl("/og-default.svg", origin);
+  const image = coverImage
+    ? absoluteUrl(coverImage, origin)
+    : absoluteUrl("/og-default.svg", origin);
   const published = data.date.toISOString();
 
   return [
@@ -168,7 +178,7 @@ export function publicationJsonLd(
         { name: "Publications", path: "/publications" },
         { name: data.title, path: pagePath },
       ],
-      origin
+      origin,
     ),
     {
       "@context": "https://schema.org",
@@ -194,7 +204,7 @@ export function publicationJsonLd(
 
 export function presentationSeoProps(
   entry: CollectionEntry<"presentations">,
-  origin = SITE_ORIGIN
+  origin = SITE_ORIGIN,
 ) {
   const { data, id } = entry;
   const pagePath = `/presentations/${id}`;
@@ -221,7 +231,7 @@ export function presentationSeoProps(
         technologies: data.technologies,
       },
       pagePath,
-      origin
+      origin,
     ),
   };
 }

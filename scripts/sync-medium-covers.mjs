@@ -3,7 +3,13 @@
  * Fetches Medium cover images from the @aghajari RSS feed and saves them
  * locally so the static site never depends on Medium CDN at runtime.
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
+import {
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  existsSync,
+  readdirSync,
+} from "node:fs";
 import { join, dirname, extname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -28,11 +34,18 @@ function parsePublications() {
   const files = readdirSync(pubsDir).filter((f) => f.endsWith(".md"));
   return files.map((file) => {
     const content = readFileSync(join(pubsDir, file), "utf8");
-    const mediumUrl = content.match(/^mediumUrl:\s*["']?([^"'\n]+)["']?/m)?.[1]?.trim();
+    const mediumUrl = content
+      .match(/^mediumUrl:\s*["']?([^"'\n]+)["']?/m)?.[1]
+      ?.trim();
     const id = file.replace(/\.md$/, "");
     if (!mediumUrl) throw new Error(`Missing mediumUrl in ${file}`);
     const title = content.match(/^title:\s*["']?([^"'\n]+)["']?/m)?.[1]?.trim();
-    return { id, mediumUrl, slug: slugFromMediumUrl(mediumUrl), title: title ?? id };
+    return {
+      id,
+      mediumUrl,
+      slug: slugFromMediumUrl(mediumUrl),
+      title: title ?? id,
+    };
   });
 }
 
@@ -105,7 +118,9 @@ async function main() {
   }
 
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
-  console.log(`\nWrote ${Object.keys(manifest).length} covers → ${manifestPath}`);
+  console.log(
+    `\nWrote ${Object.keys(manifest).length} covers → ${manifestPath}`,
+  );
 }
 
 main().catch((err) => {

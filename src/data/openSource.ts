@@ -6,7 +6,11 @@ export type Repo = {
   stars: number;
   topics: string[];
   url: string;
-  category: "Compose" | "Graphics & Motion" | "Android Views" | "Tooling & Systems";
+  category:
+    | "Compose"
+    | "Graphics & Motion"
+    | "Android Views"
+    | "Tooling & Systems";
   featured?: boolean;
   highlight?: string; // an interesting engineering detail
 };
@@ -17,7 +21,9 @@ export function formatRepoStars(count: number): string {
     const k = count / 1000;
     const step = k >= 10 ? 1 : 0.5;
     const rounded = Math.ceil(k / step) * step;
-    const text = Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+    const text = Number.isInteger(rounded)
+      ? String(rounded)
+      : rounded.toFixed(1);
     return `${text}K+`;
   }
   let rounded: number;

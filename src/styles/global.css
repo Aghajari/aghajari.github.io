@@ -1,14 +1,10 @@
-/* ============================================================
-   AmirHossein Aghajari — Design System
-   Tokens · Typography · Motion · Primitives
-   ============================================================ */
+@import "./syntax.css";
 
 @import "./fonts-core.css";
-
-/* ---------- Design Tokens ---------- */
 :root {
   /* Font families */
-  --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans:
+    "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-serif: "Newsreader Variable", Georgia, "Times New Roman", serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
@@ -60,7 +56,12 @@
   --aurora-1: #6d6af0; /* indigo */
   --aurora-2: #8b5cf6; /* violet */
   --aurora-3: #22d3ee; /* cyan */
-  --aurora: linear-gradient(115deg, var(--aurora-1), var(--aurora-2) 45%, var(--aurora-3));
+  --aurora: linear-gradient(
+    115deg,
+    var(--aurora-1),
+    var(--aurora-2) 45%,
+    var(--aurora-3)
+  );
 
   /* Elevation */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.18);
@@ -96,8 +97,6 @@
   --on-media-text-2: var(--text-2);
   --on-media-text-3: var(--text-3);
 }
-
-/* ---------- Dark theme (default) ---------- */
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
@@ -119,8 +118,6 @@
   --media-ink: #09090b;
   --media-base: #0e0e11;
 }
-
-/* ---------- Light theme ---------- */
 [data-theme="light"] {
   color-scheme: light;
   --bg: #f5f4f1;
@@ -140,9 +137,17 @@
   --aurora-1: #5855e8;
   --aurora-2: #7548db;
   --aurora-3: #0891b2;
-  --aurora: linear-gradient(115deg, var(--aurora-1), var(--aurora-2) 45%, var(--aurora-3));
-  --shadow-sm: 0 1px 2px rgba(14, 14, 24, 0.05), 0 0 0 1px rgba(14, 14, 24, 0.025);
-  --shadow-md: 0 16px 44px -20px rgba(14, 14, 32, 0.12), 0 4px 12px -6px rgba(14, 14, 32, 0.06);
+  --aurora: linear-gradient(
+    115deg,
+    var(--aurora-1),
+    var(--aurora-2) 45%,
+    var(--aurora-3)
+  );
+  --shadow-sm:
+    0 1px 2px rgba(14, 14, 24, 0.05), 0 0 0 1px rgba(14, 14, 24, 0.025);
+  --shadow-md:
+    0 16px 44px -20px rgba(14, 14, 32, 0.12),
+    0 4px 12px -6px rgba(14, 14, 32, 0.06);
   --shadow-lg: 0 52px 96px -40px rgba(14, 14, 32, 0.16);
   --header-tint: rgba(245, 244, 241, 0.9);
   --header-glass: color-mix(in srgb, var(--bg) 70%, transparent);
@@ -165,8 +170,6 @@
   --on-media-text-2: #c4c4cc;
   --on-media-text-3: #94949e;
 }
-
-/* ---------- Reset ---------- */
 *,
 *::before,
 *::after {
@@ -187,12 +190,14 @@ body {
   line-height: 1.65;
   color: var(--text);
   background: var(--bg);
+  padding-top: var(--header-h);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: clip; /* clip — unlike hidden, does not break position: sticky */
-  transition: background-color var(--dur-mid) var(--ease-out),
+  overflow-x: clip;
+  transition:
+    background-color var(--dur-mid) var(--ease-out),
     color var(--dur-mid) var(--ease-out);
 }
 
@@ -239,8 +244,6 @@ ol {
   background: var(--aurora-2);
   color: #fff;
 }
-
-/* ---------- Typography primitives ---------- */
 h1,
 h2,
 h3,
@@ -311,8 +314,6 @@ p {
 .muted {
   color: var(--text-2);
 }
-
-/* ---------- Layout helpers ---------- */
 .container,
 .container-wide {
   width: 100%;
@@ -351,8 +352,6 @@ p {
   background: var(--border);
   border: 0;
 }
-
-/* ---------- Buttons ---------- */
 .btn {
   --btn-bg: var(--text);
   --btn-fg: var(--bg);
@@ -368,9 +367,11 @@ p {
   color: var(--btn-fg);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: transform var(--dur-fast) var(--ease-out),
+  transition:
+    transform var(--dur-fast) var(--ease-out),
     background-color var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+    box-shadow var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
 }
 
 .btn:hover {
@@ -408,8 +409,6 @@ p {
 .btn:hover .arrow {
   transform: translateX(3px);
 }
-
-/* ---------- Pills / tags ---------- */
 .tag {
   display: inline-flex;
   align-items: center;
@@ -430,16 +429,16 @@ p {
   flex-wrap: wrap;
   gap: var(--space-2);
 }
-
-/* ---------- Cards ---------- */
 .card {
   position: relative;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   contain: content;
-  transition: border-color var(--dur-mid) var(--ease-out),
-    transform var(--dur-mid) var(--ease-out), background-color var(--dur-mid) var(--ease-out);
+  transition:
+    border-color var(--dur-mid) var(--ease-out),
+    transform var(--dur-mid) var(--ease-out),
+    background-color var(--dur-mid) var(--ease-out);
 }
 
 .card:hover {
@@ -476,8 +475,6 @@ p {
 .sheen:hover::before {
   opacity: 1;
 }
-
-/* ---------- Grids ---------- */
 .grid {
   display: grid;
   gap: var(--space-5);
@@ -499,19 +496,18 @@ p {
     grid-template-columns: 1fr;
   }
 }
-
-/* ---------- Hairline grid background ---------- */
 .grid-bg {
-  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 64px 64px;
 }
-
-/* ---------- Reveal on scroll ---------- */
 [data-reveal] {
   opacity: 0;
   transform: translateY(22px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  transition:
+    opacity 0.7s var(--ease-out),
+    transform 0.7s var(--ease-out);
   transition-delay: var(--reveal-delay, 0ms);
 }
 [data-reveal].is-visible {
@@ -526,8 +522,6 @@ p {
 .pub-cover--hero:not(.is-animating) .pub-cover__img {
   animation-play-state: paused !important;
 }
-
-/* ---------- Keyframes ---------- */
 @keyframes aurora-pan {
   0%,
   100% {
@@ -553,8 +547,6 @@ p {
     transform: rotate(360deg);
   }
 }
-
-/* ---------- Accessibility ---------- */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -588,6 +580,26 @@ body.flush-footer .site-footer {
   padding-block: var(--space-5) var(--space-7);
 }
 
+/* Page content sits below persisted chrome in the stacking order. */
+#main {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+}
+
+/* Persisted chrome above all page morph layers during Astro nav. */
+::view-transition-group(site-header),
+::view-transition-group(site-footer) {
+  z-index: 2147483646 !important;
+}
+
+::view-transition-old(site-header),
+::view-transition-new(site-header),
+::view-transition-old(site-footer),
+::view-transition-new(site-footer) {
+  z-index: 2147483646 !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -603,9 +615,8 @@ body.flush-footer .site-footer {
   }
 }
 
-/* ---------- Theme change — circular reveal ----------
-   Scoped to .theme-transition so Astro's page navigation
-   transitions are left untouched. The new theme snapshot
+/* Theme change — circular reveal. Scoped to .theme-transition so Astro's
+   page navigation transitions are left untouched. The new theme snapshot
    is clipped to an expanding circle (animated in site.ts). */
 html.theme-transition::view-transition-old(root),
 html.theme-transition::view-transition-new(root) {
@@ -617,4 +628,11 @@ html.theme-transition::view-transition-old(root) {
 }
 html.theme-transition::view-transition-new(root) {
   z-index: 1;
+}
+/* Only the persisted header morphs during theme swap — not every book cover. */
+html.theme-transition [data-astro-transition-scope] {
+  view-transition-name: none !important;
+}
+html.theme-transition #site-header {
+  view-transition-name: site-header !important;
 }

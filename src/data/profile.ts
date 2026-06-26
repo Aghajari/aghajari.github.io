@@ -13,8 +13,7 @@ export const profile = {
   statement:
     "I build the layer where software meets the eye — interfaces, motion, and graphics — and I care about what happens underneath them. For nearly a decade I've shipped Android products, crafted open-source libraries used in hundreds of apps, and written about the internals of animation, rendering, and performance.",
   // Hero rotating descriptors
-  facets: [
-  ],
+  facets: [],
   socials: {
     github: "https://github.com/aghajari",
     medium: "https://medium.com/@aghajari",

@@ -8,10 +8,16 @@ export type CoverMeta = {
 };
 
 export function getPublicationCover(
-  entry: CollectionEntry<"publications"> | { id: string; data: { title: string; coverImage?: string } }
+  entry:
+    | CollectionEntry<"publications">
+    | { id: string; data: { title: string; coverImage?: string } },
 ): CoverMeta | null {
   if (entry.data.coverImage) {
-    return { local: entry.data.coverImage, remote: entry.data.coverImage, alt: entry.data.title };
+    return {
+      local: entry.data.coverImage,
+      remote: entry.data.coverImage,
+      alt: entry.data.title,
+    };
   }
   const meta = (covers as Record<string, CoverMeta>)[entry.id];
   if (!meta?.local) return null;

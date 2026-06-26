@@ -1,15 +1,14 @@
-/* ============================================================
-   Reading — the personal library.
-   1) Subtle cursor tilt on every 3D book (shelf + hero).
-   2) Sort control on the listing.
-   Lifecycle-managed for Astro View Transitions.
-   ============================================================ */
-
 type Cleanup = () => void;
 type SortMode = "reading" | "title" | "author" | "rating" | "published";
 let cleanups: Cleanup[] = [];
 
-const SORT_MODES: SortMode[] = ["reading", "title", "author", "rating", "published"];
+const SORT_MODES: SortMode[] = [
+  "reading",
+  "title",
+  "author",
+  "rating",
+  "published",
+];
 
 const REST_RY = 27;
 const REST_RX = 6;
@@ -30,7 +29,7 @@ function bindTilt() {
   if (reduce) return;
 
   const books = Array.from(
-    document.querySelectorAll<HTMLElement>("[data-book3d]")
+    document.querySelectorAll<HTMLElement>("[data-book3d]"),
   );
 
   books.forEach((el) => {
@@ -48,13 +47,19 @@ function bindTilt() {
       });
     };
 
-    const onEnter = () => el.style.setProperty("--lift", "-8px");
+    const inner = el.querySelector<HTMLElement>(".book3d__inner");
+
+    const onEnter = () => {
+      el.style.setProperty("--lift", "-8px");
+      inner?.style.setProperty("will-change", "transform");
+    };
 
     const reset = () => {
       if (raf) cancelAnimationFrame(raf);
       el.style.setProperty("--ry", `${REST_RY}deg`);
       el.style.setProperty("--rx", `${REST_RX}deg`);
       el.style.setProperty("--lift", "0px");
+      inner?.style.removeProperty("will-change");
     };
 
     el.addEventListener("pointerenter", onEnter);
@@ -99,7 +104,9 @@ function bindSort() {
   };
 
   const apply = (mode: SortMode) => {
-    const cards = Array.from(shelf.querySelectorAll<HTMLElement>("[data-book-card]"));
+    const cards = Array.from(
+      shelf.querySelectorAll<HTMLElement>("[data-book-card]"),
+    );
     cards.sort((a, b) => compare(a, b, mode));
     cards.forEach((card) => shelf.appendChild(card));
   };
@@ -119,10 +126,53 @@ function bindSort() {
   }
 }
 
+function bindShelfReveal() {
+  const shelf = document.querySelector<HTMLElement>("[data-lib-shelf]");
+  if (!shelf || shelf.dataset.shelfRevealed === "1") return;
+
+  const cards = Array.from(
+    shelf.querySelectorAll<HTMLElement>("[data-book-card]"),
+  );
+  if (cards.length === 0) return;
+
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reveal = () => {
+    if (shelf.dataset.shelfRevealed === "1") return;
+    shelf.dataset.shelfRevealed = "1";
+    cards.forEach((card, i) => {
+      card.style.setProperty("--shelf-i", String(i));
+      card.classList.add("is-shelf-visible");
+    });
+  };
+
+  if (reduce) {
+    reveal();
+    return;
+  }
+
+  if (!("IntersectionObserver" in window)) {
+    reveal();
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        reveal();
+        io.disconnect();
+      }
+    },
+    { rootMargin: "0px 0px -6% 0px", threshold: 0.05 },
+  );
+  io.observe(shelf);
+  cleanups.push(() => io.disconnect());
+}
+
 function init() {
   destroy();
   bindTilt();
   bindSort();
+  bindShelfReveal();
 }
 
 document.addEventListener("astro:page-load", init);

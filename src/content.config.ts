@@ -7,7 +7,10 @@ import { glob } from "astro/loaders";
  * `theme` drives a topic-adaptive hero so each page feels unique.
  */
 const publications = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/publications" }),
+  loader: glob({
+    pattern: "**/*.{md,mdx}",
+    base: "./src/content/publications",
+  }),
   schema: z.object({
     title: z.string(),
     subtitle: z.string(),
@@ -37,14 +40,19 @@ const publications = defineCollection({
  * supports a fully custom layout per talk via `layout` + future content.
  */
 const presentations = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/presentations" }),
+  loader: glob({
+    pattern: "**/*.{md,mdx}",
+    base: "./src/content/presentations",
+  }),
   schema: z.object({
     title: z.string(),
     event: z.string(),
     date: z.coerce.date().optional(),
     topic: z.string(),
     description: z.string(),
-    theme: z.enum(["shader", "motion", "compose", "systems", "audio", "academic"]).default("motion"),
+    theme: z
+      .enum(["shader", "motion", "compose", "systems", "audio", "academic"])
+      .default("motion"),
     technologies: z.array(z.string()).default([]),
     status: z.enum(["published", "coming-soon"]).default("coming-soon"),
     slidesUrl: z.string().url().optional(),

@@ -12,7 +12,10 @@ import {
 } from "@data/reading";
 
 export function getStaticPaths() {
-  return books.map((book) => ({ params: { slug: book.slug }, props: { book } }));
+  return books.map((book) => ({
+    params: { slug: book.slug },
+    props: { book },
+  }));
 }
 
 interface Props {
@@ -24,7 +27,7 @@ const ratingLabel = Number.isInteger(book.rating)
   ? `${book.rating}`
   : book.rating.toFixed(1);
 const quote = book.quote ? parseQuote(book.quote) : null;
-const related = relatedBooks(book);
+const related = relatedBooks(book, 5);
 const isCurrent = /current/i.test(book.readingDate);
 
 const facts: { label: string; value: string }[] = [
@@ -57,41 +60,61 @@ if (book.pages) facts.push({ label: "Pages", value: String(book.pages) });
               author={book.author}
               spine={book.spine}
               variant="hero"
-              transitionName={`book-${book.slug}`}
               eager
             />
           </div>
 
           <div class="bd-hero__info">
             <div class="bd-cats" data-reveal>
-              {book.categories.map((c) => (
-                <a href="/reading" class="bd-cat">{c}</a>
-              ))}
+              {
+                book.categories.map((c) => (
+                  <a href="/reading" class="bd-cat">
+                    {c}
+                  </a>
+                ))
+              }
             </div>
-            <h1 class="bd-title serif" data-reveal style="--reveal-delay:60ms">{book.title}</h1>
+            <h1 class="bd-title serif" data-reveal style="--reveal-delay:60ms">
+              {book.title}
+            </h1>
             <p class="bd-author" data-reveal style="--reveal-delay:120ms">
-              {book.author} <span class="bd-dot">·</span> <span class="bd-country">{book.country}</span>
+              {book.author}
+              <span class="bd-dot">·</span>
+              <span class="bd-country">{book.country}</span>
             </p>
 
-            <div class="bd-rating" data-reveal style="--reveal-delay:180ms" aria-label={`My rating: ${ratingLabel} out of 5`}>
+            <div
+              class="bd-rating"
+              data-reveal
+              style="--reveal-delay:180ms"
+              aria-label={`My rating: ${ratingLabel} out of 5`}
+            >
               <span class="bd-stars">
-                {stars.map((s) => <span class:list={["bd-star", `bd-star--${s}`]}>★</span>)}
+                {
+                  stars.map((s) => (
+                    <span class:list={["bd-star", `bd-star--${s}`]}>★</span>
+                  ))
+                }
               </span>
-              <span class="bd-rating__num">{ratingLabel}<span class="bd-rating__den">/5</span></span>
+              <span class="bd-rating__num"
+                >{ratingLabel}<span class="bd-rating__den">/5</span></span
+              >
             </div>
 
             <div class="bd-facts" data-reveal style="--reveal-delay:240ms">
-              {facts.map((f) => (
-                <div class="bd-fact">
-                  <dt>{f.label}</dt>
-                  <dd>{f.value}</dd>
-                </div>
-              ))}
+              {
+                facts.map((f) => (
+                  <div class="bd-fact">
+                    <dt>{f.label}</dt>
+                    <dd>{f.value}</dd>
+                  </div>
+                ))
+              }
               <div class="bd-fact">
                 <dt>I read it</dt>
                 <dd>
                   <span class:list={["bd-when", { "is-current": isCurrent }]}>
-                    {isCurrent && <span class="bd-pulse" aria-hidden="true"></span>}
+                    {isCurrent && <span class="bd-pulse" aria-hidden="true" />}
                     {book.readingDate}
                   </span>
                 </dd>
@@ -103,49 +126,73 @@ if (book.pages) facts.push({ label: "Pages", value: String(book.pages) });
     </header>
 
     <div class="container bd-body">
-      {book.review && (
-        <section class="bd-review" data-reveal>
-          <p class="eyebrow">My review</p>
-          <div class="bd-review__text serif">
-            <p>{book.review}</p>
-          </div>
-        </section>
-      )}
+      {
+        book.review && (
+          <section class="bd-review" data-reveal>
+            <p class="eyebrow">My review</p>
+            <div class="bd-review__text serif">
+              <p>{book.review}</p>
+            </div>
+          </section>
+        )
+      }
 
-      {quote && (
-        <figure class="bd-quote" data-reveal>
-          <span class="bd-quote__glyph" aria-hidden="true">&ldquo;</span>
-          <blockquote class="bd-quote__body">
-            {quote.map((seg) =>
-              seg.quote ? (
-                <span class="q-mark">{seg.text}</span>
-              ) : (
-                <span class="q-ctx">{seg.text}</span>
-              )
-            )}
-          </blockquote>
-          <figcaption class="bd-quote__cite">{book.title}, {book.author}</figcaption>
-        </figure>
-      )}
+      {
+        quote && (
+          <figure class="bd-quote" data-reveal>
+            <p class="eyebrow bd-quote__label">My favourite quote</p>
+            <div class="bd-quote__panel">
+              <span class="bd-quote__glyph" aria-hidden="true">
+                &ldquo;
+              </span>
+              <blockquote class="bd-quote__body">
+                {quote.map((seg) =>
+                  seg.quote ? (
+                    <span class="bd-quote__mark">{seg.text}</span>
+                  ) : (
+                    <span class="bd-quote__ctx">{seg.text}</span>
+                  ),
+                )}
+              </blockquote>
+            </div>
+            <figcaption class="bd-quote__cite">
+              <cite>{book.title}</cite>
+              <span class="bd-quote__by">{book.author}</span>
+            </figcaption>
+          </figure>
+        )
+      }
 
-      {book.takeaways && (
-        <section class="bd-takeaways" data-reveal>
-          <p class="eyebrow">What stayed with me</p>
-          <p class="bd-takeaways__text">{book.takeaways}</p>
-        </section>
-      )}
+      {
+        book.takeaways && (
+          <section class="bd-takeaways" data-reveal>
+            <p class="eyebrow">What stayed with me</p>
+            <p class="bd-takeaways__text">{book.takeaways}</p>
+          </section>
+        )
+      }
     </div>
 
-    {related.length > 0 && (
-      <section class="section bd-related">
-        <div class="container">
-          <h2 class="h4 bd-related__title" data-reveal>More from the library</h2>
-          <div class="bd-related__shelf" data-reveal style="--reveal-delay:80ms">
-            {related.map((b) => <BookCard book={b} />)}
+    {
+      related.length > 0 && (
+        <section class="section bd-related">
+          <div class="container">
+            <h2 class="h4 bd-related__title" data-reveal>
+              More from the library
+            </h2>
+            <div
+              class="bd-related__shelf"
+              data-reveal
+              style="--reveal-delay:80ms"
+            >
+              {related.map((b) => (
+                <BookCard book={b} />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
-    )}
+        </section>
+      )
+    }
   </article>
 </Base>
 
@@ -173,18 +220,31 @@ if (book.pages) facts.push({ label: "Pages", value: String(book.pages) });
     opacity: 0.32;
     pointer-events: none;
   }
-
-  /* ---------- hero ---------- */
-  .bd-hero { position: relative; z-index: 1; }
-  .bd-hero__inner { padding-block: clamp(2rem, 6vw, 4rem) clamp(2.5rem, 6vw, 4.5rem); }
+  .bd-hero {
+    position: relative;
+    z-index: 1;
+  }
+  .bd-hero__inner {
+    padding-block: clamp(2rem, 6vw, 4rem) clamp(2.5rem, 6vw, 4.5rem);
+  }
 
   .back-link {
-    display: inline-flex; align-items: center; gap: 0.5em;
-    color: var(--text-3); font-size: 0.88rem; margin-bottom: var(--space-7);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--text-3);
+    font-size: 0.88rem;
+    margin-bottom: var(--space-7);
   }
-  .back-link:hover { color: var(--text); }
-  .back-link :global(.back-arrow) { transition: transform var(--dur-fast); }
-  .back-link:hover :global(.back-arrow) { transform: translateX(-3px); }
+  .back-link:hover {
+    color: var(--text);
+  }
+  .back-link :global(.back-arrow) {
+    transition: transform var(--dur-fast);
+  }
+  .back-link:hover :global(.back-arrow) {
+    transform: translateX(-3px);
+  }
 
   .bd-hero__grid {
     display: grid;
@@ -192,17 +252,30 @@ if (book.pages) facts.push({ label: "Pages", value: String(book.pages) });
     gap: clamp(2.5rem, 7vw, 6rem);
     align-items: center;
   }
-  .bd-hero__book { display: flex; justify-content: center; }
+  .bd-hero__book {
+    display: flex;
+    justify-content: center;
+  }
 
-  .bd-cats { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: var(--space-4); }
+  .bd-cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--space-4);
+  }
   .bd-cat {
-    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em;
-    text-transform: uppercase; padding: 0.4em 0.85em;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.4em 0.85em;
     border-radius: var(--radius-pill);
     border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
     background: color-mix(in srgb, var(--accent) 7%, var(--surface));
     color: var(--accent-soft);
-    transition: border-color var(--dur-fast), background var(--dur-fast);
+    transition:
+      border-color var(--dur-fast),
+      background var(--dur-fast);
   }
   .bd-cat:hover {
     border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
@@ -220,16 +293,32 @@ if (book.pages) facts.push({ label: "Pages", value: String(book.pages) });
     font-size: var(--step-1);
     color: var(--text-2);
   }
-  .bd-country { color: var(--text-3); }
-  .bd-dot { opacity: 0.4; margin-inline: 0.15em; }
+  .bd-country {
+    color: var(--text-3);
+  }
+  .bd-dot {
+    opacity: 0.4;
+    margin-inline: 0.15em;
+  }
 
   .bd-rating {
-    display: flex; align-items: center; gap: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
     margin-top: var(--space-5);
   }
-  .bd-stars { font-size: 1.5rem; letter-spacing: 0.1em; line-height: 1; --star: #d8a657; }
-  .bd-star { color: color-mix(in srgb, var(--text) 15%, transparent); }
-  .bd-star--full { color: var(--star); }
+  .bd-stars {
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    --star: #d8a657;
+  }
+  .bd-star {
+    color: color-mix(in srgb, var(--text) 15%, transparent);
+  }
+  .bd-star--full {
+    color: var(--star);
+  }
   .bd-star--half {
     background: linear-gradient(
       90deg,
@@ -241,9 +330,13 @@ if (book.pages) facts.push({ label: "Pages", value: String(book.pages) });
     color: transparent;
   }
   .bd-rating__num {
-    font-family: var(--font-mono); font-size: 0.95rem; color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--text-2);
   }
-  .bd-rating__den { color: var(--text-3); }
+  .bd-rating__den {
+    color: var(--text-3);
+  }
 
   .bd-facts {
     display: grid;
@@ -254,123 +347,153 @@ if (book.pages) facts.push({ label: "Pages", value: String(book.pages) });
     border-top: 1px solid var(--border);
   }
   .bd-fact dt {
-    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em;
-    text-transform: uppercase; color: var(--text-3); margin-bottom: 0.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 0.2rem;
   }
-  .bd-fact dd { font-size: 0.98rem; color: var(--text); }
-  .bd-when { display: inline-flex; align-items: center; gap: 0.45em; }
-  .bd-when.is-current { color: var(--accent); }
+  .bd-fact dd {
+    font-size: 0.98rem;
+    color: var(--text);
+  }
+  .bd-when {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+  }
+  .bd-when.is-current {
+    color: var(--accent);
+  }
   .bd-pulse {
-    width: 7px; height: 7px; border-radius: 50%;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
     background: var(--accent);
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent);
     animation: bd-pulse 2.2s var(--ease-in-out) infinite;
   }
   @keyframes bd-pulse {
-    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
-    70% { box-shadow: 0 0 0 8px transparent; }
-    100% { box-shadow: 0 0 0 0 transparent; }
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent);
+    }
+    70% {
+      box-shadow: 0 0 0 8px transparent;
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
   }
-
-  /* ---------- body ---------- */
   .bd-body {
-    position: relative; z-index: 1;
+    position: relative;
+    z-index: 1;
     max-width: 760px;
     padding-block: clamp(1rem, 3vw, 2rem) clamp(3rem, 7vw, 5rem);
   }
 
-  .bd-review { margin-bottom: clamp(3rem, 7vw, 5rem); }
+  .bd-review {
+    margin-bottom: clamp(3rem, 7vw, 5rem);
+  }
   .bd-review__text {
     margin-top: var(--space-4);
     font-size: clamp(1.2rem, 1rem + 0.7vw, 1.5rem);
     line-height: 1.7;
     color: var(--text);
   }
-  .bd-review__text :global(p) { margin-bottom: var(--space-4); }
-
-  /* ---------- quote — refined epigraph panel ---------- */
+  .bd-review__text :global(p) {
+    margin-bottom: var(--space-4);
+  }
   .bd-quote {
+    --quote-accent: var(--spine, #d8a657);
+    margin-block: clamp(3rem, 8vw, 5rem);
+  }
+  .bd-quote__label {
+    margin-bottom: var(--space-4);
+    color: color-mix(in srgb, var(--quote-accent) 55%, var(--text-3));
+  }
+  .bd-quote__panel {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    margin-block: clamp(3rem, 8vw, 5rem);
-    padding: clamp(2.5rem, 5vw, 3.75rem) clamp(1.75rem, 4vw, 3.25rem);
-    border-radius: clamp(16px, 2vw, 22px);
-    border: 1px solid color-mix(in srgb, var(--accent) 14%, var(--border));
-    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 3%, var(--surface)), var(--surface) 60%);
+    padding: clamp(2rem, 4vw, 2.75rem) clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: var(--radius-lg);
+    border: 1px solid color-mix(in srgb, var(--quote-accent) 20%, var(--border));
+    background:
+      radial-gradient(
+        120% 80% at 0% 0%,
+        color-mix(in srgb, var(--quote-accent) 14%, transparent),
+        transparent 58%
+      ),
+      linear-gradient(
+        165deg,
+        color-mix(in srgb, var(--quote-accent) 5%, var(--surface)),
+        var(--surface-2)
+      );
     box-shadow:
+      inset 3px 0 0 color-mix(in srgb, var(--quote-accent) 62%, transparent),
       inset 0 1px 0 var(--surface-highlight, rgba(255, 255, 255, 0.45)),
-      0 18px 40px -32px color-mix(in srgb, var(--text) 40%, transparent);
+      0 22px 50px -38px color-mix(in srgb, var(--text) 32%, transparent);
   }
-  /* gold hairline crowning the panel */
-  .bd-quote::before {
-    content: "";
-    position: absolute;
-    top: 0; left: clamp(1.5rem, 4vw, 3rem); right: clamp(1.5rem, 4vw, 3rem);
-    height: 1.5px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      color-mix(in srgb, var(--accent) 70%, transparent) 22%,
-      color-mix(in srgb, var(--accent) 70%, transparent) 78%,
-      transparent
-    );
-    opacity: 0.8;
-  }
-  /* elegant watermark quotation mark */
   .bd-quote__glyph {
     position: absolute;
-    z-index: -1;
-    top: clamp(-0.5rem, -1vw, -0.1rem);
-    left: clamp(0.4rem, 1.5vw, 1rem);
-    font-family: var(--font-serif, Georgia, serif);
-    font-size: clamp(5rem, 12vw, 7.5rem);
+    z-index: 0;
+    top: 0.15rem;
+    left: clamp(0.5rem, 2vw, 0.85rem);
+    font-family: var(--font-serif);
+    font-size: clamp(4.5rem, 11vw, 6.5rem);
     line-height: 1;
-    color: color-mix(in srgb, var(--accent) 13%, transparent);
+    color: color-mix(in srgb, var(--quote-accent) 18%, transparent);
     pointer-events: none;
     user-select: none;
   }
   .bd-quote__body {
     position: relative;
-    font-family: var(--font-serif, Georgia, serif);
-    font-size: clamp(1.05rem, 0.92rem + 0.55vw, 1.32rem);
-    line-height: 1.52;
-    letter-spacing: -0.012em;
-    color: var(--text);
+    z-index: 1;
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(1.05rem, 0.95rem + 0.45vw, 1.28rem);
+    line-height: 1.68;
+    letter-spacing: -0.01em;
+    color: var(--text-2);
     text-wrap: pretty;
     white-space: pre-line;
   }
-  /* the actual quotation — the visual focus */
-  .q-mark {
-    color: var(--text);
-    font-weight: 500;
+  .bd-quote__ctx {
+    font-size: 0.8em;
+    color: inherit;
   }
-  /* surrounding context — quiet, recedes into the page */
-  .q-ctx {
-    color: var(--text-3);
-    font-size: 0.62em;
-    line-height: 1.45;
-    opacity: 0.5;
+  .bd-quote__mark {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--text);
+    background: color-mix(in srgb, var(--quote-accent) 14%, transparent);
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    padding: 0.06em 0.14em;
+    border-radius: 0.18em;
   }
   .bd-quote__cite {
     display: flex;
-    align-items: center;
-    gap: 0.7em;
-    margin-top: clamp(1.75rem, 4vw, 2.5rem);
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35em 0.65em;
+    margin-top: var(--space-5);
     font-family: var(--font-mono);
-    font-size: 0.76rem;
-    letter-spacing: 0.06em;
+    font-size: 0.74rem;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: var(--accent-soft);
+    color: var(--text-3);
   }
-  .bd-quote__cite::before {
-    content: "";
-    width: 1.8em;
-    height: 1px;
-    background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, transparent), transparent);
+  .bd-quote__cite cite {
+    font-style: normal;
+    color: color-mix(in srgb, var(--quote-accent) 68%, var(--text-2));
   }
-
-  /* ---------- takeaways ---------- */
+  .bd-quote__by::before {
+    content: "·";
+    margin-right: 0.65em;
+    opacity: 0.45;
+  }
   .bd-takeaways {
     margin-top: clamp(2.5rem, 6vw, 4rem);
     padding-top: clamp(2rem, 5vw, 3rem);
@@ -382,22 +505,55 @@ if (book.pages) facts.push({ label: "Pages", value: String(book.pages) });
     line-height: 1.7;
     color: var(--text-2);
   }
-
-  /* ---------- related ---------- */
-  .bd-related { border-top: 1px solid var(--border); }
-  .bd-related__title { margin-bottom: var(--space-7); }
+  .bd-related {
+    border-top: 1px solid var(--border);
+  }
+  .bd-related__title {
+    margin-bottom: var(--space-7);
+  }
   .bd-related__shelf {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: clamp(2rem, 4vw, 3rem) clamp(1rem, 3vw, 2rem);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.75rem);
     align-items: end;
     justify-items: center;
-    max-width: 760px;
+  }
+  .bd-related__shelf :global(.book-card) {
+    width: 100%;
+    max-width: 200px;
+  }
+  @media (max-width: 1080px) {
+    .bd-related__shelf {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .bd-related__shelf :global(.book-card:nth-child(n + 5)) {
+      display: none;
+    }
+  }
+  @media (max-width: 860px) {
+    .bd-related__shelf {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .bd-related__shelf :global(.book-card:nth-child(n + 4)) {
+      display: none;
+    }
+  }
+  @media (max-width: 580px) {
+    .bd-related__shelf {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .bd-related__shelf :global(.book-card:nth-child(n + 3)) {
+      display: none;
+    }
   }
 
   @media (max-width: 760px) {
-    .bd-hero__grid { grid-template-columns: 1fr; gap: clamp(2rem, 8vw, 3rem); }
-    .bd-hero__book { order: -1; }
-    .bd-related__shelf { grid-template-columns: repeat(2, 1fr); gap: 2.25rem 0.75rem; }
+    .bd-hero__grid {
+      grid-template-columns: 1fr;
+      gap: clamp(2rem, 8vw, 3rem);
+    }
+    .bd-hero__book {
+      order: -1;
+    }
   }
 </style>

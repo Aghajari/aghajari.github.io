@@ -1,0 +1,125 @@
+.mt-code,
+.mt-regs__code {
+  --syn-keyword: color-mix(in srgb, var(--mt-accent-2) 75%, #a78bfa);
+  --syn-type: color-mix(in srgb, var(--mt-accent-3) 70%, #22d3ee);
+  --syn-string: color-mix(in srgb, var(--mt-accent) 55%, #4ade80);
+  --syn-number: color-mix(in srgb, var(--mt-accent-2) 60%, #fbbf24);
+  --syn-comment: var(--text-3);
+  --syn-annotation: color-mix(in srgb, var(--mt-accent-2) 70%, #f472b6);
+  --syn-builtin: color-mix(in srgb, var(--mt-accent) 65%, #60a5fa);
+  --syn-directive: color-mix(in srgb, var(--mt-accent-3) 60%, #fb923c);
+  --syn-register: color-mix(in srgb, var(--mt-accent-2) 55%, #e879f9);
+  --syn-plain: var(--text-2);
+}
+
+.ca-code {
+  --syn-keyword: color-mix(in srgb, var(--ca-accent-2) 75%, #a78bfa);
+  --syn-type: color-mix(in srgb, var(--ca-accent-3) 70%, #22d3ee);
+  --syn-string: color-mix(in srgb, var(--ca-accent) 55%, #4ade80);
+  --syn-number: color-mix(in srgb, var(--ca-accent-2) 60%, #fbbf24);
+  --syn-comment: var(--text-3);
+  --syn-annotation: color-mix(in srgb, var(--ca-accent-2) 70%, #f472b6);
+  --syn-builtin: color-mix(in srgb, var(--ca-accent) 65%, #60a5fa);
+  --syn-directive: color-mix(in srgb, var(--ca-accent-3) 60%, #fb923c);
+  --syn-register: color-mix(in srgb, var(--ca-accent-2) 55%, #e879f9);
+  --syn-plain: var(--text-2);
+}
+
+[data-theme="light"] .mt-code,
+[data-theme="light"] .mt-regs__code {
+  --syn-keyword: #6d28d9;
+  --syn-type: #0e7490;
+  --syn-string: #15803d;
+  --syn-number: #b45309;
+  --syn-comment: #6b7280;
+  --syn-annotation: #be185d;
+  --syn-builtin: #1d4ed8;
+  --syn-directive: #c2410c;
+  --syn-register: #9333ea;
+  --syn-plain: #374151;
+}
+
+[data-theme="light"] .ca-code {
+  --syn-keyword: #6d28d9;
+  --syn-type: #0e7490;
+  --syn-string: #15803d;
+  --syn-number: #b45309;
+  --syn-comment: #6b7280;
+  --syn-annotation: #be185d;
+  --syn-builtin: #1d4ed8;
+  --syn-directive: #c2410c;
+  --syn-register: #9333ea;
+  --syn-plain: #374151;
+}
+
+.mt-code .syn-keyword,
+.mt-regs__code .syn-keyword,
+.ca-code .syn-keyword {
+  color: var(--syn-keyword);
+}
+
+.mt-code .syn-type,
+.mt-regs__code .syn-type,
+.ca-code .syn-type {
+  color: var(--syn-type);
+}
+
+.mt-code .syn-string,
+.mt-regs__code .syn-string,
+.ca-code .syn-string {
+  color: var(--syn-string);
+}
+
+.mt-code .syn-number,
+.mt-regs__code .syn-number,
+.ca-code .syn-number {
+  color: var(--syn-number);
+}
+
+.mt-code .syn-comment,
+.mt-regs__code .syn-comment,
+.ca-code .syn-comment {
+  color: var(--syn-comment);
+  font-style: italic;
+}
+
+.mt-code .syn-annotation,
+.mt-regs__code .syn-annotation,
+.ca-code .syn-annotation {
+  color: var(--syn-annotation);
+}
+
+.mt-code .syn-builtin,
+.mt-regs__code .syn-builtin,
+.ca-code .syn-builtin {
+  color: var(--syn-builtin);
+}
+
+.mt-code .syn-directive,
+.mt-regs__code .syn-directive,
+.ca-code .syn-directive {
+  color: var(--syn-directive);
+}
+
+.mt-code .syn-register,
+.mt-regs__code .syn-register,
+.ca-code .syn-register {
+  color: var(--syn-register);
+}
+
+.mt-code .syn-plain,
+.ca-code .syn-plain {
+  color: var(--syn-plain);
+}
+
+.mt-regs__code .syn-plain {
+  color: var(--text);
+}
+
+.mt-regs__line.is-active .syn-keyword,
+.mt-regs__line.is-active .syn-type,
+.mt-regs__line.is-active .syn-string,
+.mt-regs__line.is-active .syn-number,
+.mt-regs__line.is-active .syn-builtin {
+  filter: brightness(1.1);
+}

@@ -2,7 +2,6 @@
 import "@/styles/fonts-editorial.css";
 import { getCollection, render } from "astro:content";
 import Base from "@layouts/Base.astro";
-import PublicationCover from "@components/PublicationCover.astro";
 import ThemeVisual from "@components/ThemeVisual.astro";
 import MediumCTA from "@components/MediumCTA.astro";
 import ArticleCard from "@components/ArticleCard.astro";
@@ -26,7 +25,7 @@ const jsonLd = publicationJsonLd(entry, cover?.local);
 
 // Related: same theme/series first, then recent.
 const all = (await getCollection("publications")).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 const related = all
   .filter((p) => p.id !== entry.id)
@@ -51,11 +50,7 @@ const related = all
     <!-- Adaptive hero -->
     <header class="pub-hero">
       <div class="pub-hero-visual" aria-hidden="true">
-        {cover ? (
-          <PublicationCover src={cover.local} alt={cover.alt} theme={data.theme} variant="hero" />
-        ) : (
-          <ThemeVisual theme={data.theme} />
-        )}
+        <ThemeVisual theme={data.theme} />
       </div>
       <div class="pub-hero-overlay"></div>
       <div class="container pub-hero-inner">
@@ -66,8 +61,12 @@ const related = all
           <span class="pub-domain">{t.label}</span>
           {data.series && <span class="pub-series">{data.series}</span>}
         </div>
-        <h1 class="pub-title" data-reveal style="--reveal-delay:120ms">{data.title}</h1>
-        <p class="pub-subtitle serif" data-reveal style="--reveal-delay:180ms">{data.subtitle}</p>
+        <h1 class="pub-title" data-reveal style="--reveal-delay:120ms">
+          {data.title}
+        </h1>
+        <p class="pub-subtitle serif" data-reveal style="--reveal-delay:180ms">
+          {data.subtitle}
+        </p>
         <div class="pub-meta" data-reveal style="--reveal-delay:240ms">
           <span>{formatDate(data.date)}</span>
           <span class="dot-sep">·</span>
@@ -83,25 +82,59 @@ const related = all
         <!-- Main column -->
         <div class="pub-main">
           <section class="pub-summary" data-reveal>
+            {
+              cover && (
+                <figure class="pub-cover-content">
+                  <img
+                    src={cover.local}
+                    alt={cover.alt}
+                    class="pub-cover-content__img"
+                    loading="eager"
+                    decoding="async"
+                  />
+                </figure>
+              )
+            }
             <p class="eyebrow">Summary</p>
             <p class="pub-summary-text serif">{data.summary}</p>
           </section>
 
-          {entry.body && entry.body.trim().length > 0 && (
-            <div class="pub-prose" data-reveal>
-              <Content />
-            </div>
-          )}
+          {
+            entry.body && entry.body.trim().length > 0 && (
+              <div class="pub-prose" data-reveal>
+                <Content />
+              </div>
+            )
+          }
+
+          {
+            entry.id === "liquid-glass" && (
+              <section class="pub-demo" data-lg-root data-reveal>
+                <p class="eyebrow">Interactive demo</p>
+                <div class="lg-demo__stage">
+                  <canvas
+                    data-lg-canvas
+                    data-lg-texture="/images/publications/liquid-glass-demo.png"
+                    aria-label="Liquid glass shader demo — move pointer to reposition the glass panel"
+                  />
+                </div>
+              </section>
+            )
+          }
 
           <section class="pub-ideas" data-reveal>
             <p class="eyebrow">Key ideas</p>
             <ul class="ideas-list">
-              {data.keyIdeas.map((idea, i) => (
-                <li class="idea">
-                  <span class="idea-num mono">{String(i + 1).padStart(2, "0")}</span>
-                  <span>{idea}</span>
-                </li>
-              ))}
+              {
+                data.keyIdeas.map((idea, i) => (
+                  <li class="idea">
+                    <span class="idea-num mono">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span>{idea}</span>
+                  </li>
+                ))
+              }
             </ul>
           </section>
 
@@ -122,10 +155,27 @@ const related = all
               <div><dt>Published</dt><dd>{formatDate(data.date)}</dd></div>
               <div><dt>Reading time</dt><dd>{data.readingTime} min</dd></div>
               <div><dt>Domain</dt><dd>{t.domain}</dd></div>
-              {data.series && <div><dt>Series</dt><dd>{data.series}</dd></div>}
+              {
+                data.series && (
+                  <div>
+                    <>
+                      <dt>Series</dt>
+                      <dd>{data.series}</dd>
+                    </>
+                  </div>
+                )
+              }
             </dl>
-            <a href={data.mediumUrl} target="_blank" rel="noopener" class="aside-medium">
-              <Icon name="medium" size={16} /> Read on Medium <Icon name="arrow-up-right" size={14} />
+            <a
+              href={data.mediumUrl}
+              target="_blank"
+              rel="noopener"
+              class="aside-medium"
+            >
+              <Icon name="medium" size={16} /> Read on Medium <Icon
+                name="arrow-up-right"
+                size={14}
+              />
             </a>
           </div>
         </aside>
@@ -133,18 +183,30 @@ const related = all
     </div>
 
     <!-- Related -->
-    {related.length > 0 && (
-      <section class="section pub-related">
-        <div class="container">
-          <h2 class="h4 related-title" data-reveal>Keep reading</h2>
-          <div class="grid grid-3">
-            {related.map((p) => <ArticleCard entry={p} />)}
+    {
+      related.length > 0 && (
+        <section class="section pub-related">
+          <div class="container">
+            <h2 class="h4 related-title" data-reveal>
+              Keep reading
+            </h2>
+            <div class="grid grid-3">
+              {related.map((p) => (
+                <ArticleCard entry={p} />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
-    )}
+        </section>
+      )
+    }
   </article>
 </Base>
+
+{
+  entry.id === "liquid-glass" && (
+    <script src="../../scripts/liquid-glass-demo.ts"></script>
+  )
+}
 
 <style>
   .pub-hero {
@@ -155,92 +217,455 @@ const related = all
     overflow: hidden;
     border-bottom: 1px solid var(--border);
   }
-  .pub-hero-visual { position: absolute; inset: 0; }
-  .pub-hero-visual :global(.tv) { border-radius: 0; }
+  .pub-hero-visual {
+    position: absolute;
+    inset: 0;
+  }
+  .pub-hero-visual :global(.tv) {
+    border-radius: 0;
+  }
   .pub-hero-overlay {
-    position: absolute; inset: 0;
-    background:
-      linear-gradient(180deg, var(--scrim-soft) 0%, transparent 28%),
-      linear-gradient(180deg, transparent 35%, var(--scrim-bottom) 68%, var(--scrim-end) 96%);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
   }
   .pub-hero-inner {
-    position: relative; z-index: 1;
+    position: relative;
+    z-index: 1;
     padding-block: clamp(2.5rem, 6vw, 5rem);
     max-width: 920px;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--text-2);
+    font-size: 0.88rem;
+    margin-bottom: var(--space-5);
+  }
+  .back-link:hover {
+    color: var(--text);
+  }
+  .back-link :global(.back-arrow) {
+    transition: transform var(--dur-fast);
+  }
+  .back-link:hover :global(.back-arrow) {
+    transform: translateX(-3px);
+  }
+
+  .pub-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--space-4);
+  }
+  .pub-domain,
+  .pub-series {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.35em 0.8em;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--t2) 45%, var(--border));
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    backdrop-filter: blur(8px);
+  }
+  .pub-domain {
+    color: color-mix(in srgb, var(--t2) 75%, var(--text-2));
+  }
+  .pub-series {
+    color: var(--text-2);
+  }
+
+  .pub-title {
+    font-size: clamp(2rem, 1.2rem + 4vw, 4.2rem);
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+    max-width: 18ch;
+    color: var(--text);
+  }
+  .pub-subtitle {
+    font-size: var(--step-2);
+    color: var(--text-2);
+    margin-top: var(--space-4);
+    max-width: 46ch;
+    line-height: 1.4;
+    font-style: italic;
+  }
+  .pub-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    align-items: center;
+    margin-top: var(--space-5);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-3);
+  }
+
+  /* Light theme — full-bleed layout, light canvas + readable text */
+  :global([data-theme="light"]) .pub-hero-overlay {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--bg) 72%, transparent) 0%,
+        transparent 38%
+      ),
+      radial-gradient(
+        130% 95% at 0% 100%,
+        color-mix(in srgb, var(--bg) 96%, transparent),
+        transparent 58%
+      ),
+      linear-gradient(
+        180deg,
+        transparent 42%,
+        color-mix(in srgb, var(--bg) 82%, transparent) 78%,
+        var(--bg) 100%
+      );
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv) {
+    background:
+      radial-gradient(
+        120% 120% at 82% 0%,
+        color-mix(in srgb, var(--t2) 16%, transparent),
+        transparent 58%
+      ),
+      radial-gradient(
+        120% 120% at 8% 100%,
+        color-mix(in srgb, var(--t1) 14%, transparent),
+        transparent 55%
+      ),
+      linear-gradient(180deg, var(--bg-soft) 0%, var(--surface) 100%);
+  }
+  :global([data-theme="light"]) .pub-title,
+  :global([data-theme="light"]) .pub-subtitle,
+  :global([data-theme="light"]) .pub-meta,
+  :global([data-theme="light"]) .back-link {
+    text-shadow: 0 1px 14px color-mix(in srgb, var(--bg) 88%, transparent);
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-grain) {
+    opacity: 0.14;
+    mix-blend-mode: multiply;
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-shader .ring) {
+    border-color: color-mix(in srgb, var(--t3) 58%, transparent);
+    opacity: 0.55;
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-shader .r2) {
+    opacity: 0.38;
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-shader .r3) {
+    opacity: 0.22;
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-shader .glass) {
+    opacity: 0.62;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--t1) 38%, transparent),
+      color-mix(in srgb, var(--t2) 34%, transparent)
+    );
+    box-shadow:
+      inset 0 0 28px rgba(255, 255, 255, 0.72),
+      0 16px 44px -22px color-mix(in srgb, var(--t2) 28%, transparent);
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-motion .curve) {
+    stroke: color-mix(in srgb, var(--t2) 68%, transparent);
+    opacity: 0.75;
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-motion .dot) {
+    opacity: 0.88;
+    box-shadow: 0 0 14px color-mix(in srgb, var(--t2) 45%, transparent);
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-compose .layer),
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-academic .page) {
+    border-color: color-mix(in srgb, var(--t3) 28%, var(--border));
+    background: color-mix(in srgb, var(--t1) 10%, var(--surface));
+    box-shadow: var(--shadow-sm);
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-systems .line) {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--t2) 72%, transparent),
+      transparent
+    );
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-systems .node) {
+    border-color: color-mix(in srgb, var(--t1) 62%, transparent);
+    background: color-mix(in srgb, var(--t1) 18%, transparent);
+  }
+  :global([data-theme="light"]) .pub-hero-visual :global(.tv-audio .bar) {
+    opacity: 0.85;
+    background: linear-gradient(
+      var(--t3),
+      color-mix(in srgb, var(--t1) 75%, var(--t3))
+    );
+  }
+  :global([data-theme="light"]) .pub-domain,
+  :global([data-theme="light"]) .pub-series {
+    border-color: color-mix(in srgb, var(--t2) 32%, var(--border));
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Dark theme — full-bleed cinematic hero (unchanged) */
+  :global([data-theme="dark"]) .pub-hero-overlay {
+    background:
+      linear-gradient(180deg, var(--scrim-soft) 0%, transparent 28%),
+      linear-gradient(
+        180deg,
+        transparent 35%,
+        var(--scrim-bottom) 68%,
+        var(--scrim-end) 96%
+      );
+  }
+  :global([data-theme="dark"]) .pub-hero-inner {
     color: var(--on-media-text);
     text-shadow: 0 1px 28px var(--scrim-text);
   }
-
-  .back-link { display: inline-flex; align-items: center; gap: 0.5em; color: var(--on-media-text-2); font-size: 0.88rem; margin-bottom: var(--space-5); }
-  .back-link:hover { color: var(--on-media-text); }
-  .back-link :global(.back-arrow) { transition: transform var(--dur-fast); }
-  .back-link:hover :global(.back-arrow) { transform: translateX(-3px); }
-
-  .pub-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: var(--space-4); }
-  .pub-domain, .pub-series {
-    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 0.35em 0.8em; border-radius: var(--radius-pill);
-    border: 1px solid color-mix(in srgb, var(--t2) 45%, var(--media-chrome-border));
-    background: var(--media-chrome-bg); backdrop-filter: blur(8px);
+  :global([data-theme="dark"]) .back-link {
+    color: var(--on-media-text-2);
   }
-  .pub-domain { color: color-mix(in srgb, var(--t2) 70%, var(--media-chrome-text)); }
-  .pub-series { color: color-mix(in srgb, var(--media-chrome-text) 75%, var(--text-2)); }
+  :global([data-theme="dark"]) .back-link:hover {
+    color: var(--on-media-text);
+  }
+  :global([data-theme="dark"]) .pub-domain,
+  :global([data-theme="dark"]) .pub-series {
+    border-color: color-mix(in srgb, var(--t2) 45%, var(--media-chrome-border));
+    background: var(--media-chrome-bg);
+  }
+  :global([data-theme="dark"]) .pub-domain {
+    color: color-mix(in srgb, var(--t2) 70%, var(--media-chrome-text));
+  }
+  :global([data-theme="dark"]) .pub-series {
+    color: color-mix(in srgb, var(--media-chrome-text) 75%, var(--text-2));
+  }
+  :global([data-theme="dark"]) .pub-title {
+    color: var(--on-media-text);
+  }
+  :global([data-theme="dark"]) .pub-subtitle {
+    color: var(--on-media-text-2);
+  }
+  :global([data-theme="dark"]) .pub-meta {
+    color: var(--on-media-text-3);
+  }
 
-  .pub-title { font-size: clamp(2rem, 1.2rem + 4vw, 4.2rem); letter-spacing: -0.03em; line-height: 1.04; max-width: 18ch; }
-  .pub-subtitle { font-size: var(--step-2); color: var(--on-media-text-2); margin-top: var(--space-4); max-width: 46ch; line-height: 1.4; font-style: italic; }
-  .pub-meta { display: flex; flex-wrap: wrap; gap: 0.5em; align-items: center; margin-top: var(--space-5); font-family: var(--font-mono); font-size: 0.8rem; color: var(--on-media-text-3); }
-  .dot-sep { opacity: 0.5; }
+  .dot-sep {
+    opacity: 0.5;
+  }
 
   /* body layout */
-  .pub-body { padding-top: clamp(2.5rem, 6vw, 4.5rem); }
-  .pub-layout { display: grid; grid-template-columns: 1fr 320px; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
-
-  .pub-summary-text { font-size: var(--step-2); line-height: 1.5; color: var(--text); margin-top: var(--space-3); }
-  .pub-summary { padding-bottom: var(--space-6); margin-bottom: var(--space-6); border-bottom: 1px solid var(--border); }
-
-  .pub-prose { font-size: var(--step-1); color: var(--text-2); line-height: 1.7; margin-bottom: var(--space-7); }
-  .pub-prose :global(p) { margin-bottom: var(--space-4); }
-
-  .pub-ideas { margin-bottom: var(--space-7); }
-  .ideas-list { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-4); counter-reset: idea; }
-  .idea {
-    display: flex; gap: var(--space-4); align-items: flex-start;
-    padding: var(--space-4) var(--space-5);
-    border: 1px solid var(--border); border-radius: var(--radius-md);
-    background: var(--surface);
-    transition: border-color var(--dur-fast), transform var(--dur-fast) var(--ease-out);
-    font-size: 1.02rem; line-height: 1.5;
+  .pub-body {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    overflow-x: clip;
   }
-  .idea:hover { border-color: var(--border-strong); transform: translateX(4px); }
+  .pub-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .pub-summary-text {
+    font-size: var(--step-2);
+    line-height: 1.5;
+    color: var(--text);
+    margin-top: var(--space-3);
+  }
+  .pub-summary {
+    padding-bottom: var(--space-6);
+    margin-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border);
+  }
+  .pub-cover-content {
+    margin: 0 0 var(--space-6);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .pub-cover-content__img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .pub-main {
+    min-width: 0;
+  }
+  .pub-prose {
+    font-size: var(--step-1);
+    color: var(--text-2);
+    line-height: 1.7;
+    margin-bottom: var(--space-7);
+  }
+  .pub-prose :global(p) {
+    margin-bottom: var(--space-4);
+  }
+
+  .pub-demo {
+    margin-bottom: var(--space-7);
+  }
+  .lg-demo__stage {
+    position: relative;
+    margin-top: var(--space-4);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    width: 100%;
+    min-height: clamp(260px, 48vh, 640px);
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--border);
+    background: #05050a;
+    touch-action: none;
+  }
+  .lg-demo__stage canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+  .lg-demo__fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    margin: 0;
+    padding: var(--space-5);
+    text-align: center;
+    font-size: 0.88rem;
+    color: var(--text-2);
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    display: grid;
+    place-items: center;
+  }
+  .lg-demo__fallback[hidden] {
+    display: none !important;
+  }
+
+  .pub-ideas {
+    margin-bottom: var(--space-7);
+  }
+  .ideas-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    counter-reset: idea;
+  }
+  .idea {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    transition:
+      border-color var(--dur-fast),
+      transform var(--dur-fast) var(--ease-out);
+    font-size: 1.02rem;
+    line-height: 1.5;
+  }
+  .idea:hover {
+    border-color: var(--border-strong);
+    transform: translateX(4px);
+  }
   .idea-num {
-    flex-shrink: 0; font-size: 0.85rem;
+    flex-shrink: 0;
+    font-size: 0.85rem;
     color: color-mix(in srgb, var(--t2) 80%, var(--text));
     padding-top: 0.15em;
   }
 
   /* aside */
-  .pub-aside { position: sticky; top: 90px; }
-  .aside-card { padding: var(--space-5); }
-  .aside-tags { margin-top: var(--space-3); }
-  .aside-div { margin: var(--space-5) 0; }
-  .aside-facts { display: flex; flex-direction: column; gap: var(--space-3); }
-  .aside-facts > div { display: flex; justify-content: space-between; gap: var(--space-3); font-size: 0.88rem; }
-  .aside-facts dt { color: var(--text-3); }
-  .aside-facts dd { color: var(--text); text-align: right; }
-  .aside-medium {
-    display: inline-flex; align-items: center; gap: 0.5em;
-    margin-top: var(--space-5); padding-top: var(--space-4);
-    border-top: 1px solid var(--border);
-    width: 100%; font-size: 0.9rem; color: var(--text-2);
+  .pub-aside {
+    position: sticky;
+    top: 90px;
   }
-  .aside-medium:hover { color: var(--text); }
+  .aside-card {
+    padding: var(--space-5);
+  }
+  .aside-tags {
+    margin-top: var(--space-3);
+  }
+  .aside-div {
+    margin: var(--space-5) 0;
+  }
+  .aside-facts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .aside-facts > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    font-size: 0.88rem;
+  }
+  .aside-facts dt {
+    color: var(--text-3);
+  }
+  .aside-facts dd {
+    color: var(--text);
+    text-align: right;
+  }
+  .aside-medium {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
+    width: 100%;
+    font-size: 0.9rem;
+    color: var(--text-2);
+  }
+  .aside-medium:hover {
+    color: var(--text);
+  }
 
-  .pub-cta-wrap { margin-top: var(--space-7); }
-  .pub-related { border-top: 1px solid var(--border); margin-top: var(--space-9); }
-  .related-title { margin-bottom: var(--space-6); }
+  .pub-cta-wrap {
+    margin-top: var(--space-7);
+  }
+  .pub-related {
+    border-top: 1px solid var(--border);
+    margin-top: var(--space-9);
+  }
+  .related-title {
+    margin-bottom: var(--space-6);
+  }
 
   @media (max-width: 900px) {
-    .pub-layout { grid-template-columns: 1fr; }
-    .pub-aside { position: static; order: -1; }
+    .pub-layout {
+      grid-template-columns: 1fr;
+    }
+    .pub-aside {
+      position: static;
+      order: -1;
+    }
+    .pub-hero-inner {
+      max-width: none;
+    }
+    .pub-title {
+      max-width: none;
+    }
+    .pub-subtitle {
+      max-width: none;
+    }
+    .lg-demo__stage {
+      min-height: clamp(220px, 56vw, 480px);
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .lg-demo__stage {
+      width: calc(100% + 2 * var(--gutter));
+      margin-inline: calc(-1 * var(--gutter));
+      border-radius: 0;
+      border-inline: none;
+      min-height: clamp(200px, 62vw, 360px);
+    }
   }
 </style>

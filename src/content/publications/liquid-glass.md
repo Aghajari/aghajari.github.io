@@ -20,4 +20,4 @@ featured: true
 order: 1
 ---
 
-Apple's *Liquid Glass* feels alive — light bends through it, colors fringe at the edges, and highlights slide as the surface moves. This article pulls the effect apart into its mathematical ingredients and rebuilds it, one shader pass at a time.
+Apple's _Liquid Glass_ feels alive — light bends through it, colors fringe at the edges, and highlights slide as the surface moves. This article pulls the effect apart into its mathematical ingredients and rebuilds it, one shader pass at a time.

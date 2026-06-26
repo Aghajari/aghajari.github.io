@@ -9,19 +9,28 @@ interface Props {
 
 const { talkId, theme } = Astro.props;
 
-const CUSTOM_VISUALS = new Set(["complex-animations", "multi-threading", "navigating-ce-studies"]);
+const CUSTOM_VISUALS = new Set([
+  "complex-animations",
+  "multi-threading",
+  "navigating-ce-studies",
+]);
 const isCustom = CUSTOM_VISUALS.has(talkId);
 ---
 
-<div class:list={["tcv", `tcv--${talkId}`, { "tcv--custom": isCustom }]} data-tcv={isCustom ? talkId : undefined}>
-  {isCustom ? (
-    <>
-      <canvas class="tcv__canvas" data-tcv-canvas aria-hidden="true"></canvas>
-      <span class="tcv__veil" aria-hidden="true"></span>
-    </>
-  ) : (
-    <ThemeVisual theme={theme} />
-  )}
+<div
+  class:list={["tcv", `tcv--${talkId}`, { "tcv--custom": isCustom }]}
+  data-tcv={isCustom ? talkId : undefined}
+>
+  {
+    isCustom ? (
+      <>
+        <canvas class="tcv__canvas" data-tcv-canvas aria-hidden="true" />
+        <span class="tcv__veil" aria-hidden="true" />
+      </>
+    ) : (
+      <ThemeVisual theme={theme} />
+    )
+  }
 </div>
 
 <style>
@@ -51,7 +60,11 @@ const isCustom = CUSTOM_VISUALS.has(talkId);
   /* Complex Animations — same veil as the talk hero */
   .tcv--complex-animations .tcv__veil {
     background:
-      radial-gradient(120% 90% at 75% 18%, color-mix(in srgb, var(--t2) 14%, transparent), transparent 60%),
+      radial-gradient(
+        120% 90% at 75% 18%,
+        color-mix(in srgb, var(--t2) 14%, transparent),
+        transparent 60%
+      ),
       linear-gradient(
         180deg,
         color-mix(in srgb, var(--media-ink) 28%, transparent) 0%,
@@ -64,7 +77,11 @@ const isCustom = CUSTOM_VISUALS.has(talkId);
   /* Multi-Threading — same veil as the talk hero */
   .tcv--multi-threading .tcv__veil {
     background:
-      radial-gradient(120% 90% at 78% 16%, color-mix(in srgb, var(--t2) 14%, transparent), transparent 60%),
+      radial-gradient(
+        120% 90% at 78% 16%,
+        color-mix(in srgb, var(--t2) 14%, transparent),
+        transparent 60%
+      ),
       linear-gradient(
         180deg,
         color-mix(in srgb, var(--media-ink) 28%, transparent) 0%,
@@ -74,13 +91,29 @@ const isCustom = CUSTOM_VISUALS.has(talkId);
       );
   }
 
-  /* Navigating CE Studies — editorial warmth from kn-hero__bg */
+  /* Navigating CE Studies — terminal glow */
   .tcv--navigating-ce-studies .tcv__veil {
     background:
-      radial-gradient(80% 70% at 88% 8%, color-mix(in srgb, var(--t1) 16%, transparent), transparent 60%),
-      radial-gradient(70% 80% at 4% 92%, color-mix(in srgb, var(--t3) 12%, transparent), transparent 60%),
-      linear-gradient(180deg, color-mix(in srgb, var(--media-ink) 18%, transparent) 0%, transparent 42%),
-      linear-gradient(180deg, transparent 55%, color-mix(in srgb, var(--media-base) 88%, transparent) 100%);
+      radial-gradient(
+        80% 70% at 88% 8%,
+        color-mix(in srgb, var(--t1) 16%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        70% 80% at 4% 92%,
+        color-mix(in srgb, var(--t3) 12%, transparent),
+        transparent 60%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--media-ink) 18%, transparent) 0%,
+        transparent 42%
+      ),
+      linear-gradient(
+        180deg,
+        transparent 55%,
+        color-mix(in srgb, var(--media-base) 88%, transparent) 100%
+      );
   }
 </style>
 
