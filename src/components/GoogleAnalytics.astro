@@ -1,0 +1,20 @@
+---
+/** GA4 — included once via BaseHead on every page. */
+const GA_ID = "G-XWM4686M0D";
+---
+
+<!-- Google tag (gtag.js) -->
+<script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+<script is:inline define:vars={{ gaId: GA_ID }}>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+  gtag("config", gaId);
+  document.addEventListener("astro:page-load", () => {
+    gtag("config", gaId, {
+      page_path: location.pathname + location.search,
+    });
+  });
+</script>
