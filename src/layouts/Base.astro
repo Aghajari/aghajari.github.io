@@ -34,6 +34,23 @@ const {
 <!doctype html>
 <html lang="en" data-theme="dark">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-XWM4686M0D"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-XWM4686M0D");
+      document.addEventListener("astro:page-load", () => {
+        gtag("config", "G-XWM4686M0D", {
+          page_path: location.pathname + location.search,
+        });
+      });
+    </script>
     <BaseHead
       title={title}
       description={description}
