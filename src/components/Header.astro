@@ -355,6 +355,20 @@ function isActive(href: string) {
     transform: rotate(0deg) scale(1);
     opacity: 1;
   }
+
+  /* Theme swap — snap like presentation sticky rails (no VT cross-fade). */
+  :global(html.theme-transition) .site-header .header-backdrop,
+  :global(html.theme-transition) .site-header .header-backdrop::before,
+  :global(html.theme-transition) .site-header .header-backdrop::after,
+  :global(html.theme-transition) .site-header .nav-link,
+  :global(html.theme-transition) .site-header .theme-toggle,
+  :global(html.theme-transition) .site-header .menu-btn,
+  :global(html.theme-transition) .site-header .ic-sun,
+  :global(html.theme-transition) .site-header .ic-moon,
+  :global(html.theme-transition) .site-header .brand-last {
+    transition: none !important;
+  }
+
   .mobile-nav {
     position: fixed;
     inset: 0;

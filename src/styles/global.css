@@ -629,10 +629,12 @@ html.theme-transition::view-transition-old(root) {
 html.theme-transition::view-transition-new(root) {
   z-index: 1;
 }
-/* Only the persisted header morphs during theme swap — not every book cover. */
+/* Strip Astro morph names during theme swap (e.g. book covers). */
 html.theme-transition [data-astro-transition-scope] {
   view-transition-name: none !important;
 }
-html.theme-transition #site-header {
-  view-transition-name: site-header !important;
+/* Keep persisted chrome live — update via CSS variables like ca-rail/mt-rail. */
+html.theme-transition #site-header,
+html.theme-transition #site-footer {
+  view-transition-name: none !important;
 }

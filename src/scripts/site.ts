@@ -158,7 +158,13 @@ function bindTheme() {
 
     root.classList.add("theme-transition");
     const restoreNames = suspendViewTransitionNames();
-    const transition = startViewTransition(() => applyTheme(next));
+    const transition = startViewTransition(() => {
+      applyTheme(next);
+      document.getElementById("site-header")?.style.setProperty(
+        "transform",
+        "translate3d(0,0,0)",
+      );
+    });
 
     transition.ready
       .then(() => {
@@ -181,6 +187,11 @@ function bindTheme() {
     transition.finished.finally(() => {
       restoreNames();
       root.classList.remove("theme-transition");
+      updateHeaderScroll();
+      document.getElementById("site-header")?.style.setProperty(
+        "transform",
+        "translate3d(0,0,0)",
+      );
     });
   };
 
