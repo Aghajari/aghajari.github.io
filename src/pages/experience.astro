@@ -99,7 +99,7 @@ const lastYear = yearStops.length - 1;
     padding-top: clamp(1.5rem, 3vw, 2.5rem);
   }
   .yt-head {
-    margin-bottom: var(--space-6);
+    margin-bottom: calc(var(--space-6) - 8px);
   }
   .yt-headline {
     margin-top: var(--space-2);
@@ -111,6 +111,8 @@ const lastYear = yearStops.length - 1;
 
   .yt {
     --yt-c: var(--accent);
+    --yt-dot-size: 12px;
+    --yt-rail-pad-top: 0.35rem;
   }
 
   /* —— Rail of years —— */
@@ -119,9 +121,8 @@ const lastYear = yearStops.length - 1;
     overflow-y: visible;
     scrollbar-width: none;
     margin-bottom: var(--space-5);
-    /* Headroom for active dot scale + ring shadow (overflow-x clips on Y otherwise) */
-    padding-top: 0.65rem;
-    margin-top: -0.65rem;
+    /* Room for active dot scale + ring inside horizontal scrollport */
+    padding-top: 8px;
   }
   .yt-rail-wrap::-webkit-scrollbar {
     display: none;
@@ -134,7 +135,7 @@ const lastYear = yearStops.length - 1;
     gap: var(--space-2);
     width: max-content;
     min-width: 100%;
-    padding: 0.35rem 0 1.4rem;
+    padding: var(--yt-rail-pad-top) 0 1.4rem;
   }
   .yt-rail::-webkit-scrollbar {
     display: none;
@@ -144,7 +145,7 @@ const lastYear = yearStops.length - 1;
     position: absolute;
     left: 0;
     right: 0;
-    top: 12px;
+    top: calc(var(--yt-rail-pad-top) + var(--yt-dot-size) / 2 - 1px);
     height: 2px;
     background: linear-gradient(
       90deg,
@@ -166,6 +167,7 @@ const lastYear = yearStops.length - 1;
     align-items: center;
     gap: 0.6rem;
     padding: 0 0.2rem;
+    overflow: visible;
     background: none;
     border: none;
     cursor: pointer;
@@ -173,8 +175,8 @@ const lastYear = yearStops.length - 1;
     transition: color var(--dur-fast);
   }
   .yt-dot {
-    width: 12px;
-    height: 12px;
+    width: var(--yt-dot-size);
+    height: var(--yt-dot-size);
     border-radius: 50%;
     background: var(--bg);
     border: 2px solid var(--border-strong);

@@ -42,7 +42,7 @@ html.is-coarse :is(
   .mobile-link,
   .theme-toggle,
   .menu-btn
-) {
+):not(.yt-year) {
   overflow: hidden;
 }
 

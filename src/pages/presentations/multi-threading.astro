@@ -1967,12 +1967,28 @@ lifecycleScope.launch {
   }
   .mt-demo--models {
     gap: var(--space-4);
+    min-width: 0;
+    max-width: 100%;
+  }
+  .mt-models__tabs {
+    max-width: 100%;
+  }
+  .mt-models__panes {
+    min-width: 0;
+    max-width: 100%;
   }
   .mt-models__pane {
     display: none;
+    min-width: 0;
+    max-width: 100%;
   }
   .mt-models__pane.is-active {
     display: block;
+  }
+  .mt-demo--models .mt-code {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .mt-models__note {
     font-size: 0.85rem;
